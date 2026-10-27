@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "uf": "SP",
+    "municipio": "Sao Paulo",
+    "codigo_municipio": "71072",
+    "zona": "0253",
+    "secao": "0010",
+    "origem": "simulados"
+  },
+  "turnos": {
+    "1": {
+      "aptos": 350,
+      "comparecimento": 270,
+      "comparecimento_bu": 270,
+      "habilitados_biometria": 210,
+      "habilitados_biografia": 43,
+      "comp_sem_biometria": 17,
+      "flavio": 126,
+      "lula": 110,
+      "outros": 20,
+      "brancos": 6,
+      "nulos": 8,
+      "nulos_tecnicos": 0,
+      "numero_interno_urna": "",
+      "modelo_urna": ""
+    },
+    "2": {
+      "aptos": 350,
+      "comparecimento": 300,
+      "comparecimento_bu": 300,
+      "habilitados_biometria": 208,
+      "habilitados_biografia": 65,
+      "comp_sem_biometria": 27,
+      "flavio": 139,
+      "lula": 152,
+      "outros": 0,
+      "brancos": 4,
+      "nulos": 5,
+      "nulos_tecnicos": 0,
+      "numero_interno_urna": "",
+      "modelo_urna": ""
+    }
+  }
+}

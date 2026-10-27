@@ -1,0 +1,11 @@
+data/
+vendor/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.log
+web/dados/*.json
+!web/dados/.gitkeep
+.DS_Store
+.env

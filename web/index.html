@@ -50,6 +50,10 @@ document.querySelector('#import').addEventListener('click',()=>document.querySel
 document.querySelector('#file-input').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{dataset=normalize(JSON.parse(await file.text()));render();}catch(err){alert('Falha ao importar JSON: '+err.message);}e.target.value='';});
 document.querySelector('#export').addEventListener('click',()=>{const output={...dataset,gerado_por:'MVP Uma Secao, Dois Turnos',observacao:'As regras exploratorias nao constituem prova de fraude.'};const blob=new Blob([JSON.stringify(output,null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`analise_${dataset.meta?.uf||'UF'}_${dataset.meta?.zona||'zona'}_${dataset.meta?.secao||'secao'}.json`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u);});
 render();
+fetch('./dados/secao_real_2026.json', {cache:'no-store'})
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { if (d) { dataset=normalize(d); render(); } })
+  .catch(() => { /* Sem JSON oficial, manter dados simulados. */ });
 </script>
 </body>
 </html>
