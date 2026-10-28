@@ -52,6 +52,17 @@
       <p class="small">A coleta roda no seu computador Linux/WSL ou VPS. A reserva de zonas e o envio automático ainda não estão disponíveis.</p>
     </section>
   </div>
+  <section class="guide-monitor-help" aria-labelledby="local-monitor-help">
+    <div class="section-head">
+      <div><p class="eyebrow dark">JÁ INICIOU UMA COLETA?</p><h2 id="local-monitor-help">Acompanhe com o painel de progresso</h2></div>
+      <a class="button outline" href="http://127.0.0.1:8765/" target="_blank" rel="noopener noreferrer">Abrir painel local</a>
+    </div>
+    <p>Abra <strong>outro terminal Ubuntu/WSL no computador que está coletando</strong> e execute:</p>
+    <div class="guide-code"><pre id="cmd-monitor-help">cd ~/conferencia-eleicao-26Br-
+scripts/coleta painel</pre><button class="button outline copy-command" type="button" data-copy="cmd-monitor-help">Copiar</button></div>
+    <p>Acesse <code>http://127.0.0.1:8765/</code>. A barra atualiza a cada <strong>2 segundos</strong> com as seções concluídas, pendentes e falhas. Fechar o painel não interrompe a coleta.</p>
+    <p class="small">O portal público não lê o andamento diretamente do seu computador. Na VPS, utilize túnel SSH em vez de abrir a porta na internet.</p>
+  </section>
   <section id="contribute-guide" class="guide-panel" hidden aria-labelledby="guide-title">
     <div class="section-head"><div><p class="eyebrow dark">ASSISTENTE DE CONTRIBUIÇÃO</p><h2 id="guide-title">Vamos preparar sua primeira coleta</h2></div><button type="button" id="contribute-close" class="button outline">Fechar guia</button></div>
     <p>Em poucos passos você define a zona, prepara os comandos, valida os resultados e os envia para revisão via GitHub.</p>
@@ -74,6 +85,11 @@
       </div>
       <p class="small">Municípios, códigos TSE e zonas são carregados do catálogo oficial das Eleições 2026. O sistema não usa códigos IBGE.</p>
       <div id="collect-zone-status" class="zone-state" role="status" aria-live="polite">Carregando a lista de municípios e zonas eleitorais...</div>
+      <div id="collect-local-controls" class="zone-local-controls" hidden>
+        <button id="collect-mark-local" class="button outline" type="button">Já estou coletando esta zona</button>
+        <button id="collect-unmark-local" class="button outline" type="button" hidden>Retirar marcação local</button>
+        <p class="small">Esta anotação fica <strong>somente neste navegador</strong>; não é uma reserva no servidor e não aparece para outros colaboradores. Nenhum dado da coleta é enviado.</p>
+      </div>
       <p class="small" id="collect-source"></p>
       <button class="button primary" type="submit" id="collect-generate">Preparar meu roteiro</button>
       <p id="collect-message" role="status" aria-live="polite"></p>
@@ -85,7 +101,7 @@
       <h3><span class="step-num">3</span> Confira e inicie a coleta</h3>
       <p>Primeiro veja a quantidade de seções que o catálogo encontrou, sem baixar arquivos:</p>
       <div class="guide-code"><pre id="cmd-check"></pre><button type="button" class="button outline copy-command" data-copy="cmd-check">Copiar</button></div>
-      <p>Depois execute a coleta dos dois turnos. O processo continua em segundo plano.</p>
+      <p>Depois execute a coleta dos dois turnos. O processo continua em segundo plano. Você pode clicar em <strong>Já estou coletando esta zona</strong> no formulário acima para lembrar da coleta neste navegador.</p>
       <div class="guide-code"><pre id="cmd-start"></pre><button type="button" class="button outline copy-command" data-copy="cmd-start">Copiar</button></div>
       <p><strong>Acompanhe na tela:</strong> abra um segundo terminal Ubuntu/WSL e execute o monitor local. Ele exibe uma barra de progresso atualizada automaticamente, sem interromper a coleta.</p>
       <div class="guide-code"><pre id="cmd-monitor"></pre><button type="button" class="button outline copy-command" data-copy="cmd-monitor">Copiar</button></div>

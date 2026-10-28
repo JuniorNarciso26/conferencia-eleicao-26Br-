@@ -10,7 +10,29 @@ const status = $("#collect-total-message");
 const uf = $("#collect-uf"), city = $("#collect-city"), zone = $("#collect-zone");
 const code = $("#collect-city-code"), zoneState = $("#collect-zone-status");
 const totalInput = $("#collect-total"), generate = $("#collect-generate");
+const localControls=$("#collect-local-controls"), markLocal=$("#collect-mark-local"), unmarkLocal=$("#collect-unmark-local");
+const LOCAL_KEY="conferencia_eleitoral_coletas_em_andamento_v1";
 let locationSelected = null, locations = null, published = null;
+function readMarks(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(LOCAL_KEY)||"[]");
+    return new Set(Array.isArray(raw)?raw.filter(x=>typeof x==="string"&&/^[A-Z]{2}-[0-9]{5}-[0-9]{4}$/.test(x)).slice(0,1000):[]);
+  }catch{return new Set();}
+}
+let localMarked=readMarks();
+function storeMarks(next){
+  try{
+    localStorage.setItem(LOCAL_KEY,JSON.stringify([...next]));
+    localMarked=next;
+    return true;
+  }catch{return false;}
+}
+function currentZone(){
+  const selected=cityForSelection();
+  if(!selected||!zone.value)return null;
+  try{return validarLocalidade({uf:uf.value,municipio:selected.nome,codigo:selected.codigo,zona:zone.value});}
+  catch{return null;}
+}
 
 function text(id,value){ document.getElementById(id).textContent=value; }
 function replaceOptions(select,placeholder,entries=[]){
@@ -45,22 +67,30 @@ function isPublished(loc){
 }
 function selectStatus(){
   resetGuide();
-  const selected=cityForSelection();
-  if(!selected || !zone.value){
-    estado("Selecione uma zona para consultar o status da apuração.");
+  localControls.hidden=true;
+  const loc=currentZone();
+  if(!loc){
+    estado("Selecione uma zona para consultar o status dos resultados.");
     return;
   }
-  const loc=validarLocalidade({uf:uf.value,municipio:selected.nome,codigo:selected.codigo,zona:zone.value});
   if(published===null){
-    estado("Não foi possível confirmar a publicação da zona. Recarregue a página antes de iniciar a coleta.","error");
+    estado("Não foi possível verificar os resultados publicados. Atualize a página antes de iniciar a coleta.","error");
     return;
   }
   if(isPublished(loc)){
-    estado("Zona "+loc.zona+" já apurada e PUBLICADA no portal. Consulte os resultados na página pública. Não é necessário repetir a coleta.","published");
-  }else{
-    estado("Zona "+loc.zona+" ainda NÃO PUBLICADA no portal. Ela pode estar em coleta por outro colaborador; reserva automática ainda não disponível.","available");
-    generate.disabled=false;
+    estado("Zona "+loc.zona+": resultados já PUBLICADOS no portal. Não é necessário repetir a coleta.","published");
+    return;
   }
+  localControls.hidden=false;
+  const marked=localMarked.has(zoneKey(loc));
+  markLocal.hidden=marked;
+  unmarkLocal.hidden=!marked;
+  if(marked){
+    estado("Zona "+loc.zona+": EM COLETA NESTE NAVEGADOR (anotação manual). Os resultados ainda não foram publicados. Outros colaboradores não veem esta marcação.","local-running");
+  }else{
+    estado("Zona "+loc.zona+": resultados AINDA NÃO PUBLICADOS. Isso não significa que a zona esteja livre; outro colaborador pode estar coletando sem registro neste navegador.","available");
+  }
+  generate.disabled=false;
 }
 async function loadCatalog(){
   try{
@@ -95,6 +125,7 @@ uf.addEventListener("change",()=>{
   replaceOptions(zone,"Selecione primeiro o município");
   const cities=locations?.ufs?.[uf.value]||[];
   replaceOptions(city,"Escolha o município",cities.map(c=>({value:c.codigo,text:c.nome})));
+  localControls.hidden=true;
   estado(cities.length?"Selecione o município para listar suas zonas.":"Selecione uma UF.");
 });
 city.addEventListener("change",()=>{
@@ -103,9 +134,38 @@ city.addEventListener("change",()=>{
   code.value=selected?.codigo||"";
   const zones=selected?.zonas||[];
   replaceOptions(zone,"Escolha a zona eleitoral",zones.map(z=>({value:z,text:"Zona "+z})));
+  localControls.hidden=true;
   estado(selected?"Selecione a zona para consultar o status.":"Selecione um município.");
 });
 zone.addEventListener("change",selectStatus);
+markLocal.addEventListener("click",()=>{
+  const loc=currentZone();
+  if(!loc||published===null||isPublished(loc))return;
+  const next=new Set(localMarked);
+  next.add(zoneKey(loc));
+  if(!storeMarks(next)){
+    estado("Não foi possível salvar a anotação neste navegador. Verifique o armazenamento local.","error");
+    return;
+  }
+  selectStatus();
+});
+unmarkLocal.addEventListener("click",()=>{
+  const loc=currentZone();
+  if(!loc)return;
+  const next=new Set(localMarked);
+  next.delete(zoneKey(loc));
+  if(!storeMarks(next)){
+    estado("Não foi possível remover a anotação neste navegador.","error");
+    return;
+  }
+  selectStatus();
+});
+window.addEventListener("storage",event=>{
+  if(event.key===LOCAL_KEY){
+    localMarked=readMarks();
+    selectStatus();
+  }
+});
 start.addEventListener("click",()=>{
   guide.hidden=false;
   start.setAttribute("aria-expanded","true");
@@ -145,7 +205,9 @@ form.addEventListener("submit",event=>{
     updateCommandOutput(commands);
     text("collect-location",loc.uf+" · "+loc.municipio+" · zona "+loc.zona);
     steps.hidden=false;steps.scrollIntoView({behavior:"smooth",block:"start"});
-    message.textContent="Zona selecionada. Confirme com outros colaboradores se já existe coleta em andamento.";
+    message.textContent=localMarked.has(zoneKey(loc))
+      ? "Você marcou esta zona como em coleta neste navegador. Abra o monitor local para acompanhar o progresso."
+      : "Zona selecionada. Antes de iniciar, confirme se outro colaborador já está trabalhando nela.";
   }catch(err){message.textContent=String(err.message);}
 });
 build.addEventListener("click",()=>{
