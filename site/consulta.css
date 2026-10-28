@@ -50,3 +50,19 @@ footer{font-size:11px;text-align:center;color:#3b607b;padding-bottom:30px}
 .growth-reference p{margin:7px 0}
 .growth-note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 0 0}
 @media(max-width:700px){.growth-kpis{grid-template-columns:1fr}.growth-kpi strong{font-size:21px}}
+
+/* Distribuicao das variacoes pelas urnas de cada zona, sem comparar zonas */
+.pattern-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}
+.pattern-stat{background:#eef7fd;border:1px solid #c1ddf1;border-radius:10px;padding:12px}
+.pattern-stat small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.pattern-stat strong{display:block;font-size:23px;margin:7px 0 3px;color:var(--deep)}
+.pattern-stat span{font-size:12px;color:var(--muted)}
+.pattern-filter{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-size:12px;font-weight:750;margin:10px 0 12px}
+.pattern-filter select{border:1px solid #9bc9e8;border-radius:8px;padding:8px;background:white;color:var(--deep);font:inherit}
+.pattern-scroll{max-height:540px;overflow:auto}
+#pattern-table{min-width:790px}
+#pattern-table thead{position:sticky;top:0;z-index:1}
+#pattern-table th:first-child,#pattern-table td:first-child{text-align:left}
+#pattern-table .pattern-lula,#pattern-table .pattern-flavio,#pattern-table .pattern-igual{font-weight:650}
+#pattern-table tr.current-section{background:#e4f3ff}
+@media(max-width:700px){.pattern-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}

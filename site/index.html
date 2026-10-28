@@ -40,33 +40,42 @@
     <button id="open" type="button" disabled>Consultar</button>
   </section>
   <div class="notice" id="notice" role="status" aria-live="polite">Buscando zonas com resultados validados e publicados...</div>
-  <section class="panel growth-panel" id="growth-comparison" aria-labelledby="growth-comparison-title">
-    <h2 id="growth-comparison-title">Comparação automática · Zonas 0252 e 0253 (São Paulo)</h2>
-    <p class="desc">Os valores são calculados diretamente dos pacotes públicos, sem digitação manual. Só serão comparadas zonas efetivamente publicadas e conferidas pela aplicação.</p>
-    <p id="growth-comparison-status" class="growth-status" role="status" aria-live="polite">Carregando informações das zonas...</p>
-    <div class="table-wrap" id="growth-comparison-wrap" hidden>
-      <table class="growth-table">
-        <thead><tr><th>Zona</th><th>Seções</th><th>Δ Lula</th><th>Δ Flávio</th><th>Lula entre finalistas no 1º turno</th><th>Lula no incremento líquido</th></tr></thead>
-        <tbody id="growth-comparison-rows"></tbody>
-      </table>
-    </div>
-    <p class="growth-note">A liderança no 1º turno não determina como votos de outros candidatos, brancos, nulos ou diferenças de comparecimento se distribuem no 2º turno. A comparação não revela migração individual nem, isoladamente, irregularidades.</p>
-  </section>
   <div id="resultado" hidden>
     <section class="metrics" id="metrics" aria-label="Indicadores principais"></section>
     <section class="panel growth-panel" id="growth-details" aria-labelledby="growth-details-title">
-      <h2 id="growth-details-title">Modelo matemático · crescimento entre turnos</h2>
+      <h2 id="growth-details-title">O que explica a diferença de votos entre os turnos?</h2>
       <p class="desc" id="growth-scope">Cálculos automáticos para os dados selecionados.</p>
       <div id="growth-kpis" class="growth-kpis"></div>
       <div id="growth-formula" class="growth-formula" aria-label="Reconciliação matemática dos votos entre turnos"></div>
       <div id="growth-reference" class="growth-reference"></div>
-      <p class="growth-note">O cenário proporcional é apenas uma hipótese ilustrativa, não um resultado estatístico esperado. Dados agregados não identificam a origem individual dos votos nem permitem concluir irregularidades a partir desta diferença.</p>
+      <p class="growth-note">Esta reconciliação mostra de quais categorias vêm as diferenças líquidas. Não identifica quais eleitores mudaram de voto. Comparações proporcionais são hipóteses, não previsões estatísticas.</p>
+    </section>
+    <section class="panel growth-panel" id="section-pattern" aria-labelledby="section-pattern-title">
+      <h2 id="section-pattern-title">Padrão de variação por seção eleitoral (urna)</h2>
+      <p class="desc">As seções são analisadas individualmente. O resumo indica em quantas delas cada finalista teve a maior variação líquida entre os turnos; não identifica transferências individuais.</p>
+      <div id="pattern-stats" class="pattern-stats"></div>
+      <label class="pattern-filter" for="pattern-filter">Exibir seções
+        <select id="pattern-filter">
+          <option value="todas">Todas as seções</option>
+          <option value="lula">Variação maior para Lula</option>
+          <option value="flavio">Variação maior para Flávio</option>
+          <option value="igual">Variações iguais</option>
+        </select>
+      </label>
+      <p id="pattern-count" class="desc" aria-live="polite"></p>
+      <div class="table-wrap pattern-scroll">
+        <table id="pattern-table">
+          <thead><tr><th>Seção</th><th>Δ Lula</th><th>Δ Lula (%)</th><th>Δ Flávio</th><th>Δ Flávio (%)</th><th>Δ comparecimento</th><th>Δ votos válidos</th><th>Variação maior</th></tr></thead>
+          <tbody id="pattern-rows"></tbody>
+        </table>
+      </div>
+      <p class="growth-note">Percentuais: (votos no 2º turno − votos no 1º turno) ÷ votos no 1º turno × 100. Quando o valor inicial é zero, aparece “—”. A variação maior pode representar uma queda menor; a tabela não estabelece causa, transferência individual ou fraude.</p>
     </section>
     <div class="grid">
       <section class="panel">
         <h2>Comparação entre os turnos</h2>
-        <p class="desc">Resultados de cada turno; diferença = 2º turno menos 1º turno.</p>
-        <div class="table-wrap"><table><thead><tr><th>Indicador</th><th>1º turno</th><th>2º turno</th><th>Diferença</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <p class="desc">Resultados por zona ou seção. Diferença = 2º turno − 1º turno. Variação % = diferença ÷ valor do 1º turno × 100 (quando diferente de zero).</p>
+        <div class="table-wrap"><table><thead><tr><th>Indicador</th><th>1º turno</th><th>2º turno</th><th>Diferença</th><th>Variação (%)</th></tr></thead><tbody id="rows"></tbody></table></div>
       </section>
       <div>
         <section class="panel">
