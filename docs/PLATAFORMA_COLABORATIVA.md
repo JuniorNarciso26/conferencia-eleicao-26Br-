@@ -121,3 +121,11 @@ O portal **não executa comandos**, **não inicia a coleta na nuvem**, **não re
 - Assim que a zona é escolhida, o site consulta `site/dados/catalogo.json`: **publicada** quando existe resultado aprovado e servido no GitHub Pages; **ainda não publicada** quando ausente do catálogo. Este último status **não confirma que não existe coleta local em andamento**. Não há reserva automática por enquanto.
 - A base de localidades e o catálogo de resultados são distintos: localidades mostram onde é possível coletar; resultados publicados mostram onde já existe consulta pública.
 - Atualizações oficiais do catálogo deverão passar por revisão, e não modificar os BUs ou os arquivos brutos locais.
+
+## Acompanhar a coleta e marcar o trabalho local (28/10/2026)
+
+- Uma seção na área de colaboradores orienta abrir um segundo terminal Ubuntu/WSL e executar `scripts/coleta painel`, depois visitar `http://127.0.0.1:8765/`. O painel atualiza a cada 2 segundos, e encerrar o painel não encerra a coleta.
+- Ao selecionar UF, município e zona, o portal continua consultando o catálogo **dos resultados publicados**. Uma zona ausente desse catálogo **não é necessariamente livre**: outra pessoa pode estar coletando.
+- O botão **Já estou coletando esta zona** permite ao usuário registrar uma **anotação no armazenamento deste navegador**. Ao selecionar novamente a mesma zona no mesmo navegador, o portal informa **EM COLETA NESTE NAVEGADOR (anotação manual)**. O botão **Retirar marcação local** desfaz esse registro.
+- A anotação não detecta automaticamente um job aberto no WSL, não verifica o progresso real, não expira automaticamente, não está associada a uma sessão GitHub e não é visível para outros colaboradores. É necessária uma solução de reserva/status no Cloudflare D1 para sinalização **compartilhada**. O colaborador deve retirar a marcação ao terminar ou abandonar a coleta.
+- Se os resultados forem publicados, o status **PUBLICADO** tem prioridade na interface, mesmo que a marcação local ainda exista.

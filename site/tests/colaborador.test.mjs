@@ -116,3 +116,24 @@ test("guia inclui painel de acompanhamento local sem coletar via GitHub Pages", 
   assert.match(js,/monitor","catalog"/);
   assert.doesNotMatch(js,/\/api\/status/);
 });
+
+test("colaborador pode anotar zona em coleta neste navegador sem reservar no servidor", () => {
+  const html=read("desenvolvedores/index.html");
+  assert.match(html,/id="collect-mark-local"/);
+  assert.match(html,/id="collect-unmark-local"/);
+  assert.match(html,/id="collect-local-controls"/);
+  assert.match(html,/somente neste navegador/i);
+  assert.match(html,/id="cmd-monitor-help"/);
+  assert.match(html,/scripts\/coleta painel/);
+  assert.match(html,/127\.0\.0\.1:8765/);
+  const code=read("desenvolvedores/contribuir.js");
+  assert.match(code,/localStorage\.getItem\(LOCAL_KEY\)/);
+  assert.match(code,/localStorage\.setItem\(LOCAL_KEY/);
+  assert.match(code,/localMarked\.has\(zoneKey\(loc\)\)/);
+  assert.match(code,/EM COLETA NESTE NAVEGADOR/);
+  assert.match(code,/resultados AINDA NÃO PUBLICADOS/);
+  assert.match(code,/if\(isPublished\(loc\)\)/);
+  assert.match(code,/markLocal\.addEventListener\("click"/);
+  assert.match(code,/unmarkLocal\.addEventListener\("click"/);
+  assert.doesNotMatch(code,/api\/zones|api\/contributions|fetch\(.+method:"POST"/);
+});
