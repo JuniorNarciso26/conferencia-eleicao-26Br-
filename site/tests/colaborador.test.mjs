@@ -1,0 +1,65 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { UFS, validarLocalidade, gerarRoteiro } from "../desenvolvedores/coleta-roteiro.mjs";
+const read = p => readFileSync(new URL("../" + p, import.meta.url), "utf8");
+
+test("guia de contribuicao existe na area de colaboradores; consulta publica permanece independente", () => {
+  const dev = read("desenvolvedores/index.html");
+  assert.match(dev, /id="contribute-start"/);
+  assert.match(dev, /id="contribute-guide"[^>]*hidden/);
+  assert.match(dev, /id="collect-form"/);
+  assert.match(dev, /id="collect-total"/);
+  assert.match(dev, /src="\.\/contribuir\.js"/);
+  assert.match(dev, /id="login-button"/);
+  const publicHome = read("index.html");
+  assert.doesNotMatch(publicHome, /contribuir\.js|coleta-roteiro/);
+  assert.doesNotMatch(publicHome, /id="login-button"/);
+});
+
+test("valida estado, municipio TSE e zona", () => {
+  assert.equal(UFS.length, 27);
+  assert.deepEqual(validarLocalidade({
+    uf:"sp", municipio:" São Paulo ", codigo:"71072", zona:"254"
+  }), {uf:"SP", municipio:"São Paulo", codigo:"71072", zona:"0254"});
+  for(const data of [
+    {uf:"ZZ",municipio:"Rio",codigo:"60011",zona:"1"},
+    {uf:"SP",municipio:"SP",codigo:"71072 && echo hack",zona:"254"},
+    {uf:"SP",municipio:"SP",codigo:"71072",zona:"254;rm -rf ."},
+    {uf:"SP",municipio:"SP",codigo:"71072",zona:"0000"},
+    {uf:"SP",municipio:"",codigo:"71072",zona:"254"}
+  ]) assert.throws(() => validarLocalidade(data));
+});
+
+test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => {
+  const input={uf:"SP",municipio:"São Paulo",codigo:"71072",zona:"0254"};
+  const basic=gerarRoteiro(input);
+  assert.match(basic.install,/git clone/);
+  assert.match(basic.install,/bash scripts\/instalar_vps\.sh/);
+  assert.match(basic.check,/--uf sp --municipio 71072 --zona 0254 --dry-run$/);
+  assert.match(basic.start,/--uf sp --municipio 71072 --zona 0254$/);
+  assert.equal(basic.status,"scripts/coleta status");
+  assert.equal(basic.export,undefined);
+  const finished=gerarRoteiro(input,312);
+  assert.match(finished.export,/--saida site\/dados\/sp_71072_0254\.json/);
+  assert.match(finished.export,/--esperado 312$/);
+  assert.deepEqual(JSON.parse(finished.catalog),{
+    uf:"SP",municipio_codigo:"71072",municipio_nome:"São Paulo",
+    zona:"0254",arquivo:"dados/sp_71072_0254.json"
+  });
+  for(const total of ["", "0", "-5", "3.5", "abc", 10001]) {
+    assert.throws(() => gerarRoteiro(input,total));
+  }
+});
+
+test("não publica arquivos brutos, não promete reserva nem upload automático", () => {
+  const html=read("desenvolvedores/index.html");
+  assert.match(html,/não reserva zonas automaticamente/i);
+  assert.match(html,/não executa a coleta/i);
+  assert.match(html,/não envie BU, RDV, VSC/i);
+  assert.match(html,/Pull Request/);
+  const js=read("desenvolvedores/contribuir.js");
+  assert.match(js,/catalogo\.json/);
+  assert.match(js,/alreadyPublished/);
+  assert.doesNotMatch(js,/\/api\/zones|\/api\/contributions/);
+});
