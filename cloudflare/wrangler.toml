@@ -1,7 +1,11 @@
 name = "conferencia-eleitoral-api"
 main = "src/worker.js"
 compatibility_date = "2026-10-01"
+# Preserva secrets/vars configurados manualmente no painel Cloudflare.
+keep_vars = true
 
+# Preencher o UUID mostrado em Cloudflare D1 > conferencia-eleitoral.
+# O ID provisório abaixo impede deploy acidental contra outra base.
 [[d1_databases]]
 binding = "DB"
 database_name = "conferencia-eleitoral"
@@ -9,5 +13,4 @@ database_id = "PREENCHER_ID_D1"
 
 [vars]
 SITE_URL = "https://juniornarciso26.github.io/conferencia-eleicao-26Br-/"
-GH_CLIENT_ID = "PREENCHER_CLIENT_ID"
-ADMIN_GITHUB_IDS = "PREENCHER_ID_NUMERICO"
+API_ORIGIN = "https://conferencia-eleitoral-api.junior-ab2.workers.dev"

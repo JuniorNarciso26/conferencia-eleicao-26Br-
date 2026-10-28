@@ -1,28 +1,59 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Conferência Eleitoral 2026 — Projeto aberto</title>
-<style>
-:root{font-family:system-ui,Arial;color:#16243b;background:#eef4fa}*{box-sizing:border-box}
-body{margin:0}header{padding:65px max(24px,calc((100vw - 980px)/2));background:linear-gradient(115deg,#0b2346,#176092);color:white}
-main{max-width:1000px;margin:25px auto;padding:0 20px 50px}
-h1{font-size:clamp(32px,5vw,54px);margin:8px 0}h2{margin-top:0}
-p{line-height:1.65}section{background:white;border:1px solid #d7e1eb;border-radius:16px;padding:25px;margin:18px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-a.action{display:inline-block;padding:11px 15px;border-radius:9px;background:#126aa2;color:#fff;text-decoration:none;font-weight:700;margin:5px 8px 5px 0}
-a.secondary{background:#edf4fb;color:#103d63}
-small{color:#a9c9e3}section small{color:#64758a}
-.notice{background:#fff9e8;border:1px solid #f0d9a0;padding:16px;border-radius:10px}
-footer{font-size:13px;text-align:center;margin:24px}
-</style></head><body>
-<header><small>PROJETO INDEPENDENTE · CÓDIGO ABERTO</small><h1>Conferência Eleitoral 2026</h1>
-<p>Uma plataforma colaborativa para coletar, conferir e comparar resultados agregados dos Boletins de Urna publicados pelo TSE.</p>
-<a class="action" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">Ver projeto no GitHub</a>
-<a class="action secondary" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/CONTRIBUTING.md">Como contribuir</a>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' https://avatars.githubusercontent.com; connect-src 'self' https://conferencia-eleitoral-api.junior-ab2.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
+<title>Conferência Eleitoral 2026 — Projeto colaborativo</title>
+<link rel="stylesheet" href="./styles.css">
+<script defer src="./config.js"></script>
+<script defer src="./app.js"></script>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">PROJETO INDEPENDENTE · CÓDIGO ABERTO</p>
+    <h1>Conferência Eleitoral 2026</h1>
+    <p class="intro">Coleta e conferência colaborativa dos resultados agregados publicados pelo TSE. Transparência, metodologia reprodutível e verificação das fontes.</p>
+    <div class="actions">
+      <a class="button secondary" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">Explorar o GitHub</a>
+      <a class="button light" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/CONTRIBUTING.md">Como colaborar</a>
+    </div>
+  </div>
 </header>
-<main>
-<section class="notice"><strong>Plataforma colaborativa em desenvolvimento.</strong> O login e o envio de resultados ainda não estão disponíveis. Não são apresentados dados eleitorais simulados como oficiais.</section>
-<div class="grid"><section><h2>Consultar</h2><p>Em breve, qualquer pessoa poderá consultar zonas, seções, diferenças entre turnos e referências das fontes públicas, sem instalar programas.</p></section><section><h2>Contribuir</h2><p>Colaboradores poderão instalar o coletor GitHub em seus computadores, executar uma zona e enviar apenas resultados agregados para revisão.</p></section></div>
-<section><h2>Transparência da metodologia</h2><p>Os dados serão processados localmente, com comparação de comparecimento, votos válidos, votos brancos, nulos e formas agregadas de identificação. O sistema não coleta o voto individual nem declara fraude a partir de diferenças estatísticas.</p>
-<a class="action secondary" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/docs/METODOLOGIA.md">Ler metodologia</a></section>
-</main><footer>Projeto independente, sem afiliação ao Tribunal Superior Eleitoral.</footer>
-</body></html>
+<main class="wrap">
+  <section class="account" aria-labelledby="access-title">
+    <div class="section-head">
+      <div><p class="eyebrow dark">ÁREA DOS COLABORADORES</p><h2 id="access-title">Acesso com GitHub</h2></div>
+      <span id="api-status" class="status">Verificando API...</span>
+    </div>
+    <p>Você pode consultar o projeto sem cadastro. O login identifica os colaboradores que irão executar a coleta em suas próprias máquinas.</p>
+    <div id="account-body" class="account-body">
+      <p id="auth-status" role="status" aria-live="polite">Verificando sua sessão...</p>
+      <button id="login-button" class="button primary" type="button" hidden>Entrar com GitHub</button>
+      <button id="logout-button" class="button outline" type="button" hidden>Sair da conta</button>
+    </div>
+    <p class="small">O login utiliza apenas seu perfil GitHub. O aplicativo não solicita acesso ao conteúdo dos seus repositórios e não guarda sua senha do GitHub.</p>
+  </section>
+  <div class="grid">
+    <section>
+      <h2>Consultar resultados</h2>
+      <p>A consulta pública por município, zona e seção está sendo integrada. Os resultados consolidados serão publicados somente após validação e revisão.</p>
+      <p class="small">Nenhum dado fictício será apresentado como oficial.</p>
+    </section>
+    <section>
+      <h2>Contribuir com a coleta</h2>
+      <p>Os colaboradores instalam o coletor do repositório, selecionam uma zona e processam os dados do TSE localmente.</p>
+      <p><strong>O envio dos resultados ao banco central será uma etapa posterior.</strong> Não envie logs, RDV, BU ou VSC ao portal.</p>
+    </section>
+  </div>
+  <section>
+    <h2>Como auditamos</h2>
+    <p>Compararemos os dois turnos por seção eleitoral, incluindo comparecimento, habilitação biométrica, votos válidos, brancos e nulos. Indicadores estatísticos servem para orientar análises, não para provar irregularidades por si só.</p>
+    <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/docs/METODOLOGIA.md">Ler a metodologia</a>
+  </section>
+</main>
+<footer class="wrap">Projeto independente. Não é afiliado ao Tribunal Superior Eleitoral.</footer>
+</body>
+</html>
