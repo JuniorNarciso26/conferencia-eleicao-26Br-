@@ -166,3 +166,10 @@ Leia `CONTRIBUTING.md` e `SECURITY.md`. Nao envie BUs, RDVs, VSCs, logs de colet
 
 - TSE: https://resultados.tse.jus.br/oficial/
 - DataUrnas-BR: https://github.com/alissonlinneker/DataUrnas-BR
+
+
+## Portal público e login GitHub (em implementação)
+
+O novo site público fica em site/ e será publicado pelo GitHub Pages. A API de login em cloudflare/src/worker.js utiliza Cloudflare Workers, D1 e OAuth GitHub com PKCE. O login e o cadastro automático estão implementados na branch de desenvolvimento; precisam ser publicados no Worker e habilitados no GitHub Pages antes de ficarem acessíveis ao público. Ainda não há upload colaborativo de resultados.
+
+Guia específico da implantação: docs/PLATAFORMA_COLABORATIVA.md.

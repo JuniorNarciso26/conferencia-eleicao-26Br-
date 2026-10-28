@@ -1,33 +1,92 @@
-# Plataforma colaborativa — fase inicial
+# Plataforma colaborativa — GitHub Pages + Cloudflare D1
 
-Arquitetura aprovada:
-- GitHub Pages: site público de consulta e convite a colaboradores, acessível sem instalação nem login.
-- Cloudflare Workers + D1: futura API para cadastro/login GitHub, reservas de zonas, persistência e revisão de resultados.
-- Máquina do colaborador: roda scripts de coleta e conversão já existentes, sem enviar BU, RDV, VSC, arquivos de log ou documentos pessoais.
-- Só enviar resultados agregados por seção/turno, metadados de identificação e hashes SHA-256 dos BUs como referências de proveniência.
-- Nunca tratar dados enviados como resultados oficiais automaticamente; validar identidade da seção, somas e correspondência com TSE antes de publicar.
+## O que está implementado nesta fase
+- Site público estático em site/index.html.
+- Login GitHub OAuth (authorization code + PKCE S256 + state com cookie HttpOnly SameSite=Lax).
+- Primeiro login cadastra automaticamente o perfil público GitHub em users.
+- Sessões locais de oito horas com hash do token no D1, ticket de uso único por dois minutos.
+- APIs GET /api/health, GET /api/auth/github, GET /api/auth/callback, POST /api/auth/ticket, GET /api/me, POST /api/logout.
+- Os segredos GitHub não são enviados ao navegador nem salvos no Git.
+- Testes offline em cloudflare/tests/auth.test.mjs com simulação do GitHub e D1.
 
-## Escopo desta branch
-Esta branch contém o esquema inicial de banco D1, configuração exemplificativa Wrangler, workflow do GitHub Pages e site público de apresentação. **O backend OAuth, os endpoints de upload e a sincronização do coletor ainda precisam de implementação e testes.** Não há coleta real nem base D1 criada nesta etapa.
+### Ainda não implementado
+- Reservar zonas, enviar resultados de seções, revisões independentes e publicar dados no D1.
+- Autenticação não transforma um usuário automaticamente em auditor ou administrador.
+- Nenhuma coleta real é transmitida: BU, RDV, VSC, logs e dados de eleitores jamais devem ser enviados pelo frontend.
+- O backend ainda precisa ser implantado na conta Cloudflare e o GitHub Pages precisa ser habilitado no GitHub.
 
-## Preparar a conta Cloudflare
-1. Criar conta gratuita em https://dash.cloudflare.com/
-2. Instalar Node.js e usar npx wrangler login na pasta cloudflare.
-3. Criar banco: npx wrangler d1 create conferencia-eleitoral.
-4. Preencher database_id em cloudflare/wrangler.toml.
-5. Aplicar migração: npx wrangler d1 migrations apply conferencia-eleitoral --remote.
-6. Criar OAuth App do GitHub (Settings > Developer settings > OAuth Apps) com callback apontando para o futuro Worker.
-7. Configurar GH_CLIENT_ID, ADMIN_GITHUB_IDS; guardar GH_CLIENT_SECRET somente como segredo da Cloudflare, nunca no Git.
-8. Implementar e testar Worker, validação e login antes de qualquer deploy público da API.
+## Passos para a conta já preparada
 
-## Publicar GitHub Pages
-1. Revisar esta branch e fazer merge na main.
-2. Em Settings > Pages, selecionar GitHub Actions.
-3. Executar workflow Publicar GitHub Pages, que publica somente site/.
-4. Endereço esperado após habilitação: https://juniornarciso26.github.io/conferencia-eleicao-26Br-/
+Você já criou:
+- D1 chamado conferencia-eleitoral com sete tabelas.
+- Worker chamado conferencia-eleitoral-api, no endereço https://conferencia-eleitoral-api.junior-ab2.workers.dev
+- Binding do D1 chamado DB.
+- Aplicativo OAuth GitHub cujo callback é https://conferencia-eleitoral-api.junior-ab2.workers.dev/api/auth/callback
+- Variáveis GH_CLIENT_ID (Text) e GH_CLIENT_SECRET (Secret) no Worker.
 
-## Cuidados
-- Não publicar tokens, dados da VPS, IPs privados ou arquivos TSE brutos no GitHub Pages.
-- Reservar tarefas com expiração e permitir revalidação independente.
-- Retenção, proteção contra abuso, rate limiting, suporte a erros e CORS estrito são pré-requisitos do backend.
-- Conferir custo e limites atuais do plano gratuito antes do uso público.
+**Não crie outro D1 nem outro OAuth App.**
+
+### 1. Adicionar duas variáveis de texto no Worker
+
+Cloudflare > Workers & Pages > conferencia-eleitoral-api > Settings > Variables and Secrets.
+
+Adicione (tipo Text):
+- SITE_URL = https://juniornarciso26.github.io/conferencia-eleicao-26Br-/
+- API_ORIGIN = https://conferencia-eleitoral-api.junior-ab2.workers.dev
+
+Garanta que GH_CLIENT_ID e GH_CLIENT_SECRET continuem presentes. Mantenha GH_CLIENT_SECRET como Secret.
+
+### 2. Publicar a API (modo painel, sem CLI)
+
+Cloudflare > Workers & Pages > conferencia-eleitoral-api > Edit code.
+
+Abra a versão de cloudflare/src/worker.js da branch feature/cloudflare-github-pages-mvp:
+https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/feature/cloudflare-github-pages-mvp/cloudflare/src/worker.js
+
+Copie todo o código. Substitua o teste temporário /api/health no editor Cloudflare e clique em Deploy.
+
+Confirme no navegador:
+https://conferencia-eleitoral-api.junior-ab2.workers.dev/api/health
+
+Resposta esperada (resumo):
+- ok: true
+- database: OK
+- tables: 7
+- github_configuration: OK
+- github_login: IMPLEMENTADO
+
+Caso não apareça, revise os Bindings e as quatro variáveis; não compartilhe o Client Secret.
+
+### 3. Publicar o site GitHub Pages
+
+Depois de aprovar o Pull Request #1 e fazer merge na main:
+- GitHub > repositório conferencia-eleicao-26Br- > Settings > Pages.
+- Em Build and deployment > Source, selecionar GitHub Actions.
+- GitHub > Actions > workflow "Publicar GitHub Pages"; clicar Run workflow na main caso não rode após o merge.
+- Abrir: https://juniornarciso26.github.io/conferencia-eleicao-26Br-/
+
+O site não exige instalação para visitantes. Colaboradores poderão entrar com GitHub, e numa etapa futura instalar o coletor e enviar apenas os resultados compilados.
+
+### 4. Testar o login
+
+1. Abrir o GitHub Pages em aba normal do navegador.
+2. Clicar "Entrar com GitHub".
+3. Autorizar o aplicativo GitHub.
+4. O GitHub redireciona para o Worker, e o Worker devolve ao site um ticket de uso único pelo fragmento da URL.
+5. O site troca esse ticket por sessão; aparece "Conectado como @seu-login".
+6. Abrir D1 > Console, executar SELECT id, login, created_at, last_seen FROM users;
+7. Clicar Sair. A sessão é invalidada no D1.
+
+Se usar modo anônimo/janelas diferentes ao iniciar o login, o cookie OAuth de estado pode não corresponder e a autenticação será recusada, como medida de segurança.
+
+## Instalação programática posterior (opcional)
+Quem preferir Wrangler deve atualizar cloudflare/wrangler.toml com o ID real de D1 antes do deploy, executar a partir da pasta cloudflare e usar o arquivo de migrações sem recriar o banco. Para este piloto, a instalação via painel acima já utiliza suas tabelas existentes.
+
+O arquivo wrangler.toml usa keep_vars=true para preservar as variáveis e secrets configurados no painel e não inclui credenciais GitHub.
+
+## Limites de segurança
+- Não publicar GH_CLIENT_SECRET, tokens da sessão, URL com ticket ou configurações privadas.
+- O site usa token de sessão armazenado somente na aba (sessionStorage); evite abrir outras aplicações não confiáveis no mesmo domínio github.io.
+- O escopo de autorização GitHub não solicita permissão aos repositórios.
+- Uma contribuição futura precisará de validação no servidor, estados de revisão, limites de taxa, autorização por zona e revisão independente antes de entrar na base pública.
+- Avaliar periodicamente os limites do Cloudflare Free, e separar staging/produção quando o projeto crescer.
