@@ -113,3 +113,11 @@ O guia prepara:
 5. Entrada JSON para o catálogo, orientação para fork e Pull Request com revisão.
 
 O portal **não executa comandos**, **não inicia a coleta na nuvem**, **não reserva zonas** e **não envia automaticamente os resultados**. Somente JSON consolidado e revisado deverá ser publicado; não anexar arquivos BU, RDV, VSC, logs nem dados brutos. O login GitHub existente não sofreu mudanças.
+
+## Seleção automática por localidade (TSE 2026)
+- O formulário **Quero contribuir** usa o snapshot `site/dados/localidades_2026.json`, derivado de configuração oficial de municípios/zonas do TSE 2026.
+- O script `scripts/gerar_catalogo_localidades.py` gera a lista da EA12 e, em caso de formato incompleto, usa os catálogos oficiais de seção CS por UF (o mesmo formato do motor). Valida as 27 UFs, controle SP 71072 / Z0253, quantidade mínima de municípios e vínculos.
+- A interface seleciona UF, depois município e zona; o código TSE é preenchido automaticamente. O campo não aceita edição manual.
+- Assim que a zona é escolhida, o site consulta `site/dados/catalogo.json`: **publicada** quando existe resultado aprovado e servido no GitHub Pages; **ainda não publicada** quando ausente do catálogo. Este último status **não confirma que não existe coleta local em andamento**. Não há reserva automática por enquanto.
+- A base de localidades e o catálogo de resultados são distintos: localidades mostram onde é possível coletar; resultados publicados mostram onde já existe consulta pública.
+- Atualizações oficiais do catálogo deverão passar por revisão, e não modificar os BUs ou os arquivos brutos locais.

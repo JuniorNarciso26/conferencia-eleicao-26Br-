@@ -60,6 +60,46 @@ test("não publica arquivos brutos, não promete reserva nem upload automático"
   assert.match(html,/Pull Request/);
   const js=read("desenvolvedores/contribuir.js");
   assert.match(js,/catalogo\.json/);
-  assert.match(js,/alreadyPublished/);
+  assert.match(js,/isPublished/);
+  assert.match(js,/localidades_2026\.json/);
   assert.doesNotMatch(js,/\/api\/zones|\/api\/contributions/);
+});
+
+
+test("catálogo TSE 2026 tem 27 UFs, municípios e zonas vinculados", () => {
+  const source = JSON.parse(read("dados/localidades_2026.json"));
+  assert.equal(source.eleicao, 2026);
+  assert.equal(source.versao, 1);
+  assert.equal(Object.keys(source.ufs).length, 27);
+  assert.ok(source.total_municipios >= 5500);
+  assert.ok(source.total_relacoes_zona >= 5500);
+  const cities = source.ufs.SP;
+  const saoPaulo = cities.find(m => m.codigo === "71072");
+  assert.equal(saoPaulo.nome.toLocaleLowerCase("pt-BR"), "são paulo");
+  assert.ok(saoPaulo.zonas.includes("0253"));
+  for (const [uf, municipios] of Object.entries(source.ufs)) {
+    assert.match(uf,/^[A-Z]{2}$/);
+    const codes = new Set();
+    for (const m of municipios) {
+      assert.match(m.codigo,/^\d{5}$/);
+      assert.ok(m.nome);
+      assert.ok(m.zonas.length > 0);
+      assert.equal(codes.has(m.codigo), false);
+      codes.add(m.codigo);
+      for (const z of m.zonas) assert.match(z,/^\d{4}$/);
+    }
+  }
+});
+
+test("seletores preenchem código TSE e zona sem digitação manual", () => {
+  const html = read("desenvolvedores/index.html");
+  assert.match(html, /<select id="collect-city"/);
+  assert.match(html, /id="collect-city-code"[^>]*readonly/);
+  assert.match(html, /<select id="collect-zone"/);
+  assert.match(html, /id="collect-zone-status"/);
+  const script = read("desenvolvedores/contribuir.js");
+  assert.match(script, /zone\.addEventListener\("change",selectStatus\)/);
+  assert.match(script, /isPublished\(loc\)/);
+  assert.match(script, /alreadyPublished|published===null/);
+  assert.match(script, /generate\.disabled=false/);
 });
