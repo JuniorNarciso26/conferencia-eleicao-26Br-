@@ -107,6 +107,24 @@ Para uma zona, use o gerador fail-closed informando a cobertura esperada:
 .venv/bin/python scripts/gerar_painel_zona.py --raiz data/coletas --saida web/dados/zona_0253.json --uf SP --municipio 71072 --zona 0253 --esperado 496
 ```
 
+## Envio direto do JSON pelo portal (novo fluxo)
+
+Após gerar o arquivo `site/dados/<uf>_<municipioTSE>_<zona>.json`, o colaborador **não precisa de Git, commit, push nem Pull Request** para entregar os dados. O arquivo permanece em seu computador até ele selecioná-lo no campo de upload na área [Colaboradores](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/desenvolvedores/).
+
+1. Entre com GitHub no portal e reserve a zona por 24 horas.
+2. Selecione a UF, município e zona reservados.
+3. Escolha o arquivo JSON consolidado e clique **Enviar resultados para revisão**.
+4. O navegador valida as seções e transmite lotes de até 20 seções para o Cloudflare Worker. O Worker confere o proprietário da reserva, a zona, os dois turnos e os totais agregados. Se a conexão falhar, selecione o mesmo arquivo para retomar.
+5. O registro muda para **Aguardando revisão**. Somente um revisor autorizado pode aprovar e publicar; os resultados aprovados ficam disponíveis na consulta pública via D1.
+
+Os dados são armazenados no D1 por zona, com uma linha por seção, não como um único JSON de tamanho elevado. O SHA-256 do arquivo original é **declarado pelo navegador** para rastreabilidade, mas não é verificado contra os bytes originais no servidor; não comprova origem nem autentica assinatura dos boletins. A aplicação continua sem validação VSC, RDV ou prova automática de integridade da fonte. O JSON precisa conter resumo consistente, cobertura completa e valores dos dois turnos. Não envie os arquivos brutos de urna.
+
+**Requisitos de ativação:** o portal GitHub Pages, sozinho, não consegue gravar dados no D1. É preciso aplicar as migrations `0002_zone_reservations_24h.sql` (caso ainda não aplicadas) e `0003_direct_upload.sql` na mesma base D1, publicar o Worker atualizado e configurar `ADMIN_GITHUB_IDS` com os IDs numéricos GitHub dos revisores. Confira o guia `docs/PLATAFORMA_COLABORATIVA.md`. Até o Worker e as migrations estarem ativos, o portal deve recusar uploads em vez de afirmar que os dados foram entregues.
+
+### Fluxo histórico (opcional)
+
+Os comandos de registro de zona e Pull Request permanecem no repositório para manutenção e auditoria, porém **não são mais exigidos do colaborador**.
+
 ## Registrar zona para contribuição
 
 Depois de validar e gerar um pacote completo, por exemplo, `site/dados/sp_71072_0252.json`:

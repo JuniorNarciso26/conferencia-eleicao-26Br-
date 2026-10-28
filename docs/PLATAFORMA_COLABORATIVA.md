@@ -153,3 +153,37 @@ Não apague a tabela `zones` existente: ela permanece no banco para a futura pub
 
 Após `scripts/gerar_painel_zona.py` gerar o pacote validado em `site/dados/<uf>_<codigoTSE>_<zona>.json`, o comando `python3 scripts/registrar_zona.py --arquivo site/dados/sp_71072_0252.json` acrescenta automaticamente a entrada a `site/dados/catalogo.json`. O script confere identidade da zona, catálogo oficial de localidades, cobertura completa e presença de dois turnos; falha se já existir um pacote diferente para essa zona. É idempotente e altera somente `catalogo.json`, sem publicar dados nem enviar arquivos.
 O painel do colaborador passou a oferecer **um comando terminal real**, em vez de um bloco JSON, para evitar `Command 'uf:' not found`. Para publicar, enviar via PR exclusivamente o JSON consolidado e o catálogo atualizado.
+
+## Envio direto do arquivo consolidado para D1 (upgrade de outubro de 2026)
+
+### Objetivo
+
+Substituir a exigência de `git commit`, `git push` e Pull Request para colaboradores. O GitHub continua utilizado para autenticação (OAuth). A reserva de 24 horas (migração 0002) continua válida e obrigatória.
+
+- No navegador, o colaborador escolhe **somente o pacote JSON consolidado**, com no máximo **5 MiB**, criado por `gerar_painel_zona.py`; não entrega BUs/RDVs/VSCs brutos.
+- O navegador valida formato, identificação da zona, contagem e somas, calcula SHA-256 declarado, e transmite sequencialmente **20 seções por requisição**. Se houver falha, permite repetir o mesmo arquivo enquanto a reserva estiver ativa. O servidor faz validação independente dos campos e totais.
+- `POST /api/uploads/start`: cria/reutiliza envio identificado por `upload_id` aleatório, somente com reserva válida e conta GitHub autenticada. Inclui metadados, resumo e quantidade esperada de seções.
+- `POST /api/uploads/chunk`: recebe no máximo 20 seções, valida cada turno e grava uma linha por seção no D1. `(upload_id,secao)` é chave única e o envio de um lote repetido não duplica a seção.
+- `POST /api/uploads/finish`: exige o número exato de seções e compara o agregado SQL dos **12 campos, nos dois turnos**, com o resumo recebido. Muda o estado para `pending_review` e o estado da reserva para `submitted`; esse status não é liberado automaticamente após 24 horas.
+- A área dos colaboradores inclui a interface de revisão. Somente GitHub IDs em `ADMIN_GITHUB_IDS` podem consultar `GET /api/review/queue`, examinar o pacote completo via `GET /api/review/packet?upload_id=...` e chamar `POST /api/review/decision` (aprovar ou rejeitar). A **rejeição exige motivo**, retém histórico do envio e libera a zona. A aprovação publica os dados em D1 e não altera o catálogo estático no GitHub.
+- A consulta pública junta `site/dados/catalogo.json` aos resultados retornados por `GET /api/published/zones`; para zonas publicadas somente no banco, lê `GET /api/published/zone?uf=SP&municipio=71072&zona=0252`. Se a API estiver temporariamente indisponível, os arquivos estáticos já publicados continuam acessíveis.
+
+**Segurança e limites:** os endpoints de escrita exigem token de sessão GitHub e conferência da origem do site, além de conferir a reserva da zona a cada lote. Não há acesso SQL direto do navegador. Os dados só aparecem publicamente após revisão explícita. O hash do arquivo original informado pelo navegador é um registro declarado, **não é conferido integralmente no servidor** e não prova autenticidade ou integridade da fonte original. Limites: 2.000 seções por zona, até 20 por lote, 5 MiB no arquivo selecionado pelo navegador. Revisores devem verificar a fonte e os critérios de metodologia antes da aprovação.
+
+### Ativação no Cloudflare existente (não automatizada pelo GitHub Pages)
+
+O arquivo `cloudflare/wrangler.toml` contém o placeholder `PREENCHER_ID_D1`, portanto **não faça deploy com ele inalterado**.
+
+1. Fazer backup do banco D1 **conferencia-eleitoral**. Confirmar que `cloudflare/migrations/0001_schema.sql` foi aplicado anteriormente e que o Worker existente já usa o binding `DB`.
+2. Aplicar **uma única vez**, na mesma base, `cloudflare/migrations/0002_zone_reservations_24h.sql` caso ainda esteja pendente, seguido de `cloudflare/migrations/0003_direct_upload.sql`. Ambas usam `IF NOT EXISTS` para tabelas/índices. **Não recriar o banco nem substituir tabelas existentes**.
+3. Configurar a variável `ADMIN_GITHUB_IDS` com uma lista, separada por vírgulas, de **IDs numéricos de perfis GitHub autorizados a revisar**. O login é visível aos usuários, mas a autorização utiliza o ID imutável. Não configurar esse valor bloqueia a aprovação, de forma intencional.
+4. Publicar a nova versão do Worker mantendo o mesmo domínio e preservando `GH_CLIENT_ID`, `GH_CLIENT_SECRET`, `SITE_URL`, `API_ORIGIN` e binding `DB`. O Worker agora depende de `cloudflare/src/upload.js`, `reservas.js` e `worker.js`. Se usar Wrangler, apontar `database_id` ao UUID real do banco existente **sem commitar esse ajuste**.
+5. Testar `GET /api/health`, `GET /api/published/zones`, login GitHub e reserva. Fazer um teste completo com uma zona ainda não publicada e um arquivo gerado pelo coletor. Conferir a fila de revisão, rejeição de um pacote de teste e aprovação apenas após a conferência.
+6. Para a Zona 0252 já coletada, **não repetir a coleta**: no portal, reservar a Zona 0252 e selecionar `sp_71072_0252.json` usando o navegador Windows/WSL. Após aprovação, ela surgirá na consulta pública do D1.
+
+### Observações de operação
+
+- O antigo registro de PR (endpoint `/api/zones/submit`) foi mantido como legado, sem remover tabelas ou dados existentes.
+- A etapa de revisão é manual; aprovação não acontece por expiração, nem automaticamente ao upload.
+- Envio iniciado e não finalizado antes do vencimento da reserva pode ser descartado quando um novo colaborador assumir a zona.
+- Em eventual manutenção, habilite as migrações apenas depois de validar o estado atual do banco. Não exponha credenciais nem SQL administrativo no site público.
