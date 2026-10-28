@@ -9,14 +9,14 @@ export function validarZona(value) {
   if(!UFS.has(uf)||!/^[0-9]{5}$/.test(municipio)||!/^[0-9]{4}$/.test(zona)||+zona<=0)throw Error("INVALID_ZONE");
   return {uf,municipio,zona,key:uf+"-"+municipio+"-"+zona};
 }
-function sanitized(row,now) {
+function sanitized(row,now,viewerId=null) {
   if(!row||(row.status==="reserved"&&row.expires_at<=now))return {status:"available"};
-  return {status:row.status,contributor:row.contributor_login,reserved_at:row.reserved_at,
+  return {status:row.status,mine:row.user_id===viewerId,contributor:row.contributor_login,reserved_at:row.reserved_at,
     expires_at:row.expires_at,pr_number:row.pr_number||null,submitted_at:row.submitted_at||null};
 }
-export async function getLease(env,zone,now){
-  const row=await env.DB.prepare("SELECT contributor_login,status,reserved_at,expires_at,pr_number,submitted_at FROM zone_reservations WHERE zone_key=?").bind(zone.key).first();
-  return sanitized(row,now);
+export async function getLease(env,zone,now,viewerId=null){
+  const row=await env.DB.prepare("SELECT user_id,contributor_login,status,reserved_at,expires_at,pr_number,submitted_at FROM zone_reservations WHERE zone_key=?").bind(zone.key).first();
+  return sanitized(row,now,viewerId);
 }
 export async function ensureValidUnpublishedZone(env,zone,siteBase,fetchImpl=fetch){
   const [l,c]=await Promise.all([

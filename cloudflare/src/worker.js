@@ -219,7 +219,8 @@ async function zoneRequest(request,env,path){
     const url=new URL(request.url);
     try{zone=validarZona({uf:url.searchParams.get("uf"),municipio:url.searchParams.get("municipio"),zona:url.searchParams.get("zona")});}
     catch{return error("INVALID_ZONE",400,request,env);}
-    const result=await getLease(env,zone,epoch());
+    const auth=request.headers.has("Authorization")?await identity(request,env):null;
+    const result=await getLease(env,zone,epoch(),auth?.id||null);
     return json({ok:true,zone:zone.key,...result},200,headers);
   }
   if(request.method!=="POST" || !authorizedOrigin(request,env))return error("ORIGIN_FORBIDDEN",403,request,env);
