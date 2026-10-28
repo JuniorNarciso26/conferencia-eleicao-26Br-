@@ -113,22 +113,22 @@ test("consulta pública identifica responsável pelo processamento e pela aprova
   assert.doesNotMatch(html,/reviewer_id|contributor_id|user\.email/);
 });
 
-test("modelo matemático aparece diretamente na consulta e recalcula ao trocar seção",()=>{
-  const html=read("index.html");
-  const js=read("consulta.js");
-  assert.match(html,/id="growth-comparison"/);
-  assert.match(html,/id="growth-comparison-rows"/);
-  assert.match(html,/id="growth-details"/);
-  assert.match(html,/id="growth-formula"/);
-  assert.match(html,/id="growth-reference"/);
-  assert.match(html,/type="module" src="\.\/consulta\.js"/);
-  assert.match(js,/from "\.\/crescimento\.mjs"/);
-  assert.match(js,/renderGrowth\(\)/);
-  assert.match(js,/void renderComparison\(\)/);
-  assert.match(js,/fetchValidatedPack/);
-  assert.match(js,/api\/published\/zone/);
-  assert.match(js,/\["0252","0253"\]/);
-  assert.match(js,/\bcalcularCrescimento\(combined\)/);
-  assert.match(js,/Comparação indisponível/);
-  assert.match(html,/não revela(m)? migração individual/);
+test("consulta mostra percentual sobre o 1º turno e padrão por seção sem comparar zonas",()=>{
+  const html=read("index.html"),code=read("consulta.js");
+  assert.match(html,/O que explica a diferença de votos entre os turnos/);
+  assert.match(html,/<th>Variação \(%\)<\/th>/);
+  assert.match(html,/id="section-pattern"/);
+  assert.match(html,/id="pattern-rows"/);
+  assert.match(html,/id="pattern-filter"/);
+  assert.match(html,/id="pattern-stats"/);
+  assert.match(code,/import \{ calcularCrescimento, percentualVariacao, analisarPadraoSecoes \}/);
+  assert.match(code,/renderGrowth\(\)/);
+  assert.match(code,/renderPattern\(\)/);
+  assert.match(code,/percentualVariacao\(a,b\)/);
+  assert.match(code,/renderPatternRows/);
+  assert.match(code,/api\/published\/zone/);
+  assert.doesNotMatch(html,/id="growth-comparison"/);
+  assert.doesNotMatch(code,/renderComparison\(/);
+  assert.doesNotMatch(code,/\["0252","0253"\]/);
+  assert.match(html,/não estabelece causa/);
 });
