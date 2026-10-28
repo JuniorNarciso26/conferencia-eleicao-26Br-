@@ -97,3 +97,18 @@ test("consulta pública também carrega zonas aprovadas no D1 sem mudar os dados
   assert.equal(catalog.zonas.length,1);
   assert.equal(catalog.zonas[0].zona,"0253");
 });
+
+test("consulta pública identifica responsável pelo processamento e pela aprovação sem exibir dados privados", () => {
+  const html=read("index.html");
+  const code=read("consulta.js");
+  assert.match(html,/id="audit-meta"/);
+  assert.match(html,/id="audit-contributor"/);
+  assert.match(html,/id="audit-reviewer"/);
+  assert.match(html,/Revisão e aprovação/);
+  assert.match(code,/function renderAudit/);
+  assert.match(code,/audit\.processado_por/);
+  assert.match(code,/audit\.revisado_por/);
+  assert.match(code,/audit\.enviado_em/);
+  assert.match(code,/audit\.revisado_em/);
+  assert.doesNotMatch(html,/reviewer_id|contributor_id|user\.email/);
+});
