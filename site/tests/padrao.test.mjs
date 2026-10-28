@@ -9,7 +9,7 @@ test("variação percentual usa o 1º turno como denominador",()=>{
   assert.ok(Math.abs(percentualVariacao(31977,40758)-27.460987584826594)<0.001);
   assert.ok(Math.abs(percentualVariacao(38173,42754)-12.000628716632173)<0.001);
   assert.ok(Math.abs(percentualVariacao(84773,87648)-3.391408820012268)<0.01);
-  assert.ok(Math.abs(percentualVariacao(79527,83512)-5.010877311855))<0.01);
+  assert.ok(Math.abs(percentualVariacao(79527,83512)-5.010876809134005)<0.001);
   assert.equal(percentualVariacao(9377,0),-100);
   assert.equal(percentualVariacao(0,20),null);
   assert.equal(percentualVariacao(0,0),null);
@@ -29,7 +29,7 @@ test("com os totais exibidos da zona 0252, decomposição é exata",()=>{
   assert.equal(r.incrementoFinalistas,13362);
   assert.deepEqual(r.componentes,{outros:9377,comparecimento:2875,brancosNulos:1110});
   assert.equal(r.reconciliacao,0);
-  assert.ok(Math.abs(r.parcelaIncrementoLula*100-65.724)<0.01);
+  assert.ok(Math.abs(r.parcelaIncrementoLula*100-65.7162101481814)<0.001);
 });
 
 test("lista todas as seções da zona publicada sem selecionar apenas as favoráveis",()=>{
