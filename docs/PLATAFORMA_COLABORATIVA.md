@@ -99,3 +99,17 @@ O arquivo wrangler.toml usa keep_vars=true para preservar as variáveis e secret
 - Consulta carrega exclusivamente pacotes explicitamente listados em site/dados/catalogo.json. O catálogo começa vazio porque ainda não publicamos pacotes de resultados: não há valores fictícios nem um resultado atribuído ao TSE sem fonte.
 - Formato de entrada futuro: `{"uf":"SP","municipio_codigo":"71072","municipio_nome":"São Paulo","zona":"0253","arquivo":"dados/zona_0253.json"}`. Só adicionar após revisão e após copiar o arquivo correspondente ao diretório site/dados/.
 - O arquivo histórico web/index.html permanece como referência visual, mas não é servido pelo GitHub Pages.
+
+## Guia interativo para novos colaboradores
+
+A área https://juniornarciso26.github.io/conferencia-eleicao-26Br-/desenvolvedores/ oferece o botão **Quero contribuir**.
+Ao clicar, o visitante informa UF, município, código TSE do município (diferente do código IBGE) e zona eleitoral. O guia checa o catálogo público para avisar se a zona já foi publicada. Como ainda não há reserva central de zonas, a ausência no catálogo não significa que outro colaborador não esteja trabalhando nela.
+
+O guia prepara:
+1. Instalação do coletor para Linux, WSL ou VPS (Git, Python 3.11+).
+2. Dry-run para descobrir quantas seções a zona possui.
+3. Coleta local dos dois turnos, com acompanhamento do job.
+4. Geração de JSON consolidado usando `scripts/gerar_painel_zona.py` com a quantidade esperada informada pelo colaborador; nunca presume 496.
+5. Entrada JSON para o catálogo, orientação para fork e Pull Request com revisão.
+
+O portal **não executa comandos**, **não inicia a coleta na nuvem**, **não reserva zonas** e **não envia automaticamente os resultados**. Somente JSON consolidado e revisado deverá ser publicado; não anexar arquivos BU, RDV, VSC, logs nem dados brutos. O login GitHub existente não sofreu mudanças.
