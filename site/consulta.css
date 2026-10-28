@@ -66,3 +66,27 @@ footer{font-size:11px;text-align:center;color:#3b607b;padding-bottom:30px}
 #pattern-table .pattern-lula,#pattern-table .pattern-flavio,#pattern-table .pattern-igual{font-weight:650}
 #pattern-table tr.current-section{background:#e4f3ff}
 @media(max-width:700px){.pattern-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Histograma simetrico: quantidade de urnas e participacao ponderada por comparecimento */
+.weighted-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.weighted-summary article{padding:12px;background:#f0f7fc;border:1px solid #c9dcec;border-radius:10px}
+.weighted-summary small{display:block;font-size:11px;font-weight:750;color:var(--muted)}
+.weighted-summary strong{display:block;font-size:22px;color:var(--deep);margin:6px 0}
+.weighted-summary span{font-size:12px;line-height:1.45;color:var(--muted)}
+.weighted-legend{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin:12px 0;flex-wrap:wrap}
+.weighted-chart{display:grid;gap:8px}
+.weighted-bar{display:grid;grid-template-columns:minmax(130px,1.1fr) minmax(80px,3fr) minmax(140px,1.4fr);gap:10px;align-items:center;padding:9px 11px;border-radius:10px;border:1px solid #dae8f2;background:#f9fcff;text-align:left;color:var(--text);font:inherit;cursor:pointer;width:100%}
+.weighted-bar:hover{background:#edf7ff;border-color:#8ec4e6}
+.weighted-bar:focus-visible{outline:3px solid #3f9de5;outline-offset:1px}
+.weighted-bar[aria-pressed="true"]{background:#e1f1fc;border:2px solid #1873b4;padding:8px 10px}
+.weighted-bar-label{font-weight:750;font-size:12px}
+.weighted-track{width:100%;height:17px;border-radius:8px;background:#e6eef4;overflow:hidden}
+.weighted-fill{display:block;height:100%;border-radius:8px;min-width:0;background:#467997}
+.weighted-bar.lula .weighted-fill{background:#236c9f}
+.weighted-bar.flavio .weighted-fill{background:#7991a2}
+.weighted-bar.equilibrio .weighted-fill{background:#a2aeb8}
+.weighted-bar-value{font-size:11px;line-height:1.45;color:var(--muted);font-variant-numeric:tabular-nums}
+.weighted-bar-value b{color:var(--deep)}
+.weighted-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin:12px 0}
+#weighted-clear{background:#f3f9ff;border:1px solid #81b9dc;border-radius:8px;padding:8px 12px;color:var(--deep);font:inherit;cursor:pointer}
+@media(max-width:700px){.weighted-summary{grid-template-columns:1fr}.weighted-bar{grid-template-columns:minmax(0,1fr);gap:6px}.weighted-legend{font-size:10px}}

@@ -132,3 +132,23 @@ test("consulta mostra percentual sobre o 1º turno e padrão por seção sem com
   assert.doesNotMatch(code,/\["0252","0253"\]/);
   assert.match(html,/não estabelece causa/);
 });
+
+
+test("gráfico ponderado por urna permite alternar contagem/peso e filtrar sem inferir transferências",()=>{
+  const html=read("index.html"),js=read("consulta.js"),model=read("crescimento.mjs");
+  for(const id of ["weighted-pattern","weighted-summary","weighted-mode","weighted-chart","weighted-selection-status","weighted-clear"])
+    assert.match(html,new RegExp('id="'+id+'"'));
+  assert.match(html,/transferência de votos entre candidatos/);
+  assert.match(html,/comparecimento do 1º turno/);
+  assert.match(js,/analisarHistogramaPonderado\(pack\.secoes\)/);
+  assert.match(js,/renderWeightedChart\(\)/);
+  assert.match(js,/renderWeightedSummary\(\)/);
+  assert.match(js,/selectedWeightedBand/);
+  assert.match(js,/renderPatternRows\(\)/);
+  assert.match(js,/weighted-mode/);
+  assert.match(model,/FAIXAS_DIFERENCA/);
+  assert.match(model,/pontos<=-20/);
+  assert.match(model,/pontos<20/);
+  assert.match(model,/totalEleitores1t/);
+  assert.doesNotMatch(js,/api\/private/);
+});

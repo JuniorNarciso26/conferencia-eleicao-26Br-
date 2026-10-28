@@ -81,3 +81,84 @@ export function analisarPadraoSecoes(secoes) {
   linhas.sort((a,b)=>a.secao.localeCompare(b.secao));
   return {total:linhas.length,contagens:totais,linhas};
 }
+
+
+// Histograma simetrico da diferenca de crescimento liquido dos finalistas,
+// normalizada pelo comparecimento da propria secao no PRIMEIRO turno.
+// "Ponderado" = percentual do comparecimento total do 1T representado
+// pelas secoes de cada faixa, NAO atribuicao de transferencia individual.
+export const FAIXAS_DIFERENCA=Object.freeze([
+  {id:"f20",rotulo:"Flávio: 20 p.p. ou mais",lado:"flavio"},
+  {id:"f10",rotulo:"Flávio: 10–20 p.p.",lado:"flavio"},
+  {id:"f5",rotulo:"Flávio: 5–10 p.p.",lado:"flavio"},
+  {id:"f2",rotulo:"Flávio: 2–5 p.p.",lado:"flavio"},
+  {id:"equilibrio",rotulo:"Diferença abaixo de 2 p.p.",lado:"equilibrio"},
+  {id:"l2",rotulo:"Lula: 2–5 p.p.",lado:"lula"},
+  {id:"l5",rotulo:"Lula: 5–10 p.p.",lado:"lula"},
+  {id:"l10",rotulo:"Lula: 10–20 p.p.",lado:"lula"},
+  {id:"l20",rotulo:"Lula: 20 p.p. ou mais",lado:"lula"}
+]);
+export function classificarDiferencaPontos(pontos){
+  if(!Number.isFinite(pontos))throw Error("Diferença normalizada inválida");
+  if(pontos<=-20)return "f20";
+  if(pontos<=-10)return "f10";
+  if(pontos<=-5)return "f5";
+  if(pontos<=-2)return "f2";
+  if(pontos<2)return "equilibrio";
+  if(pontos<5)return "l2";
+  if(pontos<10)return "l5";
+  if(pontos<20)return "l10";
+  return "l20";
+}
+export function analisarHistogramaPonderado(secoes){
+  if(!Array.isArray(secoes)||secoes.length===0)throw Error("Sem seções para ponderar");
+  const faixas=FAIXAS_DIFERENCA.map(f=>({...f,urnas:0,eleitores1t:0,secoes:[]}));
+  const index=new Map(faixas.map(f=>[f.id,f]));
+  const seen=new Set();
+  let totalEleitores=0,semBase=0;
+  const linhas=[];
+  for(const item of secoes){
+    const id=String(item?.meta?.secao||"");
+    if(!/^[0-9]{4}$/.test(id)||seen.has(id))throw Error("Seção inválida ou repetida");
+    seen.add(id);
+    const delta=calcularCrescimento(item);
+    const base=item.turnos["1"].comparecimento;
+    if(!Number.isSafeInteger(base)||base<0)throw Error("Comparecimento inválido");
+    const diferenca=delta.lula.delta-delta.flavio.delta;
+    if(base===0){
+      semBase++;
+      linhas.push({secao:id,diferencaVotos:diferenca,pontos:null,faixa:null,eleitores1t:base});
+      continue;
+    }
+    const pontos=100*diferenca/base;
+    const faixa=classificarDiferencaPontos(pontos);
+    const b=index.get(faixa);
+    b.urnas++;
+    b.eleitores1t+=base;
+    b.secoes.push(id);
+    totalEleitores+=base;
+    linhas.push({secao:id,diferencaVotos:diferenca,pontos,faixa,eleitores1t:base});
+  }
+  for(const b of faixas){
+    b.percentualUrnas=b.urnas/secoes.length*100;
+    b.percentualPonderado=totalEleitores?100*b.eleitores1t/totalEleitores:0;
+  }
+  const intensas={
+    flavio:faixas.filter(f=>f.id==="f10"||f.id==="f20"),
+    lula:faixas.filter(f=>f.id==="l10"||f.id==="l20")
+  };
+  const forte=Object.fromEntries(Object.entries(intensas).map(([key,groups])=>
+    [key,{
+      urnas:groups.reduce((n,f)=>n+f.urnas,0),
+      eleitores1t:groups.reduce((n,f)=>n+f.eleitores1t,0),
+      percentualUrnas:groups.reduce((n,f)=>n+f.urnas,0)/secoes.length*100,
+      percentualPonderado:totalEleitores
+        ? groups.reduce((n,f)=>n+f.eleitores1t,0)/totalEleitores*100:0
+    }]));
+  return {
+    totalUrnas:secoes.length,
+    urnasComBase:secoes.length-semBase,
+    semBase,totalEleitores1t:totalEleitores,
+    faixas,forte,linhas
+  };
+}

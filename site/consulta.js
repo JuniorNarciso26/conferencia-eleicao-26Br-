@@ -1,4 +1,5 @@
 import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from "./crescimento.mjs";
+import { analisarHistogramaPonderado } from "./crescimento.mjs";
 "use strict";
 (() => {
   const $ = (s) => document.querySelector(s);
@@ -24,6 +25,7 @@ import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from ".
       ["validos", "Votos válidos"], ["total", "Total recontado"]]]
   ];
   let catalog = [], pack = null, current = null, loadedZone = null, sectionPattern = null;
+  let weightedHistogram=null, selectedWeightedBand=null;
   const format = (value, decimals = 0) => Number.isFinite(value)
     ? value.toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : "—";
   const signed = (value, decimals = 0) => Number.isFinite(value)
@@ -65,7 +67,7 @@ import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from ".
   function clearResult() {
     result.hidden = true;
     $("#audit-meta").hidden = true;
-    pack = current = loadedZone = sectionPattern = null;
+    pack = current = loadedZone = sectionPattern = weightedHistogram = selectedWeightedBand = null;
     reset(view, "Resumo da zona");
   }
   function validEntry(x) {
@@ -238,11 +240,71 @@ import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from ".
     if(!validatePack(data,item))throw Error("Pacote inconsistente na Zona "+item.zona);
     return data;
   }
+  function renderWeightedSummary(){
+    const h=weightedHistogram;
+    if(!h)return;
+    const cards=[
+      ["Diferença intensa para Flávio",h.forte.flavio],
+      ["Diferença intensa para Lula",h.forte.lula]
+    ];
+    const target=$("#weighted-summary");
+    replace(target,...cards.map(([label,result])=>{
+      const card=element("article");
+      card.append(element("small",label),element("strong",format(result.urnas)+" urnas"),
+        element("span",format(result.percentualUrnas,2)+"% das seções · "+
+          format(result.percentualPonderado,2)+"% do comparecimento do 1º turno"));
+      return card;
+    }));
+    const all=element("article");
+    all.append(element("small","Total com base válida"),element("strong",format(h.urnasComBase)+" urnas"),
+      element("span",format(h.totalEleitores1t)+" comparecimentos no 1º turno"+
+        (h.semBase?" · "+format(h.semBase)+" seções sem base excluídas das faixas":"")));
+    target.appendChild(all);
+  }
+  function renderWeightedChart(){
+    if(!weightedHistogram)return;
+    const h=weightedHistogram,container=$("#weighted-chart");
+    const mode=$("#weighted-mode").value;
+    const max=Math.max(1,...h.faixas.map(f=>mode==="urnas"?f.urnas:f.eleitores1t));
+    replace(container);
+    for(const band of h.faixas){
+      const value=mode==="urnas"?band.urnas:band.eleitores1t;
+      const button=element("button",undefined,"weighted-bar "+band.lado);
+      button.type="button";
+      button.setAttribute("aria-pressed",selectedWeightedBand===band.id?"true":"false");
+      button.setAttribute("aria-label",band.rotulo+": "+format(band.urnas)+" urnas, "+
+        format(band.percentualUrnas,2)+"% das seções, "+
+        format(band.eleitores1t)+" comparecimentos no 1º turno, "+
+        format(band.percentualPonderado,2)+"% ponderado. Clique para filtrar.");
+      const name=element("span",band.rotulo,"weighted-bar-label");
+      const track=element("span",undefined,"weighted-track");
+      const bar=element("span",undefined,"weighted-fill");
+      bar.style.width=(100*value/max).toFixed(2)+"%";
+      track.appendChild(bar);
+      const caption=element("span",undefined,"weighted-bar-value");
+      caption.append(element("b",format(band.urnas)+" urnas"),
+        element("span"," · "+format(band.percentualPonderado,2)+"% dos comparecimentos do 1º turno"));
+      button.append(name,track,caption);
+      button.addEventListener("click",()=>{
+        selectedWeightedBand=selectedWeightedBand===band.id?null:band.id;
+        renderWeightedChart();
+        renderPatternRows();
+      });
+      container.appendChild(button);
+    }
+    $("#weighted-clear").hidden=selectedWeightedBand===null;
+    $("#weighted-selection-status").textContent=selectedWeightedBand
+      ?"Faixa selecionada: "+h.faixas.find(f=>f.id===selectedWeightedBand).rotulo+
+       ". A tabela abaixo exibe essas seções (respeitando também o filtro por candidato)."
+      :"Clique em uma faixa para listar somente suas seções na tabela abaixo.";
+  }
   function renderPatternRows(){
     if(!sectionPattern)return;
     const filter=$("#pattern-filter").value,body=$("#pattern-rows");
     replace(body);
-    const rows=sectionPattern.linhas.filter(row=>filter==="todas"||filter===row.grupo);
+    const selectedBand=selectedWeightedBand&&weightedHistogram?.faixas.find(f=>f.id===selectedWeightedBand);
+    const included=selectedBand?new Set(selectedBand.secoes):null;
+    const rows=sectionPattern.linhas.filter(row=>(filter==="todas"||filter===row.grupo)&&(!included||included.has(row.secao)));
     const pctValue=v=>v===null?"—":signed(v,2)+"%";
     for(const row of rows){
       const tr=element("tr",undefined,row.secao===String(current?.meta?.secao)?"current-section":"");
@@ -265,7 +327,12 @@ import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from ".
   function renderPattern(){
     if(!sectionPattern){
       sectionPattern=analisarPadraoSecoes(pack.secoes);
+      weightedHistogram=analisarHistogramaPonderado(pack.secoes);
+      selectedWeightedBand=null;
       $("#pattern-filter").value="todas";
+      $("#weighted-mode").value="eleitores";
+      renderWeightedSummary();
+      renderWeightedChart();
       const n=sectionPattern.total,counts=sectionPattern.contagens;
       const cards=[
         ["Variação maior para Lula",counts.lulaMaior],
@@ -386,6 +453,12 @@ import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from ".
   }
   open.addEventListener("click", loadSelected);
   $("#pattern-filter").addEventListener("change", renderPatternRows);
+  $("#weighted-mode").addEventListener("change", renderWeightedChart);
+  $("#weighted-clear").addEventListener("click",()=>{
+    selectedWeightedBand=null;
+    renderWeightedChart();
+    renderPatternRows();
+  });
   view.addEventListener("change", () => {
     if (!pack) return;
     current = view.value === "resumo" ? pack.resumo :
