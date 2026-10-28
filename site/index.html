@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="./consulta.css">
 <script defer src="./auth-redirect.js"></script>
 <script defer src="./config.js"></script>
-<script defer src="./consulta.js"></script>
+<script type="module" src="./consulta.js"></script>
 </head>
 <body>
 <header>
@@ -40,8 +40,28 @@
     <button id="open" type="button" disabled>Consultar</button>
   </section>
   <div class="notice" id="notice" role="status" aria-live="polite">Buscando zonas com resultados validados e publicados...</div>
+  <section class="panel growth-panel" id="growth-comparison" aria-labelledby="growth-comparison-title">
+    <h2 id="growth-comparison-title">Comparação automática · Zonas 0252 e 0253 (São Paulo)</h2>
+    <p class="desc">Os valores são calculados diretamente dos pacotes públicos, sem digitação manual. Só serão comparadas zonas efetivamente publicadas e conferidas pela aplicação.</p>
+    <p id="growth-comparison-status" class="growth-status" role="status" aria-live="polite">Carregando informações das zonas...</p>
+    <div class="table-wrap" id="growth-comparison-wrap" hidden>
+      <table class="growth-table">
+        <thead><tr><th>Zona</th><th>Seções</th><th>Δ Lula</th><th>Δ Flávio</th><th>Lula entre finalistas no 1º turno</th><th>Lula no incremento líquido</th></tr></thead>
+        <tbody id="growth-comparison-rows"></tbody>
+      </table>
+    </div>
+    <p class="growth-note">A liderança no 1º turno não determina como votos de outros candidatos, brancos, nulos ou diferenças de comparecimento se distribuem no 2º turno. A comparação não revela migração individual nem, isoladamente, irregularidades.</p>
+  </section>
   <div id="resultado" hidden>
     <section class="metrics" id="metrics" aria-label="Indicadores principais"></section>
+    <section class="panel growth-panel" id="growth-details" aria-labelledby="growth-details-title">
+      <h2 id="growth-details-title">Modelo matemático · crescimento entre turnos</h2>
+      <p class="desc" id="growth-scope">Cálculos automáticos para os dados selecionados.</p>
+      <div id="growth-kpis" class="growth-kpis"></div>
+      <div id="growth-formula" class="growth-formula" aria-label="Reconciliação matemática dos votos entre turnos"></div>
+      <div id="growth-reference" class="growth-reference"></div>
+      <p class="growth-note">O cenário proporcional é apenas uma hipótese ilustrativa, não um resultado estatístico esperado. Dados agregados não identificam a origem individual dos votos nem permitem concluir irregularidades a partir desta diferença.</p>
+    </section>
     <div class="grid">
       <section class="panel">
         <h2>Comparação entre os turnos</h2>
@@ -78,7 +98,7 @@
     <div class="explain-grid">
       <div><b>1. Escolha a localidade</b><p>Os filtros exibem somente zonas com pacotes de resultados efetivamente publicados.</p></div>
       <div><b>2. Compare os dois turnos</b><p>Quando houver dados, visualize comparecimento, habilitação, votos válidos, brancos e nulos.</p></div>
-      <div><b>3. Confira a metodologia</b><p>Dados agregados não revelam o voto individual e diferenças estatísticas, isoladamente, não provam irregularidades.</p></div>
+      <div><b>3. Confira o crescimento</b><p>A fórmula compara ganhos, reconcilia os totais dos dois turnos e mostra uma referência proporcional hipotética, com suas limitações.</p></div>
     </div>
     <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/docs/METODOLOGIA.md">Consultar metodologia e código-fonte</a>
   </section>
