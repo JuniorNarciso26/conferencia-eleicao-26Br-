@@ -20,6 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Testar consulta pública e retorno do login
+        run: |
+          node --check site/consulta.js
+          node --check site/auth-redirect.js
+          node --check site/app.js
+          node --test site/tests/*.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
