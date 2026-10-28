@@ -163,21 +163,37 @@ async function reconstruct(env,row){
   return {meta:JSON.parse(row.meta_json),resumo:JSON.parse(row.summary_json),
     secoes:sections.results.map(x=>JSON.parse(x.section_json))};
 }
+// Apenas login publico GitHub e datas de operacao; IDs internos, email e segredos nao sao expostos.
+function auditPublic(row){
+  return {
+    processado_por:row.contributor_login || null,
+    enviado_em:row.submitted_at ?? null,
+    revisado_por:row.reviewer_login || null,
+    revisado_em:row.reviewed_at ?? null
+  };
+}
 export async function publishedZones(env){
   const result=await env.DB.prepare(
-    "SELECT uf,municipio,zona,municipio_nome,expected_sections FROM zone_uploads "+
-    "WHERE state='published' ORDER BY uf,municipio,zona"
+    "SELECT u.uf,u.municipio,u.zona,u.municipio_nome,u.expected_sections,"+
+    "u.contributor_login,u.submitted_at,u.reviewed_at,"+
+    "COALESCE(u.reviewer_login,reviewer.login) AS reviewer_login "+
+    "FROM zone_uploads u LEFT JOIN users reviewer ON reviewer.id=u.reviewer_id "+
+    "WHERE u.state='published' ORDER BY u.uf,u.municipio,u.zona"
   ).all();
   return result.results.map(r=>({uf:r.uf,municipio_codigo:r.municipio,municipio_nome:r.municipio_nome,
-    zona:r.zona,total_secoes:r.expected_sections,fonte:"d1"}));
+    zona:r.zona,total_secoes:r.expected_sections,fonte:"d1",
+    auditoria:auditPublic(r)}));
 }
 export async function publishedZone(env,zone){
   const row=await env.DB.prepare(
-    "SELECT upload_id,expected_sections,meta_json,summary_json FROM zone_uploads "+
-    "WHERE zone_key=? AND state='published'"
+    "SELECT u.upload_id,u.expected_sections,u.meta_json,u.summary_json,"+
+    "u.contributor_login,u.submitted_at,u.reviewed_at,"+
+    "COALESCE(u.reviewer_login,reviewer.login) AS reviewer_login "+
+    "FROM zone_uploads u LEFT JOIN users reviewer ON reviewer.id=u.reviewer_id "+
+    "WHERE u.zone_key=? AND u.state='published'"
   ).bind(zone.key).first();
   if(!row)invalid("ZONE_NOT_PUBLISHED");
-  return reconstruct(env,row);
+  return {...await reconstruct(env,row),auditoria:auditPublic(row)};
 }
 export function isAdmin(env,user){
   const ids=String(env.ADMIN_GITHUB_IDS||"").split(",").map(x=>x.trim()).filter(Boolean);
@@ -209,9 +225,9 @@ export async function reviewDecision(env,body,user,now){
   if(!row||row.state!=="pending_review")invalid("NOT_PENDING");
   const accepted=body.decision==="approve",newStatus=accepted?"published":"rejected";
   const batch=await env.DB.batch([
-    env.DB.prepare("UPDATE zone_uploads SET state=?,reviewer_id=?,reviewed_at=?,review_reason=? "+
+    env.DB.prepare("UPDATE zone_uploads SET state=?,reviewer_id=?,reviewer_login=?,reviewed_at=?,review_reason=? "+
       "WHERE upload_id=? AND state='pending_review' RETURNING upload_id")
-      .bind(newStatus,user.id,now,reason,id),
+      .bind(newStatus,user.id,user.login,now,reason,id),
     // Rejeicao devolve a zona; aprovacao mantem a reserva historica como submitted.
     env.DB.prepare("DELETE FROM zone_reservations WHERE zone_key=? AND status='submitted' "+
       "AND ?='rejected' RETURNING zone_key").bind(row.zone_key,newStatus)
