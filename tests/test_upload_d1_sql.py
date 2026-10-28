@@ -43,6 +43,24 @@ class SqlUploadTest(unittest.TestCase):
         self.assertEqual(self.db.execute("SELECT state FROM zone_uploads").fetchone(),("rejected",))
         self.db.execute("INSERT INTO zone_reservations(zone_key,uf,municipio,zona,user_id,contributor_login,status,reserved_at,expires_at) "
                         "VALUES ('SP-71072-0252','SP','71072','0252',42,'contributor','reserved',301,86701)")
+    def test_atomic_chunk_guard_blocks_writes_after_submission(self):
+        query = (
+          "INSERT INTO zone_upload_sections(upload_id,secao,section_json) "
+          "SELECT ?,?,? WHERE EXISTS (SELECT 1 FROM zone_uploads u "
+          "JOIN zone_reservations r ON r.zone_key=u.zone_key "
+          "WHERE u.upload_id=? AND u.state='uploading' AND u.contributor_id=? "
+          "AND r.user_id=? AND r.status='reserved' AND r.expires_at>?) "
+          "ON CONFLICT(upload_id,secao) DO UPDATE SET section_json=excluded.section_json"
+        )
+        args=("upload-1","0001",'{"turnos":{}}',"upload-1",42,42,200)
+        self.db.execute(query,args)
+        self.assertEqual(self.db.execute("SELECT COUNT(*) FROM zone_upload_sections").fetchone()[0],1)
+        self.db.execute("UPDATE zone_uploads SET state='pending_review' WHERE upload_id='upload-1'")
+        self.db.execute(query,("upload-1","0002",'{}',"upload-1",42,42,200))
+        self.assertEqual(self.db.execute("SELECT COUNT(*) FROM zone_upload_sections").fetchone()[0],1)
+        self.db.execute(query,("upload-1","0001",'{"tampered":true}',"upload-1",42,42,200))
+        self.assertEqual(self.db.execute("SELECT section_json FROM zone_upload_sections").fetchone()[0],args[2])
+
     def test_unique_pending_and_published(self):
         self.db.execute("UPDATE zone_uploads SET state='pending_review' WHERE upload_id='upload-1'")
         with self.assertRaises(sqlite3.IntegrityError):
