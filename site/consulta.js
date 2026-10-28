@@ -1,4 +1,4 @@
-import { calcularCrescimento } from "./crescimento.mjs";
+import { calcularCrescimento, percentualVariacao, analisarPadraoSecoes } from "./crescimento.mjs";
 "use strict";
 (() => {
   const $ = (s) => document.querySelector(s);
@@ -23,7 +23,7 @@ import { calcularCrescimento } from "./crescimento.mjs";
       ["nulos", "Nulos de urna"], ["nulos_tecnicos", "Nulos técnicos"],
       ["validos", "Votos válidos"], ["total", "Total recontado"]]]
   ];
-  let catalog = [], pack = null, current = null, loadedZone = null;
+  let catalog = [], pack = null, current = null, loadedZone = null, sectionPattern = null;
   const format = (value, decimals = 0) => Number.isFinite(value)
     ? value.toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : "—";
   const signed = (value, decimals = 0) => Number.isFinite(value)
@@ -65,7 +65,7 @@ import { calcularCrescimento } from "./crescimento.mjs";
   function clearResult() {
     result.hidden = true;
     $("#audit-meta").hidden = true;
-    pack = current = loadedZone = null;
+    pack = current = loadedZone = sectionPattern = null;
     reset(view, "Resumo da zona");
   }
   function validEntry(x) {
@@ -150,7 +150,7 @@ import { calcularCrescimento } from "./crescimento.mjs";
   function appendGroup(table, name) {
     const row = element("tr", undefined, "group");
     const cell = element("th", name);
-    cell.colSpan = 4;
+    cell.colSpan = 5;
     row.appendChild(cell);
     table.appendChild(row);
   }
@@ -178,14 +178,25 @@ import { calcularCrescimento } from "./crescimento.mjs";
   }
   function renderGrowth() {
     const m=calcularCrescimento(current);
-    $("#growth-scope").textContent=(current===pack.resumo
-      ? "Resumo da zona "+loadedZone.zona.padStart(4,"0")+" · "+format(pack.meta.total_secoes)+" seções"
-      : "Seção "+current.meta.secao+" da zona "+loadedZone.zona.padStart(4,"0"))+
-      " — valores atualizados conforme a visualização escolhida.";
+    const t1=current.turnos["1"],t2=current.turnos["2"];
+    const validos1=t1.lula+t1.flavio+t1.outros;
+    const validos2=t2.lula+t2.flavio+t2.outros;
+    const deltaValidos=validos2-validos1;
+    const scope=current===pack.resumo
+      ? "Zona "+loadedZone.zona.padStart(4,"0")+" · "+format(pack.meta.total_secoes)+" seções"
+      : "Seção "+current.meta.secao+" · zona "+loadedZone.zona.padStart(4,"0");
+    $("#growth-scope").textContent=scope+" — reconciliação contábil dos resultados dos dois turnos.";
+    const growthPercent=(a,b)=>{
+      const v=percentualVariacao(a,b);
+      return v===null?"—":signed(v,2)+"%";
+    };
     const cards=[
-      ["Lula · ganho entre turnos",signed(m.lula.delta),"1T: "+format(m.lula.t1)+" · 2T: "+format(m.lula.t2)],
-      ["Flávio · ganho entre turnos",signed(m.flavio.delta),"1T: "+format(m.flavio.t1)+" · 2T: "+format(m.flavio.t2)],
-      ["Incremento líquido dos finalistas",signed(m.incrementoFinalistas),"Δ Lula + Δ Flávio"]
+      ["Lula — diferença de votos",signed(m.lula.delta),
+       "Variação: "+growthPercent(m.lula.t1,m.lula.t2)],
+      ["Flávio — diferença de votos",signed(m.flavio.delta),
+       "Variação: "+growthPercent(m.flavio.t1,m.flavio.t2)],
+      ["Votos válidos adicionais",signed(deltaValidos),
+       "Variação: "+growthPercent(validos1,validos2)]
     ];
     replace($("#growth-kpis"),...cards.map(([label,value,help])=>{
       const card=element("div",undefined,"growth-kpi");
@@ -193,23 +204,24 @@ import { calcularCrescimento } from "./crescimento.mjs";
       return card;
     }));
     replace($("#growth-formula"),
-      element("b","Reconciliação matemática dos dois turnos"),
-      element("p","Δ Lula + Δ Flávio = "+signed(m.lula.delta)+" + "+signed(m.flavio.delta)+" = "+signed(m.incrementoFinalistas)),
-      element("p","(Outros 1T − Outros 2T) + Δ comparecimento + (brancos/nulos 1T − brancos/nulos 2T)"),
-      element("p",signed(m.componentes.outros)+" + "+signed(m.componentes.comparecimento)+" + "+signed(m.componentes.brancosNulos)+" = "+signed(m.incrementoFinalistas))
+      element("b","1. O que explica a variação de votos válidos?"),
+      element("p","Δ votos válidos = Δ comparecimento + redução líquida de brancos/nulos"),
+      element("p",signed(deltaValidos)+" = "+signed(m.componentes.comparecimento)+" + "+signed(m.componentes.brancosNulos)),
+      element("b","2. Como se compõe o aumento líquido dos dois finalistas?"),
+      element("p","Δ Lula + Δ Flávio = redução líquida de votos de outros candidatos + Δ votos válidos"),
+      element("p",signed(m.lula.delta)+" + "+signed(m.flavio.delta)+" = "+signed(m.componentes.outros)+" + "+signed(deltaValidos)+" = "+signed(m.incrementoFinalistas))
     );
     const ref=$("#growth-reference");replace(ref);
-    if(m.referenciaLula===null){
-      ref.appendChild(element("p","A referência proporcional não se aplica: ambos os candidatos precisam ter ganho líquido não negativo e deve existir base válida no 1º turno."));
-      return;
+    if(m.parcelaIncrementoLula!==null) {
+      ref.append(
+        element("p","Participação no incremento líquido dos finalistas: Lula "+
+          format(m.parcelaIncrementoLula*100,2)+"%; Flávio "+
+          format((1-m.parcelaIncrementoLula)*100,2)+"%."),
+        element("p","Os saldos não mostram quais eleitores mudaram seu voto.")
+      );
+    }else {
+      ref.appendChild(element("p","Com redução de votos de algum finalista ou incremento total não positivo, não há distribuição interpretável de votos adicionais."));
     }
-    ref.append(
-      element("p","Lula entre finalistas no 1º turno: "+format(m.participacaoLulaT1*100,2)+"%."),
-      element("p","Lula no incremento líquido dos dois finalistas: "+format(m.parcelaIncrementoLula*100,2)+"%."),
-      element("p","Referência proporcional hipotética: "+format(m.incrementoFinalistas)+" × "+
-        format(m.participacaoLulaT1*100,2)+"% ≈ "+format(m.referenciaLula,1)+" votos adicionais para Lula."),
-      element("p","Diferença em relação à referência: "+signed(m.desvioReferencia,1)+" votos.")
-    );
   }
   function publishedUrl(item) {
     const base=(window.CONF_CONFIG?.apiBaseUrl||"").replace(/\/+$/,"");
