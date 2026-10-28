@@ -79,6 +79,18 @@ scripts/coleta stop
 scripts/coleta resume
 ```
 
+### Painel de progresso local
+
+Com uma coleta já iniciada, abra **outro terminal WSL/Ubuntu** na pasta do projeto e execute:
+
+```bash
+scripts/coleta painel
+```
+
+No navegador do computador, abra `http://127.0.0.1:8765/`. O monitor atualiza automaticamente a cada 2 segundos, exibindo total, concluídas, reaproveitadas, pendentes, falhas e percentual. Para acompanhar um job específico, use `scripts/coleta painel --job ID`.
+
+O painel usa somente leitura dos arquivos locais `state.json` e `config.json` e escuta apenas em `127.0.0.1`, sem expor logs, BU, RDV ou credenciais. **O portal GitHub Pages não consulta diretamente o WSL**. Se a coleta estiver numa VPS, use túnel SSH em vez de abrir portas públicas. Fechar o monitor com Ctrl+C não interrompe a coleta.
+
 Os dados ficam em `data/coletas/<uf>-<municipio>-<zona>-<secao>/`. O estado do motor fica em `data/motor/jobs/<job-id>/`. Ambos sao locais e ignorados pelo Git.
 
 ## Gerar painel

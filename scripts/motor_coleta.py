@@ -374,6 +374,12 @@ def cmd_status(args):
     return 0
 
 
+def cmd_painel(args):
+    from monitor_coleta import servir
+    servir(Path(args.runtime), args.job, args.porta)
+    return 0
+
+
 def cmd_stop(args):
     _, job_id, p = resolver_job(args)
     p["job"].mkdir(parents=True, exist_ok=True)
@@ -407,6 +413,11 @@ def parser():
     s.add_argument("--intervalo", type=float, default=2.0); s.add_argument("--min-free-gb", type=float, default=2.0)
     s.add_argument("--dry-run", action="store_true"); s.add_argument("--foreground", action="store_true")
     s.set_defaults(func=cmd_start)
+    painel = sub.add_parser("painel", help="abre monitor visual da coleta no navegador (somente localhost)")
+    painel.add_argument("--job", help="acompanhar job especifico; padrao: job atual")
+    painel.add_argument("--runtime", default=str(DEFAULT_RUNTIME))
+    painel.add_argument("--porta", type=int, default=8765)
+    painel.set_defaults(func=cmd_painel)
     for nome, func in (("status", cmd_status), ("stop", cmd_stop), ("resume", cmd_resume)):
         p = sub.add_parser(nome)
         p.add_argument("--job"); p.add_argument("--runtime", default=str(DEFAULT_RUNTIME))

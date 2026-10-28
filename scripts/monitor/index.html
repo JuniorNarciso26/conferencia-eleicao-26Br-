@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Acompanhamento da coleta | Conferência Eleitoral</title>
+<link rel="stylesheet" href="/style.css">
+<script defer src="/app.js"></script>
+</head>
+<body>
+<header><div class="container"><p class="eyebrow">CONFERÊNCIA ELEITORAL 2026 · MONITOR LOCAL</p><h1>Acompanhamento da coleta</h1><p>Veja o andamento das seções no seu computador, sem enviar arquivos ao portal.</p></div></header>
+<main class="container">
+<section class="panel" aria-labelledby="progress-title">
+<div class="line"><div><p class="eyebrow dark">PROGRESSO DA COLETA</p><h2 id="progress-title">Progresso em tempo real</h2></div><span id="status" class="badge">Conectando...</span></div>
+<div id="location" class="detail">Carregando a zona eleitoral...</div>
+<div class="numbers"><strong id="processed">—</strong><span> / <span id="total">—</span> seções processadas</span><strong id="percent">—%</strong></div>
+<progress id="progress" max="100" value="0" aria-label="Percentual de seções processadas">0%</progress>
+<div class="counts">
+<div><span>Concluídas</span><strong id="completed">—</strong></div>
+<div><span>Reaproveitadas</span><strong id="ignored">—</strong></div>
+<div><span>Pendentes</span><strong id="pending">—</strong></div>
+<div><span>Falhas</span><strong id="failed">—</strong></div>
+</div>
+<p class="current" id="current" role="status" aria-live="polite">Consultando o andamento...</p>
+</section>
+<section class="panel subtle">
+<h2>Informações</h2>
+<p id="job">Job: —</p>
+<p id="updated">Última atualização: —</p>
+<p id="notice">O painel atualiza automaticamente a cada 2 segundos. Pode permanecer aberto enquanto o coletor trabalha.</p>
+<p class="fine">Este monitor é somente leitura, acessível pelo <strong>localhost</strong>. Para identificar erros detalhados, use <code>scripts/coleta status</code> no terminal. Nenhum boletim de urna, credencial ou arquivo de coleta é transmitido ao portal.</p>
+</section>
+</main>
+<footer class="container">Projeto independente · Não afiliado ao Tribunal Superior Eleitoral.</footer>
+</body>
+</html>
