@@ -54,14 +54,14 @@ test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => 
 test("portal preserva coleta local mas exige reserva central para iniciar", () => {
   const html=read("desenvolvedores/index.html");
   assert.match(html,/reserva é compartilhada entre colaboradores/i);
-  assert.match(html,/não envie BU, RDV, VSC/i);
-  assert.match(html,/Pull Request/);
+  assert.match(html,/BU, RDV, VSC/i);
+  assert.match(html,/Enviar resultados para revisão/);
   const js=read("desenvolvedores/contribuir.js");
   assert.match(js,/catalogo\.json/);
   assert.match(js,/isPublished/);
   assert.match(js,/localidades_2026\.json/);
   assert.match(js,/api\/zones\/reserve/);
-  assert.match(js,/api\/zones\/submit/);
+  assert.match(js,/api\/uploads\/start/);
 });
 
 
@@ -110,16 +110,18 @@ test("guia inclui painel de acompanhamento local sem coletar via GitHub Pages", 
   assert.match(html, /127\.0\.0\.1:8765/);
   assert.match(html, /Acompanhe na tela/);
   const js = read("desenvolvedores/contribuir.js");
-  assert.match(js,/monitor","catalog"/);
+  assert.match(js,/start","status","monitor"/);
   assert.doesNotMatch(js,/\/api\/status/);
 });
 
-test("reserva compartilhada informa colaborador, prazo e envio PR", () => {
+test("reserva compartilhada permite upload seguro e revisao", () => {
   const html=read("desenvolvedores/index.html");
   assert.match(html,/id="collect-reserve"/);
   assert.match(html,/id="collect-release"/);
-  assert.match(html,/id="collect-submit"/);
-  assert.match(html,/id="collect-pr-number"/);
+  assert.match(html,/id="collect-upload-button"/);
+  assert.match(html,/id="collect-upload-file"/);
+  assert.match(html,/id="collect-upload-progress"/);
+  assert.match(html,/id="review-refresh"/);
   assert.match(html,/24 horas/);
   assert.match(html,/id="cmd-monitor-help"/);
   const js=read("desenvolvedores/contribuir.js");
@@ -127,18 +129,24 @@ test("reserva compartilhada informa colaborador, prazo e envio PR", () => {
   assert.match(js,/SUA RESERVA ATIVA/);
   assert.match(js,/AGUARDANDO REVISÃO/);
   assert.match(js,/api\/zones\/reserve/);
-  assert.match(js,/api\/zones\/submit/);
+  assert.match(js,/api\/uploads\/finish/);
   assert.match(js,/api\/zones\/release/);
   assert.match(js,/sessionStorage\.getItem\(TOKEN_KEY\)/);
   assert.doesNotMatch(js,/localStorage/);
   assert.doesNotMatch(js,/collect-mark-local/);
 });
 
-test("guia gera comando executavel para atualizar o catalogo, nao JSON bruto",()=>{
+test("guia de contribuicao nao exige Git, push nem PR para enviar o arquivo",()=>{
   const html=read("desenvolvedores/index.html");
-  assert.match(html,/Registre a zona automaticamente/);
-  assert.match(html,/não.*deve ser colado no terminal/);
-  const cmd=gerarRoteiro({uf:"SP",municipio:"São Paulo",codigo:"71072",zona:"0252"}).catalog;
-  assert.match(cmd,/^python3 scripts\/registrar_zona\.py --arquivo site\/dados\/sp_71072_0252\.json$/);
-  assert.doesNotMatch(cmd,/^\{/);
+  assert.match(html,/Envie o JSON pelo portal/);
+  assert.match(html,/id="collect-upload-file"/);
+  assert.match(html,/id="review-refresh"/);
+  assert.match(html,/src="\.\/revisao\.js"/);
+  const code=read("desenvolvedores/contribuir.js");
+  assert.match(code,/api\/uploads\/start/);
+  assert.match(code,/api\/uploads\/chunk/);
+  assert.match(code,/api\/uploads\/finish/);
+  assert.match(code,/crypto\.subtle\.digest/);
+  assert.match(code,/validateFile/);
+  assert.doesNotMatch(code,/localStorage/);
 });

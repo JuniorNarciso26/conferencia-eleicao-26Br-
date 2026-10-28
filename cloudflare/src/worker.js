@@ -1,3 +1,4 @@
+import {beginUpload,uploadChunk,finishUpload,publishedZones,publishedZone,isAdmin,pendingReviews,reviewPacket,reviewDecision} from "./upload.js";
 import { validarZona,getLease,ensureValidUnpublishedZone,reserveZone,releaseZone,verifyPullRequest,submitZone } from "./reservas.js";
 // Conferencia Eleitoral 2026 - GitHub OAuth com PKCE e sessoes no D1.
 // Apenas login. Nenhum dado eleitoral e enviado por esta versao.
@@ -262,6 +263,70 @@ async function zoneRequest(request,env,path){
   return error("NOT_FOUND",404,request,env);
 }
 
+function uploadError(code,request,env){
+  const status={
+    INVALID_ZONE:400,INVALID_PACKAGE:400,INVALID_SUMMARY:400,INVALID_SECTION:400,
+    INVALID_TOTALS:400,VOTE_SUM_MISMATCH:400,INVALID_HASH:400,INVALID_CHUNK:400,
+    DUPLICATE_SECTION:400,SECTION_TOO_LARGE:400,INVALID_UPLOAD_ID:400,
+    INCOMPLETE_UPLOAD:409,AGGREGATE_MISMATCH:422,UPLOAD_NOT_ACTIVE:409,
+    RESERVATION_NOT_ACTIVE:409,RESERVATION_EXPIRED:409,
+    ALREADY_SUBMITTED:409,UPLOAD_EXISTS:409,INVALID_DECISION:400,
+    REVIEW_REASON_REQUIRED:400,NOT_PENDING:409,ZONE_NOT_PUBLISHED:404,
+    ZONE_PUBLISHED:409,ZONE_IN_REVIEW:409,UNKNOWN_ZONE:400,CATALOG_UNAVAILABLE:503
+  }[code]||500;
+  return error(status===500?"UPLOAD_ERROR":code,status,request,env);
+}
+async function uploadRequest(request,env,path){
+  const headers=corsHeaders(request,env),now=epoch();
+  if(path==="/api/published/zones"&&request.method==="GET"){
+    return json({ok:true,zonas:await publishedZones(env)},200,headers);
+  }
+  if(path==="/api/published/zone"&&request.method==="GET"){
+    let zone;
+    const query=new URL(request.url).searchParams;
+    try{zone=validarZona({uf:query.get("uf"),municipio:query.get("municipio"),zona:query.get("zona")});}
+    catch{return error("INVALID_ZONE",400,request,env);}
+    try{return json(await publishedZone(env,zone),200,headers);}
+    catch(e){return uploadError(e.message,request,env);}
+  }
+  if(path==="/api/uploads/start"||path==="/api/uploads/chunk"||path==="/api/uploads/finish"){
+    if(request.method!=="POST"||!authorizedOrigin(request,env))
+      return error("ORIGIN_FORBIDDEN",403,request,env);
+    const user=await identity(request,env);
+    if(!user)return error("UNAUTHORIZED",401,request,env);
+    let body;
+    try{body=await readBody(request,path==="/api/uploads/chunk"?180000:20000);}
+    catch(e){return error(e.message,400,request,env);}
+    try{
+      let result;
+      if(path==="/api/uploads/start"){
+        const zone=validarZona(body);
+        result=await beginUpload(env,zone,user,body,now,siteUrl(env));
+      }else if(path==="/api/uploads/chunk")result=await uploadChunk(env,body,user,now);
+      else result=await finishUpload(env,body,user,now);
+      return json({ok:true,...result},200,headers);
+    }catch(e){return uploadError(e.message,request,env);}
+  }
+  if(path.startsWith("/api/review/")){
+    if(!authorizedOrigin(request,env))return error("ORIGIN_FORBIDDEN",403,request,env);
+    const user=await identity(request,env);
+    if(!isAdmin(env,user))return error("FORBIDDEN",403,request,env);
+    try{
+      if(path==="/api/review/queue"&&request.method==="GET")
+        return json({ok:true,items:await pendingReviews(env)},200,headers);
+      if(path==="/api/review/packet"&&request.method==="GET"){
+        const value=new URL(request.url).searchParams.get("upload_id");
+        return json({ok:true,...await reviewPacket(env,value)},200,headers);
+      }
+      if(path==="/api/review/decision"&&request.method==="POST"){
+        const body=await readBody(request,1000);
+        return json({ok:true,...await reviewDecision(env,body,user,now)},200,headers);
+      }
+    }catch(e){return uploadError(e.message,request,env);}
+  }
+  return error("NOT_FOUND",404,request,env);
+}
+
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
@@ -272,6 +337,9 @@ export default {
     }
     try {
       if (path === "/api/health" && request.method === "GET") return await health(env, request);
+      if (path.startsWith("/api/uploads/") || path.startsWith("/api/review/") ||
+          path==="/api/published/zones" || path==="/api/published/zone")
+        return await uploadRequest(request,env,path);
       if (path === "/api/zones/reservation" || path === "/api/zones/reserve" ||
           path === "/api/zones/release" || path === "/api/zones/submit")
         return await zoneRequest(request,env,path);

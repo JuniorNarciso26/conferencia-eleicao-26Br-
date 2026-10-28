@@ -50,6 +50,8 @@ function fakeDB(){
           return {zone_key:args[2]};
         }
         if(sql.startsWith("SELECT u.id, u.login"))return null;
+        if(sql.startsWith("SELECT state FROM zone_uploads"))return null;
+        if(sql.startsWith("SELECT state,contributor_login,submitted_at,reviewed_at"))return null;
         throw Error("Unexpected SQL first "+sql);
       }
     };
@@ -111,9 +113,9 @@ test("official catalog checks real zone and published zone",async()=>{
       return Promise.resolve(Response.json({eleicao:2026,ufs:{SP:[{codigo:"71072",zonas:["0252","0253"]}]}}));
     return Promise.resolve(Response.json({zonas:[{uf:"SP",municipio_codigo:"71072",zona:"0253"}]}));
   }
-  await ensureValidUnpublishedZone({},zone,base,fetcher);
-  await assert.rejects(()=>ensureValidUnpublishedZone({},validarZona({uf:"SP",municipio:"71072",zona:"0253"}),base,fetcher),/ZONE_PUBLISHED/);
-  await assert.rejects(()=>ensureValidUnpublishedZone({},validarZona({uf:"SP",municipio:"71072",zona:"0254"}),base,fetcher),/UNKNOWN_ZONE/);
+  await ensureValidUnpublishedZone({DB:fakeDB()},zone,base,fetcher);
+  await assert.rejects(()=>ensureValidUnpublishedZone({DB:fakeDB()},validarZona({uf:"SP",municipio:"71072",zona:"0253"}),base,fetcher),/ZONE_PUBLISHED/);
+  await assert.rejects(()=>ensureValidUnpublishedZone({DB:fakeDB()},validarZona({uf:"SP",municipio:"71072",zona:"0254"}),base,fetcher),/UNKNOWN_ZONE/);
 });
 
 test("PR must be open, owned by logged-in GitHub ID and contain both zone files",async()=>{

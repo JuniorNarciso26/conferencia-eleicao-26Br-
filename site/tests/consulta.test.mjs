@@ -84,3 +84,16 @@ test("sem callback OAuth, página inicial não redireciona visitante", () => {
   });
   assert.equal(redirects, 0);
 });
+
+test("consulta pública também carrega zonas aprovadas no D1 sem mudar os dados estáticos",()=>{
+  const html=read("index.html");
+  assert.match(html,/src="\.\/config\.js"/);
+  assert.match(html,/connect-src 'self' https:\/\/conferencia-eleitoral-api/);
+  const code=read("consulta.js");
+  assert.match(code,/api\/published\/zones/);
+  assert.match(code,/api\/published\/zone/);
+  assert.match(code,/fonte === "d1"/);
+  const catalog=JSON.parse(read("dados/catalogo.json"));
+  assert.equal(catalog.zonas.length,1);
+  assert.equal(catalog.zonas[0].zona,"0253");
+});
