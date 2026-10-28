@@ -60,16 +60,16 @@ class CrescimentoEntreTurnosTest(unittest.TestCase):
         p=copy.deepcopy(self.pacote)
         # Uma troca de votos válidos para branco aumenta brancos/nulos no 2T.
         # Modifica consistentemente a mesma secao e o resumo.
-        p["secoes"][0]["turnos"]["2"]["lula"]-=100
-        p["secoes"][0]["turnos"]["2"]["brancos"]+=100
-        p["resumo"]["turnos"]["2"]["lula"]-=100
-        p["resumo"]["turnos"]["2"]["brancos"]+=100
-        # Os agregados continuam validos, mas a reducao BN fica negativa.
-        p["secoes"][0]["turnos"]["2"]["lula"]+=100
-        p["secoes"][0]["turnos"]["2"]["brancos"]-=100
-        p["resumo"]["turnos"]["2"]["lula"]+=100
-        p["resumo"]["turnos"]["2"]["brancos"]-=100
-        self.assertTrue(module.analisar_pacote(p)["cenario_sem_migracao_direta_entre_finalistas"]["viavel_nesta_construcao_agregada"])
+        for s in p["secoes"][:5]:
+            s["turnos"]["2"]["lula"] -= 80
+            s["turnos"]["2"]["brancos"] += 80
+        p["resumo"]["turnos"]["2"]["lula"] -= 400
+        p["resumo"]["turnos"]["2"]["brancos"] += 400
+        # A soma continua coerente, mas brancos/nulos sobem 57 votos.
+        r=module.analisar_pacote(p)
+        self.assertEqual(r["reconciliacao"]["componentes_contabeis"]["reducao_brancos_nulos"],-57)
+        self.assertFalse(r["cenario_sem_migracao_direta_entre_finalistas"]["viavel_nesta_construcao_agregada"])
+        self.assertIsNone(r["cenario_sem_migracao_direta_entre_finalistas"]["exemplo_de_alocacao_liquida_hipotetica"])
 
     def test_model_does_not_report_fraud_p_value_or_identify_individuals(self):
         r=module.analisar_pacote(self.pacote)
