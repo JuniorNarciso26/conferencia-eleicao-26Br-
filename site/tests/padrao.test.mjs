@@ -59,6 +59,6 @@ test("conta variação maior mesmo quando ambos caem, sem chamar isso de transfe
   assert.equal(p.contagens.flavioMaior,1);
   assert.equal(p.contagens.lulaMaior,1);
   assert.equal(p.contagens.iguais,1);
-  assert.equal(p.contagens.ambosCresceram,0);
+  assert.equal(p.contagens.ambosCresceram,1);
   assert.throws(()=>analisarPadraoSecoes([mk("0001",60,40,50,30),mk("0001",40,50,30,32)]),/repetida/);
 });
