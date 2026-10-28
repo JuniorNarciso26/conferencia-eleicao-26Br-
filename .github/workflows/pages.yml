@@ -25,6 +25,8 @@ jobs:
           node --check site/consulta.js
           node --check site/auth-redirect.js
           node --check site/app.js
+          node --check site/desenvolvedores/contribuir.js
+          node --check site/desenvolvedores/coleta-roteiro.mjs
           node --test site/tests/*.test.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

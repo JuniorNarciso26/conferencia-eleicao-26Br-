@@ -15,3 +15,9 @@
 #collect-message,#collect-total-message{font-size:13px;font-weight:650;color:#275e7b}
 .guide-panel[hidden],#collect-steps[hidden],#collect-export[hidden]{display:none}
 @media(max-width:620px){.guide-fields{grid-template-columns:1fr}.guide-code{flex-direction:column}.guide-code .button{align-self:flex-end}.guide-total label{width:100%}}
+
+.zone-state{margin:14px 0;padding:13px 15px;border:1px solid #b7d1e3;border-radius:10px;background:#eef6fc;color:#204766;font-size:13px;font-weight:700;line-height:1.5}
+.zone-state.published{background:#e5f4e9;border-color:#9acdaa;color:#19653a}
+.zone-state.available{background:#fff8e7;border-color:#efd49a;color:#77551c}
+.zone-state.error{background:#fff1ef;border-color:#e4bbb2;color:#a13f35}
+.guide-fields input[readonly]{background:#e8f2f8;color:#234b62}
