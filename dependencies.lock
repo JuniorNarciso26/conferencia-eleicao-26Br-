@@ -1,0 +1,7 @@
+# Dependências obtidas diretamente de repositórios Git.
+# Formato: nome URL commit
+#
+# DataUrnas-BR v0.2.2, revisado para a homologação em 2026-10-28.
+# Commit/tag confirmados no repositório upstream antes da instalação.
+DataUrnas-BR https://github.com/alissonlinneker/DataUrnas-BR.git 12f0433bd20882d305dd7b9e4987d6dcf3b321a9
+asn1tools 0.169.0
