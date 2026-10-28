@@ -208,3 +208,15 @@ Guia específico da implantação: docs/PLATAFORMA_COLABORATIVA.md.
 - **Dados publicados**: `site/dados/catalogo.json` contém somente entradas para pacotes efetivamente revisados e tornados públicos; inicialmente o catálogo está vazio. A interface informa indisponibilidade, sem simular resultados.
 - **Painel anterior**: o arquivo histórico `web/index.html` permanece preservado.
 - O Worker permanece inalterado; `site/auth-redirect.js` encaminha à área dos colaboradores o retorno OAuth configurado para a raiz.
+
+## Analisar crescimento entre turnos (cenários, não atribuição individual)
+
+Com duas zonas consolidadas no computador, compare o incremento líquido dos votos e a hipótese de distribuição proporcional:
+
+```bash
+python3 scripts/analisar_crescimento_turnos.py --arquivos \\
+  site/dados/zona_0253.json \\
+  site/dados/sp_71072_0252.json
+```
+
+O teste confere a soma das seções, a identidade de comparecimento e mostra cenários matematicamente possíveis, sem inferir quem mudou de voto ou emitir conclusão de fraude. [Metodologia e limitações](docs/MODELO_CRESCIMENTO_TURNOS.md).
