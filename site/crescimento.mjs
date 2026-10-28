@@ -41,3 +41,43 @@ export function calcularCrescimento(resumo) {
     desvioReferencia:referenciaLula===null?null:deltaLula-referenciaLula
   };
 }
+
+
+// Diferenca relativa ao 1o turno, quando existe denominador valido.
+// Nunca confundir percentual relativo com diferenca em pontos percentuais.
+export function percentualVariacao(primeiro,segundo){
+  if(!Number.isSafeInteger(primeiro)||!Number.isSafeInteger(segundo)||
+     primeiro<0||segundo<0||primeiro===0)return null;
+  return (segundo-primeiro)/primeiro*100;
+}
+
+// Descreve a distribuicao dos ganhos/variacoes pelas secoes; nao atribui
+// transferencias de votos individuais nem inferencia causal.
+export function analisarPadraoSecoes(secoes) {
+  if(!Array.isArray(secoes)||secoes.length===0)throw Error("Sem seções válidas");
+  const vistos=new Set(),linhas=[];
+  const totais={lulaMaior:0,flavioMaior:0,iguais:0,ambosCresceram:0};
+  for(const secao of secoes){
+    const id=String(secao?.meta?.secao||"");
+    if(!/^[0-9]{4}$/.test(id)||vistos.has(id))throw Error("Seção inválida ou repetida");
+    vistos.add(id);
+    const analise=calcularCrescimento(secao);
+    const l=analise.lula,f=analise.flavio;
+    const grupo=l.delta>f.delta?"lula":f.delta>l.delta?"flavio":"igual";
+    if(grupo==="lula")totais.lulaMaior++;
+    else if(grupo==="flavio")totais.flavioMaior++;
+    else totais.iguais++;
+    if(l.delta>0&&f.delta>0)totais.ambosCresceram++;
+    linhas.push({
+      secao:id,
+      deltaLula:l.delta,deltaFlavio:f.delta,
+      percentualLula:percentualVariacao(l.t1,l.t2),
+      percentualFlavio:percentualVariacao(f.t1,f.t2),
+      deltaComparecimento:analise.componentes.comparecimento,
+      deltaVotosValidos:analise.componentes.comparecimento+analise.componentes.brancosNulos,
+      grupo
+    });
+  }
+  linhas.sort((a,b)=>a.secao.localeCompare(b.secao));
+  return {total:linhas.length,contagens:totais,linhas};
+}
