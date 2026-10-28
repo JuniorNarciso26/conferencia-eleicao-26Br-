@@ -119,9 +119,13 @@ export async function uploadChunk(env,body,user,now){
     if(keys.has(secao))invalid("DUPLICATE_SECTION");
     keys.add(secao);
     statements.push(env.DB.prepare(
-      "INSERT INTO zone_upload_sections(upload_id,secao,section_json) VALUES (?,?,?) "+
+      "INSERT INTO zone_upload_sections(upload_id,secao,section_json) "+
+      "SELECT ?,?,? WHERE EXISTS (SELECT 1 FROM zone_uploads u "+
+      "JOIN zone_reservations r ON r.zone_key=u.zone_key "+
+      "WHERE u.upload_id=? AND u.state='uploading' AND u.contributor_id=? "+
+      "AND r.user_id=? AND r.status='reserved' AND r.expires_at>?) "+
       "ON CONFLICT(upload_id,secao) DO UPDATE SET section_json=excluded.section_json"
-    ).bind(id,secao,raw));
+    ).bind(id,secao,raw,id,user.id,user.id,now));
   }
   await env.DB.batch(statements);
   const result=await env.DB.prepare(
