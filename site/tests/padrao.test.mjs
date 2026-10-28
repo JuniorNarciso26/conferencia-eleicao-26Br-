@@ -55,7 +55,7 @@ test("conta variação maior mesmo quando ambos caem, sem chamar isso de transfe
       "2":{lula:l2,flavio:f2,outros:0,brancos:0,nulos:0,nulos_tecnicos:0,comparecimento:l2+f2,aptos:150}
     }
   });
-  const p=analisarPadraoSecoes([mk("0001",60,40,50,30),mk("0002",30,50,30,32),mk("0003",40,40,40,40)]);
+  const p=analisarPadraoSecoes([mk("0001",60,40,50,35),mk("0002",30,50,30,32),mk("0003",40,40,40,40)]);
   assert.equal(p.contagens.flavioMaior,1);
   assert.equal(p.contagens.lulaMaior,1);
   assert.equal(p.contagens.iguais,1);
