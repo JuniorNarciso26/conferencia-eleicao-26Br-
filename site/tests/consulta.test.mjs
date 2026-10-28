@@ -112,3 +112,23 @@ test("consulta pública identifica responsável pelo processamento e pela aprova
   assert.match(code,/audit\.revisado_em/);
   assert.doesNotMatch(html,/reviewer_id|contributor_id|user\.email/);
 });
+
+test("modelo matemático aparece diretamente na consulta e recalcula ao trocar seção",()=>{
+  const html=read("index.html");
+  const js=read("consulta.js");
+  assert.match(html,/id="growth-comparison"/);
+  assert.match(html,/id="growth-comparison-rows"/);
+  assert.match(html,/id="growth-details"/);
+  assert.match(html,/id="growth-formula"/);
+  assert.match(html,/id="growth-reference"/);
+  assert.match(html,/type="module" src="\.\/consulta\.js"/);
+  assert.match(js,/from "\.\/crescimento\.mjs"/);
+  assert.match(js,/renderGrowth\(\)/);
+  assert.match(js,/void renderComparison\(\)/);
+  assert.match(js,/fetchValidatedPack/);
+  assert.match(js,/api\/published\/zone/);
+  assert.match(js,/\["0252","0253"\]/);
+  assert.match(js,/\bcalcularCrescimento\(combined\)/);
+  assert.match(js,/Comparação indisponível/);
+  assert.match(html,/não revela(m)? migração individual/);
+});

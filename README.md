@@ -218,3 +218,7 @@ python3 scripts/analisar_crescimento_turnos.py --arquivos site/dados/zona_0253.j
 ```
 
 O teste confere a soma das seções, a identidade de comparecimento e mostra cenários matematicamente possíveis, sem inferir quem mudou de voto ou emitir conclusão de fraude. [Metodologia e limitações](docs/MODELO_CRESCIMENTO_TURNOS.md).
+
+## Análise automática na consulta pública
+
+A [consulta pública](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/) já calcula a variação dos votos entre os turnos e compara automaticamente as zonas 0252 e 0253 quando ambas estão publicadas. Uma fórmula de reconciliação, participações do incremento líquido e uma **referência proporcional hipotética** aparecem na página, sem executar scripts localmente. A [metodologia e limitações](docs/FORMULA_CRESCIMENTO_CONSULTA.md) distinguem aritmética de inferências sobre o voto individual.
