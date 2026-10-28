@@ -3,57 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Consulta pública e gratuita de resultados eleitorais agregados por zona e seção, com comparação entre turnos e fontes verificáveis.">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' https://avatars.githubusercontent.com; connect-src 'self' https://conferencia-eleitoral-api.junior-ab2.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
-<title>Conferência Eleitoral 2026 — Projeto colaborativo</title>
-<link rel="stylesheet" href="./styles.css">
-<script defer src="./config.js"></script>
-<script defer src="./app.js"></script>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>Consulta pública | Conferência Eleitoral 2026</title>
+<link rel="stylesheet" href="./consulta.css">
+<script defer src="./auth-redirect.js"></script>
+<script defer src="./consulta.js"></script>
 </head>
 <body>
-<header class="hero">
-  <div class="wrap">
-    <p class="eyebrow">PROJETO INDEPENDENTE · CÓDIGO ABERTO</p>
-    <h1>Conferência Eleitoral 2026</h1>
-    <p class="intro">Coleta e conferência colaborativa dos resultados agregados publicados pelo TSE. Transparência, metodologia reprodutível e verificação das fontes.</p>
-    <div class="actions">
-      <a class="button secondary" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">Explorar o GitHub</a>
-      <a class="button light" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/CONTRIBUTING.md">Como colaborar</a>
+<header>
+  <div class="topbar">
+    <div class="brand">CONFERÊNCIA ELEITORAL <span>2026</span></div>
+    <nav aria-label="Navegação principal">
+      <a href="./" aria-current="page">Consulta pública</a>
+      <a href="./desenvolvedores/">Área dos colaboradores</a>
+      <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">Código aberto</a>
+    </nav>
+  </div>
+  <div class="headline">
+    <div>
+      <div class="eyebrow">CONSULTA PÚBLICA · ACESSO LIVRE · SEM CADASTRO</div>
+      <h1>Conferência Eleitoral 2026</h1>
+      <p>Consulte e compare resultados agregados dos boletins de urna entre o 1º e o 2º turno, por município, zona e seção eleitoral. Nenhum login é necessário.</p>
     </div>
+    <span class="status" id="status" role="status" aria-live="polite">CARREGANDO CATÁLOGO</span>
   </div>
 </header>
-<main class="wrap">
-  <section class="account" aria-labelledby="access-title">
-    <div class="section-head">
-      <div><p class="eyebrow dark">ÁREA DOS COLABORADORES</p><h2 id="access-title">Acesso com GitHub</h2></div>
-      <span id="api-status" class="status">Verificando API...</span>
-    </div>
-    <p>Você pode consultar o projeto sem cadastro. O login identifica os colaboradores que irão executar a coleta em suas próprias máquinas.</p>
-    <div id="account-body" class="account-body">
-      <p id="auth-status" role="status" aria-live="polite">Verificando sua sessão...</p>
-      <button id="login-button" class="button primary" type="button" hidden>Entrar com GitHub</button>
-      <button id="logout-button" class="button outline" type="button" hidden>Sair da conta</button>
-    </div>
-    <p class="small">O login utiliza apenas seu perfil GitHub. O aplicativo não solicita acesso ao conteúdo dos seus repositórios e não guarda sua senha do GitHub.</p>
+<main class="shell">
+  <section class="selector" aria-label="Filtros da consulta">
+    <label for="uf">Estado (UF)<select id="uf" disabled><option value="">Selecione</option></select></label>
+    <label class="wide" for="municipio">Município<select id="municipio" disabled><option value="">Selecione</option></select></label>
+    <label for="zona">Zona eleitoral<select id="zona" disabled><option value="">Selecione</option></select></label>
+    <label class="wide" for="view">Visualização<select id="view" disabled><option value="resumo">Resumo da zona</option></select></label>
+    <button id="open" type="button" disabled>Consultar</button>
   </section>
-  <div class="grid">
-    <section>
-      <h2>Consultar resultados</h2>
-      <p>A consulta pública por município, zona e seção está sendo integrada. Os resultados consolidados serão publicados somente após validação e revisão.</p>
-      <p class="small">Nenhum dado fictício será apresentado como oficial.</p>
-    </section>
-    <section>
-      <h2>Contribuir com a coleta</h2>
-      <p>Os colaboradores instalam o coletor do repositório, selecionam uma zona e processam os dados do TSE localmente.</p>
-      <p><strong>O envio dos resultados ao banco central será uma etapa posterior.</strong> Não envie logs, RDV, BU ou VSC ao portal.</p>
-    </section>
+  <div class="notice" id="notice" role="status" aria-live="polite">Buscando zonas com resultados validados e publicados...</div>
+  <div id="resultado" hidden>
+    <section class="metrics" id="metrics" aria-label="Indicadores principais"></section>
+    <div class="grid">
+      <section class="panel">
+        <h2>Comparação entre os turnos</h2>
+        <p class="desc">Resultados de cada turno; diferença = 2º turno menos 1º turno.</p>
+        <div class="table-wrap"><table><thead><tr><th>Indicador</th><th>1º turno</th><th>2º turno</th><th>Diferença</th></tr></thead><tbody id="rows"></tbody></table></div>
+      </section>
+      <div>
+        <section class="panel">
+          <h2>Distribuição dos votos válidos</h2>
+          <p class="desc">Comparação percentual calculada sobre votos válidos.</p>
+          <div id="bars"></div>
+        </section>
+        <section class="panel">
+          <h2>Conferências matemáticas</h2>
+          <div id="checks"></div>
+        </section>
+        <section class="panel">
+          <h2>Fonte e limites</h2>
+          <p class="source" id="source"></p>
+        </section>
+      </div>
+    </div>
   </div>
-  <section>
-    <h2>Como auditamos</h2>
-    <p>Compararemos os dois turnos por seção eleitoral, incluindo comparecimento, habilitação biométrica, votos válidos, brancos e nulos. Indicadores estatísticos servem para orientar análises, não para provar irregularidades por si só.</p>
-    <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/docs/METODOLOGIA.md">Ler a metodologia</a>
+  <section class="panel explainer">
+    <h2>Como funciona esta consulta</h2>
+    <div class="explain-grid">
+      <div><b>1. Escolha a localidade</b><p>Os filtros exibem somente zonas com pacotes de resultados efetivamente publicados.</p></div>
+      <div><b>2. Compare os dois turnos</b><p>Quando houver dados, visualize comparecimento, habilitação, votos válidos, brancos e nulos.</p></div>
+      <div><b>3. Confira a metodologia</b><p>Dados agregados não revelam o voto individual e diferenças estatísticas, isoladamente, não provam irregularidades.</p></div>
+    </div>
+    <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/docs/METODOLOGIA.md">Consultar metodologia e código-fonte</a>
+  </section>
+  <section class="contribute">
+    <div><b>Quer ajudar a ampliar a cobertura?</b><p>Colaboradores podem contribuir com a coleta e conferência. Somente essa área exige autenticação com GitHub.</p></div>
+    <a class="cta" href="./desenvolvedores/">Acessar área dos colaboradores</a>
   </section>
 </main>
-<footer class="wrap">Projeto independente. Não é afiliado ao Tribunal Superior Eleitoral.</footer>
+<footer class="shell">Projeto independente, não afiliado ao Tribunal Superior Eleitoral. Os resultados só serão exibidos após publicação de pacotes verificados.</footer>
 </body>
 </html>
