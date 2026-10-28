@@ -126,6 +126,9 @@ async function checkStatus(reset=true){
         state("Zona "+loc.zona+": SENDO PROCESSADA POR "+owner+". Prazo até "+deadline+".","reserved");
         info.textContent="A zona está reservada por outro colaborador. Ela será liberada após o vencimento se os dados não forem entregues.";
       }
+    }else if(result.status==="published"){
+      state("Zona "+loc.zona+": resultados PUBLICADOS no portal após revisão.","published");
+      info.textContent="Os dados desta zona estão disponíveis na consulta pública.";
     }else if(result.status==="submitted"){
       state("Zona "+loc.zona+": DADOS ENVIADOS POR @"+result.contributor+"; AGUARDANDO REVISÃO.","submitted");
       info.textContent=result.pr_number

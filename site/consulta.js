@@ -71,8 +71,8 @@
       /^\d{1,10}$/.test(x.municipio_codigo) &&
       typeof x.municipio_nome === "string" && x.municipio_nome.length > 0 && x.municipio_nome.length <= 150 &&
       /^\d{1,4}$/.test(x.zona) &&
-      typeof x.arquivo === "string" &&
-      /^dados\/[a-zA-Z0-9_-]+\.json$/.test(x.arquivo);
+      (x.fonte === "d1" && Number.isSafeInteger(x.total_secoes) && x.total_secoes>0 ||
+      typeof x.arquivo === "string" && /^dados\/[a-zA-Z0-9_-]+\.json$/.test(x.arquivo));
   }
   function zoneForSelection() {
     return catalog.find(x => x.uf === uf.value &&
@@ -231,7 +231,13 @@
     status.textContent = "CARREGANDO ZONA";
     setNotice("Carregando pacote público da zona " + selected.zona + "...");
     try {
-      const response = await fetch("./" + selected.arquivo, { cache: "no-store" });
+      const base = (window.CONF_CONFIG?.apiBaseUrl || "").replace(/\/+$/, "");
+      const link = selected.fonte === "d1"
+        ? base+"/api/published/zone?"+new URLSearchParams({
+          uf:selected.uf,municipio:selected.municipio_codigo,zona:selected.zona
+        }).toString()
+        : "./"+selected.arquivo;
+      const response = await fetch(link, { cache: "no-store" });
       if (!response.ok) throw new Error("Arquivo não disponível (HTTP " + response.status + ")");
       const data = await response.json();
       if (!validatePack(data, selected)) throw new Error("Pacote inconsistente: não será exibido");
@@ -267,7 +273,25 @@
         throw new Error("Formato do catálogo inválido");
       }
       // Nao mostra zonas que nao constam expressamente no catalogo publico.
-      catalog = data.zonas;
+      catalog = [...data.zonas];
+      const base = (window.CONF_CONFIG?.apiBaseUrl || "").replace(/\/+$/, "");
+      if(base){
+        try{
+          const response = await fetch(base+"/api/published/zones",{cache:"no-store"});
+          if(response.ok){
+            const live=await response.json();
+            if(!Array.isArray(live.zonas)||!live.zonas.every(x=>x.fonte==="d1"&&validEntry(x)))
+              throw new Error("Catálogo dinâmico inválido");
+            for(const entry of live.zonas){
+              if(!catalog.some(x=>x.uf===entry.uf&&
+                  x.municipio_codigo===entry.municipio_codigo&&x.zona===entry.zona))
+                catalog.push(entry);
+            }
+          }
+        }catch{
+          // Preserva acesso aos pacotes estaticos quando a API esta indisponivel.
+        }
+      }
       populateUfs();
       if (!catalog.length) {
         status.textContent = "AGUARDANDO RESULTADOS";
