@@ -49,7 +49,7 @@
       <h2>Contribuir com a coleta</h2>
       <p>Escolha uma zona eleitoral e receba um roteiro de coleta feito para ela. O portal preenche os códigos eleitorais e orienta você da instalação até o Pull Request.</p>
       <button type="button" class="button primary" id="contribute-start" aria-expanded="false" aria-controls="contribute-guide">Quero contribuir</button>
-      <p class="small">A coleta roda no seu computador Linux/WSL ou VPS. A reserva de zonas e o envio automático ainda não estão disponíveis.</p>
+      <p class="small">A coleta roda no computador Linux/WSL ou VPS. Antes de começar, reserve a zona por 24 horas com seu login GitHub.</p>
     </section>
   </div>
   <section class="guide-monitor-help" aria-labelledby="local-monitor-help">
@@ -65,8 +65,8 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
   </section>
   <section id="contribute-guide" class="guide-panel" hidden aria-labelledby="guide-title">
     <div class="section-head"><div><p class="eyebrow dark">ASSISTENTE DE CONTRIBUIÇÃO</p><h2 id="guide-title">Vamos preparar sua primeira coleta</h2></div><button type="button" id="contribute-close" class="button outline">Fechar guia</button></div>
-    <p>Em poucos passos você define a zona, prepara os comandos, valida os resultados e os envia para revisão via GitHub.</p>
-    <p class="guide-info">O site <strong>não executa a coleta</strong>, não reserva zonas automaticamente e não envia arquivos ao servidor nesta versão. O login GitHub é necessário para abrir o Pull Request, não para consultar os resultados.</p>
+    <p>Reserve a zona por 24 horas e siga o roteiro para coletar, validar e enviar os resultados por Pull Request.</p>
+    <p class="guide-info">A reserva é compartilhada entre colaboradores no Cloudflare D1 e vence em 24 horas se não houver envio válido. O portal não executa a coleta nem recebe arquivos brutos; o envio continua por Pull Request.</p>
     <form id="contribute-form" novalidate>
       <h3><span class="step-num">1</span> Escolha a zona eleitoral</h3>
       <div class="guide-fields">
@@ -85,10 +85,17 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
       </div>
       <p class="small">Municípios, códigos TSE e zonas são carregados do catálogo oficial das Eleições 2026. O sistema não usa códigos IBGE.</p>
       <div id="collect-zone-status" class="zone-state" role="status" aria-live="polite">Carregando a lista de municípios e zonas eleitorais...</div>
-      <div id="collect-local-controls" class="zone-local-controls" hidden>
-        <button id="collect-mark-local" class="button outline" type="button">Já estou coletando esta zona</button>
-        <button id="collect-unmark-local" class="button outline" type="button" hidden>Retirar marcação local</button>
-        <p class="small">Esta anotação fica <strong>somente neste navegador</strong>; não é uma reserva no servidor e não aparece para outros colaboradores. Nenhum dado da coleta é enviado.</p>
+      <div id="collect-reservation-controls" class="reservation-controls" hidden>
+        <div id="collect-reservation-status" role="status" aria-live="polite"></div>
+        <button id="collect-reserve" type="button" class="button primary" hidden>Reservar esta zona por 24 horas</button>
+        <button id="collect-release" type="button" class="button outline" hidden>Liberar minha reserva</button>
+        <div id="collect-submit-controls" hidden>
+          <label for="collect-pr-number">Número do Pull Request com os resultados
+            <input id="collect-pr-number" type="number" min="1" step="1" placeholder="Ex.: 15">
+          </label>
+          <button id="collect-submit" type="button" class="button primary">Registrar envio para revisão</button>
+          <p class="small">Depois de criar o Pull Request, informe o número aqui antes das 24 horas. O sistema valida o autor e os arquivos da zona. Uma zona em revisão não expira automaticamente.</p>
+        </div>
       </div>
       <p class="small" id="collect-source"></p>
       <button class="button primary" type="submit" id="collect-generate">Preparar meu roteiro</button>
@@ -101,7 +108,7 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
       <h3><span class="step-num">3</span> Confira e inicie a coleta</h3>
       <p>Primeiro veja a quantidade de seções que o catálogo encontrou, sem baixar arquivos:</p>
       <div class="guide-code"><pre id="cmd-check"></pre><button type="button" class="button outline copy-command" data-copy="cmd-check">Copiar</button></div>
-      <p>Depois execute a coleta dos dois turnos. O processo continua em segundo plano. Você pode clicar em <strong>Já estou coletando esta zona</strong> no formulário acima para lembrar da coleta neste navegador.</p>
+      <p>Depois execute a coleta dos dois turnos. O processo continua em segundo plano. A reserva fica registrada no servidor durante 24 horas, mesmo que você feche o navegador.</p>
       <div class="guide-code"><pre id="cmd-start"></pre><button type="button" class="button outline copy-command" data-copy="cmd-start">Copiar</button></div>
       <p><strong>Acompanhe na tela:</strong> abra um segundo terminal Ubuntu/WSL e execute o monitor local. Ele exibe uma barra de progresso atualizada automaticamente, sem interromper a coleta.</p>
       <div class="guide-code"><pre id="cmd-monitor"></pre><button type="button" class="button outline copy-command" data-copy="cmd-monitor">Copiar</button></div>
@@ -120,7 +127,7 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
         <h3><span class="step-num">5</span> Envie sua contribuição para revisão</h3>
         <p>Crie um <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/fork" target="_blank" rel="noopener noreferrer">fork do projeto</a> no seu GitHub. Inclua somente o JSON consolidado gerado e uma nova entrada em <code>site/dados/catalogo.json</code>:</p>
         <div class="guide-code"><pre id="cmd-catalog"></pre><button type="button" class="button outline copy-command" data-copy="cmd-catalog">Copiar</button></div>
-        <p>Crie um Pull Request para a branch <code>main</code> do <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/pulls" target="_blank" rel="noopener noreferrer">repositório oficial</a>. Os arquivos serão revisados antes de entrar no site público.</p>
+        <p>Crie um Pull Request para a branch <code>main</code> do <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/pulls" target="_blank" rel="noopener noreferrer">repositório oficial</a>. Volte ao formulário e informe o número do PR em <strong>Registrar envio para revisão</strong> antes de vencer sua reserva. O sistema confere sua autoria e os arquivos da zona. Os resultados serão revisados antes de entrar no site público.</p>
         <p class="guide-info"><strong>Privacidade:</strong> não envie BU, RDV, VSC, logs, diretórios <code>raw/</code>, arquivos de identificação pessoal nem credenciais. O único arquivo de resultados a publicar é o JSON consolidado.</p>
       </div>
     </div>
