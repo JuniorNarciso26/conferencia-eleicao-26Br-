@@ -302,7 +302,9 @@ import { analisarHistogramaPonderado } from "./crescimento.mjs";
     if(!sectionPattern)return;
     const filter=$("#pattern-filter").value,body=$("#pattern-rows");
     replace(body);
-    const rows=sectionPattern.linhas.filter(row=>filter==="todas"||filter===row.grupo);
+    const selectedBand=selectedWeightedBand&&weightedHistogram?.faixas.find(f=>f.id===selectedWeightedBand);
+    const included=selectedBand?new Set(selectedBand.secoes):null;
+    const rows=sectionPattern.linhas.filter(row=>(filter==="todas"||filter===row.grupo)&&(!included||included.has(row.secao)));
     const pctValue=v=>v===null?"—":signed(v,2)+"%";
     for(const row of rows){
       const tr=element("tr",undefined,row.secao===String(current?.meta?.secao)?"current-section":"");
@@ -325,7 +327,12 @@ import { analisarHistogramaPonderado } from "./crescimento.mjs";
   function renderPattern(){
     if(!sectionPattern){
       sectionPattern=analisarPadraoSecoes(pack.secoes);
+      weightedHistogram=analisarHistogramaPonderado(pack.secoes);
+      selectedWeightedBand=null;
       $("#pattern-filter").value="todas";
+      $("#weighted-mode").value="eleitores";
+      renderWeightedSummary();
+      renderWeightedChart();
       const n=sectionPattern.total,counts=sectionPattern.contagens;
       const cards=[
         ["Variação maior para Lula",counts.lulaMaior],
@@ -446,6 +453,12 @@ import { analisarHistogramaPonderado } from "./crescimento.mjs";
   }
   open.addEventListener("click", loadSelected);
   $("#pattern-filter").addEventListener("change", renderPatternRows);
+  $("#weighted-mode").addEventListener("change", renderWeightedChart);
+  $("#weighted-clear").addEventListener("click",()=>{
+    selectedWeightedBand=null;
+    renderWeightedChart();
+    renderPatternRows();
+  });
   view.addEventListener("change", () => {
     if (!pack) return;
     current = view.value === "resumo" ? pack.resumo :
