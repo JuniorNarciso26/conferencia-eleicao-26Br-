@@ -32,3 +32,21 @@ footer{font-size:11px;text-align:center;color:#3b607b;padding-bottom:30px}
 .audit-meta dd{margin:5px 0 0;font-size:13px;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
 .audit-meta .audit-date{font-size:11px;color:var(--muted);font-weight:400;margin-top:3px}
 .audit-note{font-size:11px;color:var(--muted);line-height:1.5;margin:12px 0 0}
+
+/* Modelo auditavel de crescimento de votos entre turnos */
+.growth-panel{margin-bottom:16px}
+.growth-panel .desc{max-width:940px}
+.growth-status{margin:0 0 12px;color:var(--muted);font-size:13px}
+.growth-table{min-width:680px}
+.growth-table td:first-child{font-weight:800;text-align:left}
+.growth-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0}
+.growth-kpi{padding:13px;border:1px solid #d4e8f6;background:#f1f9fe;border-radius:10px}
+.growth-kpi small{display:block;font-weight:750;color:var(--muted);font-size:11px}
+.growth-kpi strong{display:block;color:var(--deep);font-size:23px;margin:7px 0}
+.growth-formula{padding:14px;border:1px solid #afcfe7;background:#eaf5fd;border-radius:10px}
+.growth-formula b{display:block;margin-bottom:7px}
+.growth-formula p{margin:5px 0;font-size:13px;line-height:1.6;font-variant-numeric:tabular-nums}
+.growth-reference{font-size:13px;line-height:1.65;margin-top:13px}
+.growth-reference p{margin:7px 0}
+.growth-note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 0 0}
+@media(max-width:700px){.growth-kpis{grid-template-columns:1fr}.growth-kpi strong{font-size:21px}}
