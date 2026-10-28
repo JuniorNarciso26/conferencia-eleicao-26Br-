@@ -25,5 +25,9 @@ jobs:
         run: |
           node --check cloudflare/src/worker.js
           node --check site/app.js
+          node --check site/consulta.js
+          node --check site/auth-redirect.js
       - name: Testar login sem internet
-        run: node --test cloudflare/tests/*.test.mjs
+        run: |
+          node --test cloudflare/tests/*.test.mjs
+          node --test site/tests/*.test.mjs

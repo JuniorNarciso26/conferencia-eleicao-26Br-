@@ -173,3 +173,11 @@ Leia `CONTRIBUTING.md` e `SECURITY.md`. Nao envie BUs, RDVs, VSCs, logs de colet
 O novo site público fica em site/ e será publicado pelo GitHub Pages. A API de login em cloudflare/src/worker.js utiliza Cloudflare Workers, D1 e OAuth GitHub com PKCE. O login e o cadastro automático estão implementados na branch de desenvolvimento; precisam ser publicados no Worker e habilitados no GitHub Pages antes de ficarem acessíveis ao público. Ainda não há upload colaborativo de resultados.
 
 Guia específico da implantação: docs/PLATAFORMA_COLABORATIVA.md.
+
+
+### Estrutura da navegação pública
+- **Página inicial / consulta pública**: a pasta `site/` reúne o painel por UF, município, zona e seção. Visitantes não precisam de GitHub para consultar pacotes de resultados publicados.
+- **Área dos colaboradores**: `site/desenvolvedores/index.html` usa GitHub OAuth para identificar quem participa da coleta.
+- **Dados publicados**: `site/dados/catalogo.json` contém somente entradas para pacotes efetivamente revisados e tornados públicos; inicialmente o catálogo está vazio. A interface informa indisponibilidade, sem simular resultados.
+- **Painel anterior**: o arquivo histórico `web/index.html` permanece preservado.
+- O Worker permanece inalterado; `site/auth-redirect.js` encaminha à área dos colaboradores o retorno OAuth configurado para a raiz.

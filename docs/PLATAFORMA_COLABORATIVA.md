@@ -90,3 +90,12 @@ O arquivo wrangler.toml usa keep_vars=true para preservar as variáveis e secret
 - O escopo de autorização GitHub não solicita permissão aos repositórios.
 - Uma contribuição futura precisará de validação no servidor, estados de revisão, limites de taxa, autorização por zona e revisão independente antes de entrar na base pública.
 - Avaliar periodicamente os limites do Cloudflare Free, e separar staging/produção quando o projeto crescer.
+
+
+## Navegação após a reorganização (28/10/2026)
+- Consulta pública principal: https://juniornarciso26.github.io/conferencia-eleicao-26Br-/
+- Login dos colaboradores: https://juniornarciso26.github.io/conferencia-eleicao-26Br-/desenvolvedores/
+- O callback OAuth continua apontando à raiz do site, como já configurado em SITE_URL no Worker. Um script na página principal encaminha apenas os fragmentos ticket/login_error para a página de colaboradores. **Não alterar o Client ID, o Secret ou o callback**.
+- Consulta carrega exclusivamente pacotes explicitamente listados em site/dados/catalogo.json. O catálogo começa vazio porque ainda não publicamos pacotes de resultados: não há valores fictícios nem um resultado atribuído ao TSE sem fonte.
+- Formato de entrada futuro: `{"uf":"SP","municipio_codigo":"71072","municipio_nome":"São Paulo","zona":"0253","arquivo":"dados/zona_0253.json"}`. Só adicionar após revisão e após copiar o arquivo correspondente ao diretório site/dados/.
+- O arquivo histórico web/index.html permanece como referência visual, mas não é servido pelo GitHub Pages.
