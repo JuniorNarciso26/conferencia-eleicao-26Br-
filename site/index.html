@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' https://avatars.githubusercontent.com; connect-src 'self' https://conferencia-eleitoral-api.junior-ab2.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'none'">
+<title>Conferência Eleitoral 2026 — Projeto colaborativo</title>
+<link rel="stylesheet" href="./styles.css">
+<script defer src="./config.js"></script>
+<script defer src="./app.js"></script>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">PROJETO INDEPENDENTE · CÓDIGO ABERTO</p>
+    <h1>Conferência Eleitoral 2026</h1>
+    <p class="intro">Coleta e conferência colaborativa dos resultados agregados publicados pelo TSE. Transparência, metodologia reprodutível e verificação das fontes.</p>
+    <div class="actions">
+      <a class="button secondary" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">Explorar o GitHub</a>
+      <a class="button light" href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/CONTRIBUTING.md">Como colaborar</a>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <section class="account" aria-labelledby="access-title">
+    <div class="section-head">
+      <div><p class="eyebrow dark">ÁREA DOS COLABORADORES</p><h2 id="access-title">Acesso com GitHub</h2></div>
+      <span id="api-status" class="status">Verificando API...</span>
+    </div>
+    <p>Você pode consultar o projeto sem cadastro. O login identifica os colaboradores que irão executar a coleta em suas próprias máquinas.</p>
+    <div id="account-body" class="account-body">
+      <p id="auth-status" role="status" aria-live="polite">Verificando sua sessão...</p>
+      <button id="login-button" class="button primary" type="button" hidden>Entrar com GitHub</button>
+      <button id="logout-button" class="button outline" type="button" hidden>Sair da conta</button>
+    </div>
+    <p class="small">O login utiliza apenas seu perfil GitHub. O aplicativo não solicita acesso ao conteúdo dos seus repositórios e não guarda sua senha do GitHub.</p>
+  </section>
+  <div class="grid">
+    <section>
+      <h2>Consultar resultados</h2>
+      <p>A consulta pública por município, zona e seção está sendo integrada. Os resultados consolidados serão publicados somente após validação e revisão.</p>
+      <p class="small">Nenhum dado fictício será apresentado como oficial.</p>
+    </section>
+    <section>
+      <h2>Contribuir com a coleta</h2>
+      <p>Os colaboradores instalam o coletor do repositório, selecionam uma zona e processam os dados do TSE localmente.</p>
+      <p><strong>O envio dos resultados ao banco central será uma etapa posterior.</strong> Não envie logs, RDV, BU ou VSC ao portal.</p>
+    </section>
+  </div>
+  <section>
+    <h2>Como auditamos</h2>
+    <p>Compararemos os dois turnos por seção eleitoral, incluindo comparecimento, habilitação biométrica, votos válidos, brancos e nulos. Indicadores estatísticos servem para orientar análises, não para provar irregularidades por si só.</p>
+    <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/docs/METODOLOGIA.md">Ler a metodologia</a>
+  </section>
+</main>
+<footer class="wrap">Projeto independente. Não é afiliado ao Tribunal Superior Eleitoral.</footer>
+</body>
+</html>

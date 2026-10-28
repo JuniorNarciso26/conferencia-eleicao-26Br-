@@ -1,0 +1,29 @@
+name: API OAuth e GitHub Pages - testes
+on:
+  push:
+    branches: [feature/cloudflare-github-pages-mvp]
+    paths:
+      - 'cloudflare/**'
+      - 'site/**'
+      - '.github/workflows/worker-tests.yml'
+  pull_request:
+    paths:
+      - 'cloudflare/**'
+      - 'site/**'
+      - '.github/workflows/worker-tests.yml'
+permissions:
+  contents: read
+jobs:
+  testes-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar sintaxe
+        run: |
+          node --check cloudflare/src/worker.js
+          node --check site/app.js
+      - name: Testar login sem internet
+        run: node --test cloudflare/tests/*.test.mjs
