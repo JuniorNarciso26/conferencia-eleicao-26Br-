@@ -1,3 +1,4 @@
+import { calcularCrescimento } from "./crescimento.mjs";
 "use strict";
 (() => {
   const $ = (s) => document.querySelector(s);
@@ -175,6 +176,98 @@
     show("#audit-reviewer", audit.revisado_por, audit.revisado_em);
     panel.hidden = false;
   }
+  function renderGrowth() {
+    const m=calcularCrescimento(current);
+    $("#growth-scope").textContent=(current===pack.resumo
+      ? "Resumo da zona "+loadedZone.zona.padStart(4,"0")+" · "+format(pack.meta.total_secoes)+" seções"
+      : "Seção "+current.meta.secao+" da zona "+loadedZone.zona.padStart(4,"0"))+
+      " — valores atualizados conforme a visualização escolhida.";
+    const cards=[
+      ["Lula · ganho entre turnos",signed(m.lula.delta),"1T: "+format(m.lula.t1)+" · 2T: "+format(m.lula.t2)],
+      ["Flávio · ganho entre turnos",signed(m.flavio.delta),"1T: "+format(m.flavio.t1)+" · 2T: "+format(m.flavio.t2)],
+      ["Incremento líquido dos finalistas",signed(m.incrementoFinalistas),"Δ Lula + Δ Flávio"]
+    ];
+    replace($("#growth-kpis"),...cards.map(([label,value,help])=>{
+      const card=element("div",undefined,"growth-kpi");
+      card.append(element("small",label),element("strong",value),element("small",help));
+      return card;
+    }));
+    replace($("#growth-formula"),
+      element("b","Reconciliação matemática dos dois turnos"),
+      element("p","Δ Lula + Δ Flávio = "+signed(m.lula.delta)+" + "+signed(m.flavio.delta)+" = "+signed(m.incrementoFinalistas)),
+      element("p","(Outros 1T − Outros 2T) + Δ comparecimento + (brancos/nulos 1T − brancos/nulos 2T)"),
+      element("p",signed(m.componentes.outros)+" + "+signed(m.componentes.comparecimento)+" + "+signed(m.componentes.brancosNulos)+" = "+signed(m.incrementoFinalistas))
+    );
+    const ref=$("#growth-reference");replace(ref);
+    if(m.referenciaLula===null){
+      ref.appendChild(element("p","A referência proporcional não se aplica: ambos os candidatos precisam ter ganho líquido não negativo e deve existir base válida no 1º turno."));
+      return;
+    }
+    ref.append(
+      element("p","Lula entre finalistas no 1º turno: "+format(m.participacaoLulaT1*100,2)+"%."),
+      element("p","Lula no incremento líquido dos dois finalistas: "+format(m.parcelaIncrementoLula*100,2)+"%."),
+      element("p","Referência proporcional hipotética: "+format(m.incrementoFinalistas)+" × "+
+        format(m.participacaoLulaT1*100,2)+"% ≈ "+format(m.referenciaLula,1)+" votos adicionais para Lula."),
+      element("p","Diferença em relação à referência: "+signed(m.desvioReferencia,1)+" votos.")
+    );
+  }
+  function publishedUrl(item) {
+    const base=(window.CONF_CONFIG?.apiBaseUrl||"").replace(/\/+$/,"");
+    return item.fonte==="d1"
+      ? base+"/api/published/zone?"+new URLSearchParams({
+          uf:item.uf,municipio:item.municipio_codigo,zona:item.zona
+        }).toString()
+      : "./"+item.arquivo;
+  }
+  async function fetchValidatedPack(item) {
+    const response=await fetch(publishedUrl(item),{cache:"no-store"});
+    if(!response.ok)throw Error("HTTP "+response.status+" na Zona "+item.zona);
+    const data=await response.json();
+    if(!validatePack(data,item))throw Error("Pacote inconsistente na Zona "+item.zona);
+    return data;
+  }
+  async function renderComparison() {
+    const display=$("#growth-comparison-status"),wrap=$("#growth-comparison-wrap"),body=$("#growth-comparison-rows");
+    wrap.hidden=true;replace(body);
+    const numbers=["0252","0253"];
+    const targets=numbers.map(z=>catalog.find(e=>e.uf==="SP" &&
+      e.municipio_codigo==="71072" && e.zona.padStart(4,"0")===z));
+    if(targets.some(x=>!x)){
+      const missing=numbers.filter((z,i)=>!targets[i]);
+      display.textContent="A comparação automática ficará disponível quando ambas as zonas estiverem publicadas. Aguardando zona(s): "+missing.join(", ")+".";
+      return;
+    }
+    display.textContent="Carregando os pacotes publicados das duas zonas...";
+    try{
+      const packs=await Promise.all(targets.map(fetchValidatedPack));
+      const rows=packs.map((p,i)=>({
+        zona:targets[i].zona.padStart(4,"0"),secoes:p.meta.total_secoes,...calcularCrescimento(p.resumo)
+      }));
+      const keys=["lula","flavio","outros","brancos","nulos","nulos_tecnicos","comparecimento","aptos"];
+      const combined={turnos:{"1":{},"2":{}}};
+      for(const turn of ["1","2"])for(const key of keys)
+        combined.turnos[turn][key]=packs.reduce((n,p)=>n+p.resumo.turnos[turn][key],0);
+      rows.push({
+        zona:"Total · 2 zonas",
+        secoes:packs.reduce((n,p)=>n+p.meta.total_secoes,0),
+        ...calcularCrescimento(combined)
+      });
+      for(const row of rows){
+        const cells=[
+          row.zona,format(row.secoes),signed(row.lula.delta),signed(row.flavio.delta),
+          row.participacaoLulaT1===null?"—":format(row.participacaoLulaT1*100,2)+"%",
+          row.parcelaIncrementoLula===null?"—":format(row.parcelaIncrementoLula*100,2)+"%"
+        ];
+        const tr=element("tr",undefined,row.zona.startsWith("Total")?"derived":"");
+        cells.forEach((v,i)=>tr.appendChild(element(i===0?"th":"td",v)));
+        body.appendChild(tr);
+      }
+      display.textContent="Valores calculados automaticamente dos dois pacotes públicos, conferidos por seção e por turno.";
+      wrap.hidden=false;
+    }catch(err){
+      display.textContent="Comparação indisponível: "+err.message+". Não são apresentados números não confirmados.";
+    }
+  }
   function render() {
     const summary = current === pack.resumo;
     const title = summary
@@ -243,6 +336,7 @@
       element("p",format(pack.meta.total_secoes)+" seções no pacote publicado."));
     coverage.appendChild(text); checks.appendChild(coverage);
     renderAudit();
+    renderGrowth();
     $("#source").textContent = "Fonte declarada pelo pacote: " +
       String(current.meta.origem || "não informada") +
       ". A integridade matemática do agregado é conferida no navegador; autenticação VSC e validação independente da fonte não são realizadas nesta tela. O voto individual permanece secreto.";
@@ -255,16 +349,7 @@
     status.textContent = "CARREGANDO ZONA";
     setNotice("Carregando pacote público da zona " + selected.zona + "...");
     try {
-      const base = (window.CONF_CONFIG?.apiBaseUrl || "").replace(/\/+$/, "");
-      const link = selected.fonte === "d1"
-        ? base+"/api/published/zone?"+new URLSearchParams({
-          uf:selected.uf,municipio:selected.municipio_codigo,zona:selected.zona
-        }).toString()
-        : "./"+selected.arquivo;
-      const response = await fetch(link, { cache: "no-store" });
-      if (!response.ok) throw new Error("Arquivo não disponível (HTTP " + response.status + ")");
-      const data = await response.json();
-      if (!validatePack(data, selected)) throw new Error("Pacote inconsistente: não será exibido");
+      const data = await fetchValidatedPack(selected);
       loadedZone = selected;
       pack = data;
       replace(view, option("resumo", "Resumo da zona (" + pack.meta.total_secoes + " seções)"));
@@ -317,6 +402,7 @@
         }
       }
       populateUfs();
+      void renderComparison();
       if (!catalog.length) {
         status.textContent = "AGUARDANDO RESULTADOS";
         setNotice("A consulta pública está disponível sem login. Ainda não há zonas eleitorais com pacotes de resultados consolidados publicados neste portal. Os filtros serão habilitados à medida que os pacotes forem disponibilizados.",true);
