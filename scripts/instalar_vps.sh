@@ -42,9 +42,10 @@ fi
 [[ "$(git -C vendor/DataUrnas-BR remote get-url origin)" == "$repositorio" ]] || {
   echo "Origin inesperado em vendor/DataUrnas-BR" >&2; exit 1;
 }
-# Checkout esparso: o MVP usa somente código, specs ASN.1, metadados e licença.
+# No modo cone, os arquivos da raiz (pyproject.toml, README.md e LICENSE)
+# sao incluidos automaticamente. O comando set deve listar apenas diretorios.
 git -C vendor/DataUrnas-BR sparse-checkout init --cone
-git -C vendor/DataUrnas-BR sparse-checkout set src spec pyproject.toml README.md LICENSE
+git -C vendor/DataUrnas-BR sparse-checkout set src spec
 git -C vendor/DataUrnas-BR fetch --depth 1 --filter=blob:none origin "$commit"
 git -C vendor/DataUrnas-BR checkout --detach FETCH_HEAD
 [[ "$(git -C vendor/DataUrnas-BR rev-parse HEAD)" == "$commit" ]] || exit 1
