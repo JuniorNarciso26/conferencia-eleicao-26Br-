@@ -1,3 +1,4 @@
+import { validarZona,getLease,ensureValidUnpublishedZone,reserveZone,releaseZone,verifyPullRequest,submitZone } from "./reservas.js";
 // Conferencia Eleitoral 2026 - GitHub OAuth com PKCE e sessoes no D1.
 // Apenas login. Nenhum dado eleitoral e enviado por esta versao.
 const SESSION_TTL = 8 * 60 * 60;
@@ -211,6 +212,56 @@ async function health(env, request) {
     return json({ ok: false, database: "ERRO_DE_CONEXAO" }, 503, corsHeaders(request, env));
   }
 }
+async function zoneRequest(request,env,path){
+  const headers=corsHeaders(request,env);
+  let zone;
+  if(path==="/api/zones/reservation"&&request.method==="GET"){
+    const url=new URL(request.url);
+    try{zone=validarZona({uf:url.searchParams.get("uf"),municipio:url.searchParams.get("municipio"),zona:url.searchParams.get("zona")});}
+    catch{return error("INVALID_ZONE",400,request,env);}
+    const auth=request.headers.has("Authorization")?await identity(request,env):null;
+    const result=await getLease(env,zone,epoch(),auth?.id||null);
+    return json({ok:true,zone:zone.key,...result},200,headers);
+  }
+  if(request.method!=="POST" || !authorizedOrigin(request,env))return error("ORIGIN_FORBIDDEN",403,request,env);
+  const user=await identity(request,env);
+  if(!user)return error("UNAUTHORIZED",401,request,env);
+  let payload;
+  try{payload=await readBody(request,1024);zone=validarZona(payload);}
+  catch(e){return error(e.message==="INVALID_ZONE"?"INVALID_ZONE":"INVALID_JSON",400,request,env);}
+  const now=epoch();
+  if(path==="/api/zones/reserve"){
+    try{await ensureValidUnpublishedZone(env,zone,siteUrl(env));}
+    catch(e){
+      const code=e.message;
+      return error(code==="UNKNOWN_ZONE"||code==="ZONE_PUBLISHED"?code:"CATALOG_UNAVAILABLE",
+        code==="UNKNOWN_ZONE"?400:code==="ZONE_PUBLISHED"?409:503,request,env);
+    }
+    const result=await reserveZone(env,zone,user,now);
+    return json({zone:zone.key,...result},result.ok?201:409,headers);
+  }
+  if(path==="/api/zones/release"){
+    const ok=await releaseZone(env,zone,user,now);
+    return ok?json({ok:true,status:"available",zone:zone.key},200,headers):error("NOT_OWNER_OR_EXPIRED",409,request,env);
+  }
+  if(path==="/api/zones/submit"){
+    const myZone=await env.DB.prepare(
+      "SELECT zone_key FROM zone_reservations WHERE zone_key=? AND user_id=? AND status='reserved' AND expires_at>?"
+    ).bind(zone.key,user.id,now).first();
+    if(!myZone)return error("RESERVATION_NOT_ACTIVE",409,request,env);
+    const pr=Number(payload.pr_number);
+    try{await verifyPullRequest(zone,user,pr);}
+    catch(e){
+      const c=e.message;
+      return error(c,c==="PR_NOT_FOUND"?404:c==="PR_FILES_UNAVAILABLE"?503:400,request,env);
+    }
+    const ok=await submitZone(env,zone,user,epoch(),pr);
+    return ok?json({ok:true,status:"submitted",zone:zone.key,pr_number:pr},200,headers)
+      :error("RESERVATION_EXPIRED",409,request,env);
+  }
+  return error("NOT_FOUND",404,request,env);
+}
+
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
@@ -221,6 +272,9 @@ export default {
     }
     try {
       if (path === "/api/health" && request.method === "GET") return await health(env, request);
+      if (path === "/api/zones/reservation" || path === "/api/zones/reserve" ||
+          path === "/api/zones/release" || path === "/api/zones/submit")
+        return await zoneRequest(request,env,path);
       if (path === "/api/auth/github" && request.method === "GET") return await startAuth(env);
       if (path === "/api/auth/callback" && request.method === "GET") return await callback(request, env);
       if (path === "/api/auth/ticket" && request.method === "POST") return await exchange(request, env);

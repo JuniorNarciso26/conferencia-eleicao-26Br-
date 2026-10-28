@@ -129,3 +129,22 @@ O portal **não executa comandos**, **não inicia a coleta na nuvem**, **não re
 - O botão **Já estou coletando esta zona** permite ao usuário registrar uma **anotação no armazenamento deste navegador**. Ao selecionar novamente a mesma zona no mesmo navegador, o portal informa **EM COLETA NESTE NAVEGADOR (anotação manual)**. O botão **Retirar marcação local** desfaz esse registro.
 - A anotação não detecta automaticamente um job aberto no WSL, não verifica o progresso real, não expira automaticamente, não está associada a uma sessão GitHub e não é visível para outros colaboradores. É necessária uma solução de reserva/status no Cloudflare D1 para sinalização **compartilhada**. O colaborador deve retirar a marcação ao terminar ou abandonar a coleta.
 - Se os resultados forem publicados, o status **PUBLICADO** tem prioridade na interface, mesmo que a marcação local ainda exista.
+
+## Reserva de zona no D1 por 24 horas — integração (versão 2026-10-28)
+
+A partir deste upgrade, as zonas passam a ter **reserva compartilhada**, vinculada à conta GitHub autenticada.
+
+**Regra:** ao reservar uma zona válida (UF/código TSE/zona), uma linha em `zone_reservations` guarda `user_id`, login público do GitHub, `reserved_at` e `expires_at` (Unix epoch UTC). Prazo imutável de **86.400 segundos a partir da confirmação da reserva**. Uma conta só pode reservar uma zona por vez e não consegue renovar o prazo clicando novamente. A exclusividade é garantida por PRIMARY KEY da zona e índice UNIQUE parcial por usuário.
+
+O status é consultado em tempo real no Worker por `GET /api/zones/reservation?uf=SP&municipio=71072&zona=0252`. Enquanto está ativa, todos veem `Reservada por @login até data/hora`. **No segundo exato da expiração, uma reserva não enviada é tratada como disponível**; nenhuma tarefa agendada é necessária. A linha expirada é apagada ao chegar uma nova solicitação de reserva. O colaborador pode liberar antes com `POST /api/zones/release` (somente proprietário).
+
+Se o colaborador abrir um Pull Request antes do vencimento, poderá registrar seu número no portal via `POST /api/zones/submit`. O Worker confere via GitHub API: PR aberto, para `main`, autor GitHub igual à conta autenticada e arquivos `site/dados/<uf>_<codigo>_<zona>.json` e `site/dados/catalogo.json`. Nesse caso o estado vira `submitted` (em revisão) e **não é liberado após 24 horas**, pois houve entrega válida para revisão. O merge/publicação do PR segue o fluxo atual de revisão manual, não há upload automático no Worker. Para PR rejeitado ou encerrado sem publicação, a liberação exige intervenção operacional futura; esta versão não possui painel administrativo.
+
+**Importante: atualização não instala o banco e Worker automaticamente.** O GitHub Pages pode ser publicado antes da API; nesse caso o portal deve indicar que não consegue confirmar reservas e bloquear novas reservas. Para ativar na conta Cloudflare atual:
+
+1. No Cloudflare, abra **D1 > conferencia-eleitoral > Console** e execute o arquivo `cloudflare/migrations/0002_zone_reservations_24h.sql` (apenas a nova tabela e índices; **não execute novamente 0001_schema.sql nem recrie a base**).
+2. Publique a nova versão do Worker contendo **`cloudflare/src/worker.js` e `cloudflare/src/reservas.js`**. Pelo Wrangler, preencha o UUID real do D1 em seu ambiente/arquivo de configuração e faça deploy para o Worker existente. Preserve `GH_CLIENT_ID`, `GH_CLIENT_SECRET`, `SITE_URL`, `API_ORIGIN` e o binding `DB`. Não publicar secrets no GitHub.
+3. Teste `GET https://conferencia-eleitoral-api.junior-ab2.workers.dev/api/zones/reservation?uf=SP&municipio=71072&zona=0252` (deve retornar `{"ok":true,"zone":"SP-71072-0252","status":"available"}` antes da reserva).
+4. No portal dos colaboradores, entre com GitHub, escolha a zona disponível, clique em **Reservar esta zona por 24 horas** e confirme a identificação, prazo e exclusividade em outro navegador.
+
+Não apague a tabela `zones` existente: ela permanece no banco para a futura publicação direta, sem uso neste fluxo. Os dados de urna continuam exclusivamente no WSL/VPS do colaborador até o PR revisado.
