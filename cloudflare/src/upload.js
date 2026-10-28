@@ -79,6 +79,12 @@ export async function beginUpload(env,zone,user,body,now,siteBase){
   if(!own||own.user_id!==user.id||own.status!=="reserved"||own.expires_at<=now)invalid("RESERVATION_NOT_ACTIVE");
   // Confere contra o catalogo TSE oficial e pacotes estaticos ja publicados.
   const cityName=await ensureValidUnpublishedZone(env,zone,siteBase);
+  // Um upload abandonado por outra reserva nao bloqueia o novo proprietario.
+  await env.DB.prepare("DELETE FROM zone_upload_sections WHERE upload_id IN "+
+    "(SELECT upload_id FROM zone_uploads WHERE zone_key=? AND state='uploading' AND created_at<?)")
+    .bind(zone.key,own.reserved_at).run();
+  await env.DB.prepare("DELETE FROM zone_uploads WHERE zone_key=? AND state='uploading' AND created_at<?")
+    .bind(zone.key,own.reserved_at).run();
   const existing=await env.DB.prepare(
     "SELECT upload_id,contributor_id,state,expected_sections,meta_json,summary_json FROM zone_uploads "+
     "WHERE zone_key=? AND state IN ('uploading','pending_review','published')"
@@ -89,12 +95,6 @@ export async function beginUpload(env,zone,user,body,now,siteBase){
     return {upload_id:existing.upload_id,sections:header.total,resumed:true};
   }
   if(existing)invalid("UPLOAD_EXISTS");
-  // Limpa somente uploads antigos de reserva que ja foi substituida.
-  await env.DB.prepare("DELETE FROM zone_upload_sections WHERE upload_id IN "+
-    "(SELECT upload_id FROM zone_uploads WHERE zone_key=? AND state='uploading' AND created_at<?)")
-    .bind(zone.key,own.reserved_at).run();
-  await env.DB.prepare("DELETE FROM zone_uploads WHERE zone_key=? AND state='uploading' AND created_at<?")
-    .bind(zone.key,own.reserved_at).run();
   const id=newId();
   const created=await env.DB.prepare(
     "INSERT OR IGNORE INTO zone_uploads "+

@@ -15,6 +15,15 @@ function sanitized(row,now,viewerId=null) {
     expires_at:row.expires_at,pr_number:row.pr_number||null,submitted_at:row.submitted_at||null};
 }
 export async function getLease(env,zone,now,viewerId=null){
+  const upload=await env.DB.prepare(
+    "SELECT state,contributor_login,submitted_at,reviewed_at FROM zone_uploads "+
+    "WHERE zone_key=? AND state IN ('pending_review','published')"
+  ).bind(zone.key).first();
+  if(upload){
+    return {status:upload.state==="published"?"published":"submitted",
+      contributor:upload.contributor_login,submitted_at:upload.submitted_at,
+      reviewed_at:upload.reviewed_at,mine:false};
+  }
   const row=await env.DB.prepare("SELECT user_id,contributor_login,status,reserved_at,expires_at,pr_number,submitted_at FROM zone_reservations WHERE zone_key=?").bind(zone.key).first();
   return sanitized(row,now,viewerId);
 }
@@ -30,6 +39,11 @@ export async function ensureValidUnpublishedZone(env,zone,siteBase,fetchImpl=fet
   if(!Array.isArray(cat?.zonas))throw Error("CATALOG_UNAVAILABLE");
   if(cat.zonas.some(x=>x.uf===zone.uf&&x.municipio_codigo===zone.municipio&&String(x.zona).padStart(4,"0")===zone.zona))
     throw Error("ZONE_PUBLISHED");
+  const existing=await env.DB.prepare(
+    "SELECT state FROM zone_uploads WHERE zone_key=? AND state IN ('pending_review','published')"
+  ).bind(zone.key).first();
+  if(existing)throw Error(existing.state==="published"?"ZONE_PUBLISHED":"ZONE_IN_REVIEW");
+  return city.nome;
 }
 export async function reserveZone(env,zone,user,now) {
   // Expiracao logica imediata. Limpeza so no momento de reservar.
