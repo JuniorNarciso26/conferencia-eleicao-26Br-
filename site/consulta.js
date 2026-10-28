@@ -63,6 +63,7 @@
   }
   function clearResult() {
     result.hidden = true;
+    $("#audit-meta").hidden = true;
     pack = current = loadedZone = null;
     reset(view, "Resumo da zona");
   }
@@ -152,6 +153,28 @@
     row.appendChild(cell);
     table.appendChild(row);
   }
+  function renderAudit() {
+    const audit = pack && pack.auditoria;
+    const panel = $("#audit-meta");
+    if (!audit || typeof audit !== "object") {
+      panel.hidden = true;
+      return;
+    }
+    function show(id, name, time) {
+      const root = $(id);
+      root.replaceChildren();
+      const user = typeof name === "string" && /^[A-Za-z0-9-]{1,39}$/.test(name)
+        ? "@" + name : "Não registrado";
+      root.appendChild(element("span", user));
+      if (Number.isSafeInteger(time) && time > 0) {
+        const formatted = new Date(time * 1000).toLocaleString("pt-BR");
+        root.appendChild(element("div", formatted, "audit-date"));
+      }
+    }
+    show("#audit-contributor", audit.processado_por, audit.enviado_em);
+    show("#audit-reviewer", audit.revisado_por, audit.revisado_em);
+    panel.hidden = false;
+  }
   function render() {
     const summary = current === pack.resumo;
     const title = summary
@@ -219,6 +242,7 @@
     text.append(element("b",pack.meta.cobertura_completa?"Cobertura indicada como completa":"Cobertura parcial"),
       element("p",format(pack.meta.total_secoes)+" seções no pacote publicado."));
     coverage.appendChild(text); checks.appendChild(coverage);
+    renderAudit();
     $("#source").textContent = "Fonte declarada pelo pacote: " +
       String(current.meta.origem || "não informada") +
       ". A integridade matemática do agregado é conferida no navegador; autenticação VSC e validação independente da fonte não são realizadas nesta tela. O voto individual permanece secreto.";

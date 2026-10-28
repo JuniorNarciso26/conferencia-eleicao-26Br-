@@ -187,3 +187,40 @@ O arquivo `cloudflare/wrangler.toml` contém o placeholder `PREENCHER_ID_D1`, po
 - A etapa de revisão é manual; aprovação não acontece por expiração, nem automaticamente ao upload.
 - Envio iniciado e não finalizado antes do vencimento da reserva pode ser descartado quando um novo colaborador assumir a zona.
 - Em eventual manutenção, habilite as migrações apenas depois de validar o estado atual do banco. Não exponha credenciais nem SQL administrativo no site público.
+
+## Identificação pública do colaborador e do revisor — migração 0004
+
+Cada pacote consolidado enviado diretamente ao D1 já possui `contributor_id` (ID GitHub), `contributor_login` (login público no momento do envio) e `submitted_at` (data/hora UTC do envio). Desde a primeira versão da revisão, `reviewer_id` e `reviewed_at` também são gravados ao aprovar/rejeitar. O upgrade acrescenta `reviewer_login`: cópia do login público GitHub **no momento da decisão**, preservada caso o usuário altere o nome depois.
+
+A migration `cloudflare/migrations/0004_review_author.sql` adiciona somente a coluna `reviewer_login` e preenche revisões já existentes usando o `reviewer_id` salvo e o login atual da tabela `users`. Para uma revisão antiga, o nome recuperado pode ser o login atual, não necessariamente o usado na data histórica; não há como garantir o nome antigo sem um snapshot anterior. A migration é de **execução única** (não repetir `ALTER TABLE`). Não cria outro banco e não altera dados eleitorais.
+
+Na API pública `/api/published/zones` e `/api/published/zone?uf=SP&municipio=71072&zona=0252`, o objeto `auditoria` inclui apenas `processado_por`, `enviado_em`, `revisado_por` e `revisado_em`. O Worker preserva os IDs internamente, mas não expõe IDs pessoais, e-mails, tokens, motivos de rejeição ou informações privadas. Para registros sem revisor conhecido, retorna `null` em vez de atribuir responsabilidade não comprovada.
+
+A consulta pública de uma zona aprovada no D1 mostra uma caixa **Responsáveis pela zona**, com as contas GitHub e as datas. Zonas antigas provenientes de pacotes estáticos sem metadados de revisão não recebem atribuições inventadas.
+
+### Como ativar na sua instalação atual (WSL)
+
+1. Confirme que a base D1 usada ainda é `conferencia-eleitoral`. Faça backup remoto antes de migrar, se ainda não houver backup atualizado.
+2. Atualize a **cópia de deploy**:
+   ```bash
+   cd ~/conferencia-eleicao-deploy
+   git pull --ff-only
+   cd cloudflare
+   grep database_id wrangler.toml
+   ```
+   **Atenção:** `wrangler.toml` foi editado localmente para colocar o UUID real da base. Se o `git pull` disser que sobrescreveria modificações no arquivo, **não force, não faça reset nem descarte a configuração**: faça uma cópia do arquivo fora do repositório, atualize o código, e restaure apenas o UUID e bindings necessários. O UUID real deve permanecer local.
+3. Aplique **somente a nova migration**:
+   ```bash
+   npx wrangler d1 execute conferencia-eleitoral --remote --file migrations/0004_review_author.sql
+   ```
+4. Publique a API na mesma conta/Worker, preservando `DB`, `ADMIN_GITHUB_IDS`, `GH_CLIENT_SECRET`, `GH_CLIENT_ID`, `SITE_URL` e `API_ORIGIN`:
+   ```bash
+   npx wrangler deploy
+   ```
+5. Teste a API e o pacote público quando a Zona 0252 estiver aprovada:
+   ```bash
+   curl -sS 'https://conferencia-eleitoral-api.junior-ab2.workers.dev/api/published/zone?uf=SP&municipio=71072&zona=0252' | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d.get("auditoria", d.get("code","SEM_METADADOS")))'
+   ```
+   Se a zona ainda estiver **aguardando revisão**, não aparece na API pública e o revisor não existe: aprove no painel depois de conferir os resultados.
+
+**Importante:** identificar quem processou e quem revisou é um registro de responsabilidade editorial, **não constitui certificação do TSE nem prova automática da integridade dos boletins**.

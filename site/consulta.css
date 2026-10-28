@@ -23,3 +23,12 @@ footer{font-size:11px;text-align:center;color:#3b607b;padding-bottom:30px}
 [hidden]{display:none!important}
 @media(max-width:1020px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.topbar,.headline{padding-left:16px;padding-right:16px}.headline{padding-top:29px;padding-bottom:34px}.shell{padding:15px}.metrics{gap:9px}.metric{padding:12px}.metric b{font-size:22px}.selector label.wide{min-width:100%}.selector label{min-width:calc(50% - 8px)}.explain-grid{grid-template-columns:1fr}.panel{padding:17px}.contribute{padding:18px}}
+
+.audit-meta{margin-top:15px;padding-top:12px;border-top:1px solid #dcebf6}
+.audit-meta h3{margin:0 0 12px;color:var(--deep);font-size:14px}
+.audit-meta dl{display:grid;gap:12px;margin:0}
+.audit-meta dl>div{padding:10px 12px;border:1px solid #dcebf6;border-radius:9px;background:#f2f9fe}
+.audit-meta dt{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.audit-meta dd{margin:5px 0 0;font-size:13px;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
+.audit-meta .audit-date{font-size:11px;color:var(--muted);font-weight:400;margin-top:3px}
+.audit-note{font-size:11px;color:var(--muted);line-height:1.5;margin:12px 0 0}
