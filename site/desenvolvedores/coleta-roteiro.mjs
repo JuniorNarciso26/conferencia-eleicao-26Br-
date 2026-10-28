@@ -25,6 +25,7 @@ export function gerarRoteiro(localidade, totalEsperado) {
     check: prefix + " --dry-run",
     start: prefix,
     status: "scripts/coleta status",
+    monitor: "scripts/coleta painel",
     output,
     catalog: JSON.stringify({
       uf:loc.uf, municipio_codigo:loc.codigo, municipio_nome:loc.municipio,

@@ -87,6 +87,10 @@
       <div class="guide-code"><pre id="cmd-check"></pre><button type="button" class="button outline copy-command" data-copy="cmd-check">Copiar</button></div>
       <p>Depois execute a coleta dos dois turnos. O processo continua em segundo plano.</p>
       <div class="guide-code"><pre id="cmd-start"></pre><button type="button" class="button outline copy-command" data-copy="cmd-start">Copiar</button></div>
+      <p><strong>Acompanhe na tela:</strong> abra um segundo terminal Ubuntu/WSL e execute o monitor local. Ele exibe uma barra de progresso atualizada automaticamente, sem interromper a coleta.</p>
+      <div class="guide-code"><pre id="cmd-monitor"></pre><button type="button" class="button outline copy-command" data-copy="cmd-monitor">Copiar</button></div>
+      <p><a class="button outline" href="http://127.0.0.1:8765/" target="_blank" rel="noopener noreferrer">Abrir painel de progresso local</a></p>
+      <p class="small">O link só funciona depois de executar o comando acima no computador que está coletando. Para coleta na VPS, utilize um túnel SSH; não exponha o monitor à internet.</p>
       <p>Acompanhe até o estado <code>completed</code>, sem falhas:</p>
       <div class="guide-code"><pre id="cmd-status"></pre><button type="button" class="button outline copy-command" data-copy="cmd-status">Copiar</button></div>
       <p class="small">Você pode interromper com <code>scripts/coleta stop</code> e continuar com <code>scripts/coleta resume</code>. Não feche sua VPS ou computador durante o processamento.</p>

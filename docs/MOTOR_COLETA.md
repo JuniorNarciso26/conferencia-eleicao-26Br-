@@ -56,7 +56,15 @@ scripts/coleta start --escopo uf --uf sp --max-secoes 10
 
 ## Operação
 
-O comando `start` retorna imediatamente e deixa o worker em segundo plano. Para acompanhar o job atual:
+O comando `start` retorna imediatamente e deixa o worker em segundo plano. Para acompanhar por uma **barra de progresso no navegador**, em outro terminal (no computador com a coleta):
+
+```bash
+scripts/coleta painel
+```
+
+Abra `http://127.0.0.1:8765/`. Atualiza a cada 2 segundos, lê somente os arquivos locais de estado, e mostra contagem/percentual de seções. `--job ID` seleciona um job anterior. O monitor escuta em loopback apenas, não precisa acessar a internet e não publica resultados. Não exponha a porta na VPS. Ctrl+C fecha apenas o monitor.
+
+Para acompanhar o job atual:
 
 ```bash
 scripts/coleta status

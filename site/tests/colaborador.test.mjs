@@ -40,6 +40,7 @@ test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => 
   assert.match(basic.check,/--uf sp --municipio 71072 --zona 0254 --dry-run$/);
   assert.match(basic.start,/--uf sp --municipio 71072 --zona 0254$/);
   assert.equal(basic.status,"scripts/coleta status");
+  assert.equal(basic.monitor,"scripts/coleta painel");
   assert.equal(basic.export,undefined);
   const finished=gerarRoteiro(input,312);
   assert.match(finished.export,/--saida site\/dados\/sp_71072_0254\.json/);
@@ -103,4 +104,15 @@ test("seletores preenchem código TSE e zona sem digitação manual", () => {
   assert.match(script, /isPublished\(loc\)/);
   assert.match(script, /alreadyPublished|published===null/);
   assert.match(script, /generate\.disabled=false/);
+});
+
+
+test("guia inclui painel de acompanhamento local sem coletar via GitHub Pages", () => {
+  const html = read("desenvolvedores/index.html");
+  assert.match(html, /id="cmd-monitor"/);
+  assert.match(html, /127\.0\.0\.1:8765/);
+  assert.match(html, /Acompanhe na tela/);
+  const js = read("desenvolvedores/contribuir.js");
+  assert.match(js,/monitor","catalog"/);
+  assert.doesNotMatch(js,/\/api\/status/);
 });

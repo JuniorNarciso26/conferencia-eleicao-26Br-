@@ -118,7 +118,7 @@ close.addEventListener("click",()=>{
   start.focus();
 });
 function updateCommandOutput(data){
-  for(const key of ["install","check","start","status","catalog"]){
+  for(const key of ["install","check","start","status","monitor","catalog"]){
     text("cmd-"+key,data[key]);
   }
   if(data.export)text("cmd-export",data.export);
