@@ -125,8 +125,9 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
         <div class="guide-code"><pre id="cmd-export"></pre><button type="button" class="button outline copy-command" data-copy="cmd-export">Copiar</button></div>
         <p>O comando só gera o pacote se todas as seções esperadas estiverem validadas. Revise os totais e a origem dos dados antes de publicar.</p>
         <h3><span class="step-num">5</span> Envie sua contribuição para revisão</h3>
-        <p>Crie um <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/fork" target="_blank" rel="noopener noreferrer">fork do projeto</a> no seu GitHub. Inclua somente o JSON consolidado gerado e uma nova entrada em <code>site/dados/catalogo.json</code>:</p>
-        <div class="guide-code"><pre id="cmd-catalog"></pre><button type="button" class="button outline copy-command" data-copy="cmd-catalog">Copiar</button></div>
+        <p><strong>Registre a zona automaticamente:</strong> execute o próximo comando no Ubuntu/WSL. Ele valida o pacote e acrescenta a zona ao arquivo <code>site/dados/catalogo.json</code>. O conteúdo JSON é um dado de cadastro, <strong>não</strong> deve ser colado no terminal.</p>
+        <div class="guide-code"><pre id="cmd-catalog"></pre><button type="button" class="button outline copy-command" data-copy="cmd-catalog">Copiar comando</button></div>
+        <p>Depois confira com <code>git status</code> e crie um Pull Request contendo <strong>apenas</strong> o JSON consolidado da zona e o catálogo atualizado. Se não tiver permissão de escrita no projeto, envie a alteração pelo seu fork.</p>
         <p>Crie um Pull Request para a branch <code>main</code> do <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/pulls" target="_blank" rel="noopener noreferrer">repositório oficial</a>. Volte ao formulário e informe o número do PR em <strong>Registrar envio para revisão</strong> antes de vencer sua reserva. O sistema confere sua autoria e os arquivos da zona. Os resultados serão revisados antes de entrar no site público.</p>
         <p class="guide-info"><strong>Privacidade:</strong> não envie BU, RDV, VSC, logs, diretórios <code>raw/</code>, arquivos de identificação pessoal nem credenciais. O único arquivo de resultados a publicar é o JSON consolidado.</p>
       </div>

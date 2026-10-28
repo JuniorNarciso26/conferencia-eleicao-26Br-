@@ -45,10 +45,7 @@ test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => 
   const finished=gerarRoteiro(input,312);
   assert.match(finished.export,/--saida site\/dados\/sp_71072_0254\.json/);
   assert.match(finished.export,/--esperado 312$/);
-  assert.deepEqual(JSON.parse(finished.catalog),{
-    uf:"SP",municipio_codigo:"71072",municipio_nome:"São Paulo",
-    zona:"0254",arquivo:"dados/sp_71072_0254.json"
-  });
+  assert.equal(finished.catalog,"python3 scripts/registrar_zona.py --arquivo site/dados/sp_71072_0254.json");
   for(const total of ["", "0", "-5", "3.5", "abc", 10001]) {
     assert.throws(() => gerarRoteiro(input,total));
   }
@@ -135,4 +132,13 @@ test("reserva compartilhada informa colaborador, prazo e envio PR", () => {
   assert.match(js,/sessionStorage\.getItem\(TOKEN_KEY\)/);
   assert.doesNotMatch(js,/localStorage/);
   assert.doesNotMatch(js,/collect-mark-local/);
+});
+
+test("guia gera comando executavel para atualizar o catalogo, nao JSON bruto",()=>{
+  const html=read("desenvolvedores/index.html");
+  assert.match(html,/Registre a zona automaticamente/);
+  assert.match(html,/não.*deve ser colado no terminal/);
+  const cmd=gerarRoteiro({uf:"SP",municipio:"São Paulo",codigo:"71072",zona:"0252"}).catalog;
+  assert.match(cmd,/^python3 scripts\/registrar_zona\.py --arquivo site\/dados\/sp_71072_0252\.json$/);
+  assert.doesNotMatch(cmd,/^\{/);
 });

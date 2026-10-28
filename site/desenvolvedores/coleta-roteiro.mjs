@@ -27,10 +27,7 @@ export function gerarRoteiro(localidade, totalEsperado) {
     status: "scripts/coleta status",
     monitor: "scripts/coleta painel",
     output,
-    catalog: JSON.stringify({
-      uf:loc.uf, municipio_codigo:loc.codigo, municipio_nome:loc.municipio,
-      zona:loc.zona, arquivo:`dados/${loc.uf.toLowerCase()}_${loc.codigo}_${loc.zona}.json`
-    }, null, 2)
+    catalog: `python3 scripts/registrar_zona.py --arquivo ${output}`
   };
   if (totalEsperado !== undefined && totalEsperado !== null) {
     const total = Number(totalEsperado);

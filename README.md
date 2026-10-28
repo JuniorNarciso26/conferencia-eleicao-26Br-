@@ -107,6 +107,17 @@ Para uma zona, use o gerador fail-closed informando a cobertura esperada:
 .venv/bin/python scripts/gerar_painel_zona.py --raiz data/coletas --saida web/dados/zona_0253.json --uf SP --municipio 71072 --zona 0253 --esperado 496
 ```
 
+## Registrar zona para contribuição
+
+Depois de validar e gerar um pacote completo, por exemplo, `site/dados/sp_71072_0252.json`:
+
+```bash
+python3 scripts/registrar_zona.py --arquivo site/dados/sp_71072_0252.json
+git status
+```
+
+Este comando **não** publica dados na internet. Ele valida o pacote e registra a zona em `site/dados/catalogo.json`. Depois, inclua apenas esses dois JSONs no Pull Request. Um bloco `{"uf":...}` é conteúdo JSON e não um comando de terminal.
+
 ## Abrir painel localhost
 
 Linux:
