@@ -18,8 +18,8 @@ export function validarLocalidade({ uf, municipio, codigo, zona }) {
 
 export function gerarRoteiro(localidade, totalEsperado) {
   const loc = validarLocalidade(localidade);
-  const output = \`site/dados/\${loc.uf.toLowerCase()}_\${loc.codigo}_\${loc.zona}.json\`;
-  const prefix = \`scripts/coleta start --escopo zona --uf \${loc.uf.toLowerCase()} --municipio \${loc.codigo} --zona \${loc.zona}\`;
+  const output = `site/dados/${loc.uf.toLowerCase()}_${loc.codigo}_${loc.zona}.json`;
+  const prefix = `scripts/coleta start --escopo zona --uf ${loc.uf.toLowerCase()} --municipio ${loc.codigo} --zona ${loc.zona}`;
   const commands = {
     install: "git clone https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-.git\ncd conferencia-eleicao-26Br-\nbash scripts/instalar_vps.sh",
     check: prefix + " --dry-run",
@@ -28,7 +28,7 @@ export function gerarRoteiro(localidade, totalEsperado) {
     output,
     catalog: JSON.stringify({
       uf:loc.uf, municipio_codigo:loc.codigo, municipio_nome:loc.municipio,
-      zona:loc.zona, arquivo:\`dados/\${loc.uf.toLowerCase()}_\${loc.codigo}_\${loc.zona}.json\`
+      zona:loc.zona, arquivo:`dados/${loc.uf.toLowerCase()}_${loc.codigo}_${loc.zona}.json`
     }, null, 2)
   };
   if (totalEsperado !== undefined && totalEsperado !== null) {
@@ -36,7 +36,7 @@ export function gerarRoteiro(localidade, totalEsperado) {
     if (!Number.isSafeInteger(total) || total < 1 || total > 10000) {
       throw new Error("Informe um total válido de seções (entre 1 e 10.000).");
     }
-    commands.export = \`python3 scripts/gerar_painel_zona.py --raiz data/coletas --saida \${output} --uf \${loc.uf} --municipio \${loc.codigo} --zona \${loc.zona} --esperado \${total}\`;
+    commands.export = `python3 scripts/gerar_painel_zona.py --raiz data/coletas --saida ${output} --uf ${loc.uf} --municipio ${loc.codigo} --zona ${loc.zona} --esperado ${total}`;
   }
   return commands;
 }

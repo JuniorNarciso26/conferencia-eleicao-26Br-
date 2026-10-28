@@ -85,7 +85,7 @@ form.addEventListener("submit", async event => {
     locationSelected = loc;
     lastCommands = gerarRoteiro(loc);
     updateCommandOutput(lastCommands);
-    setText("collect-location", \`\${loc.uf} · \${loc.municipio} · zona \${loc.zona}\`);
+    setText("collect-location", `${loc.uf} · ${loc.municipio} · zona ${loc.zona}`);
     totalInput.value = "";
     steps.hidden = false;
     steps.scrollIntoView({behavior:"smooth", block:"start"});
