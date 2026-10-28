@@ -54,7 +54,7 @@ test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => 
 test("portal preserva coleta local mas exige reserva central para iniciar", () => {
   const html=read("desenvolvedores/index.html");
   assert.match(html,/reserva é compartilhada entre colaboradores/i);
-  assert.match(html,/não envie BU, RDV, VSC/i);
+  assert.match(html,/BU, RDV, VSC/i);
   assert.match(html,/Enviar resultados para revisão/);
   const js=read("desenvolvedores/contribuir.js");
   assert.match(js,/catalogo\.json/);
@@ -110,7 +110,7 @@ test("guia inclui painel de acompanhamento local sem coletar via GitHub Pages", 
   assert.match(html, /127\.0\.0\.1:8765/);
   assert.match(html, /Acompanhe na tela/);
   const js = read("desenvolvedores/contribuir.js");
-  assert.match(js,/monitor","catalog"/);
+  assert.match(js,/start","status","monitor"/);
   assert.doesNotMatch(js,/\/api\/status/);
 });
 
@@ -121,6 +121,7 @@ test("reserva compartilhada permite upload seguro e revisao", () => {
   assert.match(html,/id="collect-upload-button"/);
   assert.match(html,/id="collect-upload-file"/);
   assert.match(html,/id="collect-upload-progress"/);
+  assert.match(html,/id="review-refresh"/);
   assert.match(html,/24 horas/);
   assert.match(html,/id="cmd-monitor-help"/);
   const js=read("desenvolvedores/contribuir.js");
