@@ -9,8 +9,11 @@ const code=$("#collect-city-code"),zoneState=$("#collect-zone-status");
 const totalInput=$("#collect-total"),generate=$("#collect-generate");
 const controls=$("#collect-reservation-controls"),info=$("#collect-reservation-status");
 const reserveButton=$("#collect-reserve"),releaseButton=$("#collect-release");
-const submitControls=$("#collect-submit-controls"),submitButton=$("#collect-submit");
-const prInput=$("#collect-pr-number");
+const uploadControls=$("#collect-upload-controls"),uploadButton=$("#collect-upload-button");
+const fileInput=$("#collect-upload-file"),uploadProgress=$("#collect-upload-progress");
+const uploadStatus=$("#collect-upload-status");
+const FIELD_KEYS=["aptos","comparecimento","comparecimento_bu","habilitados_biometria",
+  "habilitados_biografia","comp_sem_biometria","flavio","lula","outros","brancos","nulos","nulos_tecnicos"];
 const API=(window.CONF_CONFIG?.apiBaseUrl||"").replace(/\/+$/,"");
 const TOKEN_KEY="conferencia_eleitoral_token";
 let locations=null,published=null,locationSelected=null,activeLease=null,version=0;
@@ -35,7 +38,7 @@ function resetGuide(){
 }
 function resetControls(){
   controls.hidden=true;reserveButton.hidden=true;releaseButton.hidden=true;
-  submitControls.hidden=true;info.textContent="";activeLease=null;
+  uploadControls.hidden=true;info.textContent="";activeLease=null;
 }
 function cityForSelection(){return (locations?.ufs?.[uf.value]||[]).find(x=>x.codigo===city.value);}
 function currentZone(){
@@ -67,11 +70,21 @@ function niceError(code){
     RESERVATION_NOT_ACTIVE:"Sua reserva venceu ou não está ativa. Consulte o status novamente.",
     RESERVATION_EXPIRED:"O prazo da sua reserva venceu. A zona voltou a ficar disponível.",
     NOT_OWNER_OR_EXPIRED:"Não foi possível liberar: a reserva não pertence à sua conta ou já venceu.",
-    PR_NOT_FOUND:"Pull Request não encontrado no repositório oficial.",
-    PR_NOT_ELIGIBLE:"O Pull Request precisa estar aberto, destinado à main e criado pela sua conta GitHub.",
-    PR_MISSING_ZONE_DATA:"O PR precisa incluir o JSON consolidado da zona e a atualização do catálogo.",
-    PR_FILES_UNAVAILABLE:"Não foi possível conferir os arquivos do PR no GitHub.",
-    INVALID_PR:"Informe um número de Pull Request válido."
+    INVALID_PACKAGE:"O arquivo não corresponde ao pacote consolidado esperado.",
+    INVALID_SUMMARY:"O resumo da zona não está no formato correto.",
+    INVALID_SECTION:"Uma das seções é inválida ou pertence a outra zona.",
+    INVALID_TOTALS:"O pacote possui valores inválidos.",
+    VOTE_SUM_MISMATCH:"A soma de votos de uma seção não fecha.",
+    AGGREGATE_MISMATCH:"A soma das seções não confere com o resumo. O envio foi recusado.",
+    INCOMPLETE_UPLOAD:"O servidor ainda não recebeu todas as seções.",
+    INVALID_CHUNK:"O lote de seções é inválido.",
+    DUPLICATE_SECTION:"Existe uma seção duplicada no lote.",
+    UPLOAD_NOT_ACTIVE:"O envio não está mais ativo. Confira a reserva.",
+    UPLOAD_EXISTS:"Existe outro envio iniciado nesta zona.",
+    ALREADY_SUBMITTED:"A zona já foi enviada para revisão.",
+    INVALID_HASH:"Falha ao conferir o identificador de integridade.",
+    INVALID_UPLOAD_ID:"Identificador do envio inválido.",
+    ZONE_IN_REVIEW:"Esta zona já está aguardando revisão."
   })[code]||"Não foi possível concluir a solicitação. Confira a conexão e tente novamente.";
 }
 async function api(path,options={}){
@@ -107,8 +120,8 @@ async function checkStatus(reset=true){
       const owner="@"+result.contributor,deadline=date(result.expires_at);
       if(result.mine){
         state("Zona "+loc.zona+": SUA RESERVA ATIVA. Prazo de entrega até "+deadline+".","mine");
-        releaseButton.hidden=false;submitControls.hidden=false;generate.disabled=false;
-        info.textContent="Reserva registrada no servidor. Prepare os dados e informe o número do Pull Request antes do prazo.";
+        releaseButton.hidden=false;uploadControls.hidden=false;generate.disabled=false;
+        info.textContent="Reserva registrada no servidor. Selecione o JSON consolidado e envie pelo botão abaixo antes do prazo.";
       }else{
         state("Zona "+loc.zona+": SENDO PROCESSADA POR "+owner+". Prazo até "+deadline+".","reserved");
         info.textContent="A zona está reservada por outro colaborador. Ela será liberada após o vencimento se os dados não forem entregues.";
@@ -116,8 +129,8 @@ async function checkStatus(reset=true){
     }else if(result.status==="submitted"){
       state("Zona "+loc.zona+": DADOS ENVIADOS POR @"+result.contributor+"; AGUARDANDO REVISÃO.","submitted");
       info.textContent=result.pr_number
-        ?"Pull Request #"+result.pr_number+" registrado. O bloqueio permanece até a revisão/publicação."
-        :"O envio foi registrado e aguarda revisão.";
+        ?"Pull Request legado #"+result.pr_number+" registrado, aguardando revisão."
+        :"O arquivo consolidado já foi enviado e aguarda aprovação.";
     }else{
       state("Não foi possível interpretar o estado desta zona.","error");
     }
@@ -149,11 +162,87 @@ async function action(button,path,payload){
 }
 reserveButton.addEventListener("click",()=>action(reserveButton,"/api/zones/reserve",{}));
 releaseButton.addEventListener("click",()=>action(releaseButton,"/api/zones/release",{}));
-submitButton.addEventListener("click",()=>{
-  const n=Number(prInput.value);
-  if(!Number.isSafeInteger(n)||n<1){message.textContent="Informe um número de Pull Request válido.";return;}
-  action(submitButton,"/api/zones/submit",{pr_number:n});
-});
+function validateFile(packet,loc){
+  const header=packet?.meta;
+  if(!header||header.uf!==loc.uf||String(header.municipio)!==loc.codigo||
+     String(header.zona).padStart(4,"0")!==loc.zona||
+     header.cobertura_completa!==true||
+     !Number.isSafeInteger(header.total_secoes)||header.total_secoes<1||header.total_secoes>2000||
+     !Array.isArray(packet.secoes)||packet.secoes.length!==header.total_secoes)
+    throw Error("INVALID_PACKAGE");
+  const sums={"1":{},"2":{}};
+  for(const t of ["1","2"])for(const k of FIELD_KEYS)sums[t][k]=0;
+  const seen=new Set();
+  function validateTurn(t){
+    if(!t||FIELD_KEYS.some(k=>!Number.isSafeInteger(t[k])||t[k]<0)||
+       t.comparecimento>t.aptos||
+       t.flavio+t.lula+t.outros+t.brancos+t.nulos+t.nulos_tecnicos!==t.comparecimento)
+       throw Error("INVALID_TOTALS");
+  }
+  for(const section of packet.secoes){
+    if(section?.meta?.uf!==loc.uf||
+       String(section.meta.codigo_municipio)!==loc.codigo||
+       String(section.meta.zona).padStart(4,"0")!==loc.zona||
+       !/^[0-9]{4}$/.test(String(section.meta.secao||""))||
+       seen.has(section.meta.secao))throw Error("INVALID_SECTION");
+    seen.add(section.meta.secao);
+    for(const t of ["1","2"]){
+      validateTurn(section.turnos?.[t]);
+      for(const k of FIELD_KEYS)sums[t][k]+=section.turnos[t][k];
+    }
+  }
+  for(const t of ["1","2"]){
+    validateTurn(packet.resumo?.turnos?.[t]);
+    for(const k of FIELD_KEYS)if(sums[t][k]!==packet.resumo.turnos[t][k])
+      throw Error("AGGREGATE_MISMATCH");
+  }
+  if(packet.resumo.meta?.uf!==loc.uf||
+    String(packet.resumo.meta.codigo_municipio)!==loc.codigo||
+    String(packet.resumo.meta.zona).padStart(4,"0")!==loc.zona)
+    throw Error("INVALID_SUMMARY");
+}
+async function uploadSelected(){
+  const loc=currentZone(),file=fileInput.files?.[0];
+  if(!loc||!activeLease?.mine||activeLease.status!=="reserved"){
+    uploadStatus.textContent="Sua reserva não está ativa.";return;
+  }
+  if(!file){uploadStatus.textContent="Selecione o JSON consolidado da zona.";return;}
+  if(file.size>5*1024*1024||file.size<100){
+    uploadStatus.textContent="Arquivo inválido ou maior que 5 MB. Envie somente o pacote consolidado.";return;
+  }
+  uploadButton.disabled=true;uploadProgress.hidden=false;uploadProgress.value=0;
+  try{
+    const raw=await file.text();
+    const packet=JSON.parse(raw);
+    validateFile(packet,loc);
+    const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(raw));
+    const sha256=[...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,"0")).join("");
+    uploadStatus.textContent="Iniciando o envio seguro de "+packet.secoes.length+" seções...";
+    const start=await changeReservation("/api/uploads/start",{
+      meta:packet.meta,resumo:packet.resumo,sha256
+    });
+    const id=start.upload_id,chunkSize=20,items=packet.secoes;
+    for(let i=0;i<items.length;i+=chunkSize){
+      const part=items.slice(i,i+chunkSize);
+      const res=await changeReservation("/api/uploads/chunk",{upload_id:id,secoes:part});
+      uploadProgress.value=Math.min(95,Math.round(95*Math.min(items.length,i+part.length)/items.length));
+      uploadStatus.textContent="Enviando "+Math.min(items.length,i+part.length)+"/"+items.length+
+        " seções · "+res.received+" recebidas pelo servidor.";
+    }
+    uploadStatus.textContent="Conferindo os totais da zona no servidor...";
+    await changeReservation("/api/uploads/finish",{upload_id:id});
+    uploadProgress.value=100;
+    uploadStatus.textContent="Arquivo recebido e validado. Protocolo "+id+". Aguardando revisão.";
+    await checkStatus(true);
+    message.textContent="Envio concluído! Os resultados estão aguardando revisão e ainda não são públicos.";
+  }catch(e){
+    uploadStatus.textContent=e instanceof SyntaxError
+      ?"O arquivo selecionado não contém um JSON válido."
+      :niceError(e.message)+
+       " Se a conexão foi interrompida, selecione o mesmo arquivo e tente novamente antes de expirar sua reserva.";
+  }finally{uploadButton.disabled=false;}
+}
+uploadButton.addEventListener("click",uploadSelected);
 async function loadCatalog(){
   try{
     const [r1,r2]=await Promise.all([
@@ -217,7 +306,7 @@ form.addEventListener("submit",async event=>{
     updateCommands(gerarRoteiro(loc));
     text("collect-location",loc.uf+" · "+loc.municipio+" · zona "+loc.zona);
     steps.hidden=false;steps.scrollIntoView({behavior:"smooth",block:"start"});
-    message.textContent="Reserva confirmada. Acompanhe o prazo e registre seu PR antes do vencimento.";
+    message.textContent="Reserva confirmada. Acompanhe o prazo e envie o JSON consolidado antes do vencimento.";
   }catch(err){message.textContent=niceError(err.message);}
 });
 build.addEventListener("click",()=>{
@@ -227,7 +316,7 @@ build.addEventListener("click",()=>{
     const commands=gerarRoteiro(locationSelected,totalInput.value);
     text("cmd-export",commands.export);text("cmd-catalog",commands.catalog);
     output.hidden=false;
-    status.textContent="Gere e valide os resultados. Depois registre seu Pull Request antes do prazo.";
+    status.textContent="Gere e valide os resultados. Depois envie o JSON no campo Arquivo consolidado da zona.";
     output.scrollIntoView({behavior:"smooth",block:"start"});
   }catch(err){status.textContent=String(err.message);}
 });
