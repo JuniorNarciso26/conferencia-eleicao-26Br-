@@ -2,11 +2,26 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 command -v git >/dev/null || { echo "Instale git" >&2; exit 1; }
-python3 - <<'PY'
+PYTHON_BIN="${PYTHON:-python3}"
+command -v "$PYTHON_BIN" >/dev/null || { echo "Python não encontrado: $PYTHON_BIN" >&2; exit 1; }
+"$PYTHON_BIN" - <<'PY'
+import platform
 import sys
-if sys.version_info < (3, 11):
-    raise SystemExit("Python 3.11+ requerido")
+if sys.version_info[:2] != (3, 12) or sys.platform != "linux" or platform.machine() not in ("x86_64", "amd64"):
+    raise SystemExit(
+        f"Ambiente incompatível: Python {sys.version.split()[0]}, {sys.platform}/{platform.machine()}. "
+        "O requirements-homologacao.txt está fixado para Python 3.12, Linux x86_64. "
+        'Use: PYTHON="$(uv python find 3.12)" bash scripts/instalar_vps.sh'
+    )
 PY
+if [[ -x .venv/bin/python ]]; then
+  if ! .venv/bin/python -c 'import sys; sys.exit(0 if sys.version_info[:2] == (3, 12) else 1)' ; then
+    echo "Ambiente .venv existente usa Python diferente de 3.12." >&2
+    echo "Preserve-o com: mv .venv .venv-backup" >&2
+    echo "Depois execute novamente o instalador com PYTHON 3.12." >&2
+    exit 1
+  fi
+fi
 
 read -r nome repositorio commit < <(awk '$1 == "DataUrnas-BR" {print $1, $2, $3}' dependencies.lock)
 [[ "$nome" == "DataUrnas-BR" && "$repositorio" == "https://github.com/alissonlinneker/DataUrnas-BR.git" ]] || {
@@ -17,7 +32,7 @@ read -r nome repositorio commit < <(awk '$1 == "DataUrnas-BR" {print $1, $2, $3}
   exit 1
 }
 
-python3 -m venv .venv
+"$PYTHON_BIN" -m venv .venv
 mkdir -p vendor web/dados data
 if [[ ! -d vendor/DataUrnas-BR/.git ]]; then
   mkdir -p vendor/DataUrnas-BR

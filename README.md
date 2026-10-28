@@ -22,7 +22,7 @@ Arquivos reais de coleta, `data/`, `web/dados/*.json`, ambientes virtuais, check
 
 ## Requisitos
 
-- Python 3.11 ou superior;
+- Python **3.12**, Linux **x86_64** para executar o motor de coleta homologado (WSL Ubuntu ou VPS). O arquivo `requirements-homologacao.txt` fixa hashes dos artefatos deste ambiente;
 - Git;
 - acesso HTTPS aos dominios publicos usados pelo TSE e GitHub durante instalacao/coleta;
 - espaco em disco proporcional ao escopo.
@@ -33,36 +33,22 @@ Limites padrao por turno: aux ate 2 MiB, documento de candidatos ate 20 MiB, cad
 
 ```bash
 sudo apt update
-sudo apt install -y git python3 python3-venv python3-pip
+sudo apt install -y git curl
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+uv python install 3.12
 git clone https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-.git
 cd conferencia-eleicao-26Br-
-bash scripts/instalar_vps.sh
+PYTHON="$(uv python find 3.12)" bash scripts/instalar_vps.sh
 ```
+
+Se já havia uma instalação com Python 3.14, preserve o ambiente antigo com `mv .venv .venv-backup` antes de executar o instalador. O script recusa ambientes incompatíveis e não modifica os hashes. Você também pode usar um `python3.12` do sistema: `PYTHON=python3.12 bash scripts/instalar_vps.sh`.
 
 O instalador cria `.venv`, baixa o DataUrnas-BR no commit fixado em `dependencies.lock`, instala dependencias com hashes em `requirements-homologacao.txt` e executa os testes. Apesar do nome historico do script, ele deve ser usado em ambiente local isolado; nao configura VPS, systemd, portas publicas ou servidor de producao.
 
-## Instalacao no Windows
+## Instalacao no Windows (WSL)
 
-1. Instale Git for Windows e Python 3.11+ marcando a opcao de adicionar Python ao `PATH`.
-2. Abra PowerShell no diretorio desejado.
-3. Execute:
-
-```powershell
-git clone https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-.git
-cd conferencia-eleicao-26Br-
-py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements-homologacao.txt
-git clone https://github.com/alissonlinneker/DataUrnas-BR.git vendor\DataUrnas-BR
-git -C vendor\DataUrnas-BR checkout 12f0433bd20882d305dd7b9e4987d6dcf3b321a9
-```
-
-Depois adicione `vendor\DataUrnas-BR\src` ao `PYTHONPATH` da sessao antes de converter BUs:
-
-```powershell
-$env:PYTHONPATH = "$PWD\vendor\DataUrnas-BR\src"
-```
-
-O launcher `scripts\run_local.ps1` serve o painel local. O motor de coleta foi desenvolvido e testado no Linux; no Windows, prefira executar coleta via WSL ou usar os scripts Python diretamente em foreground.
+O coletor com dependências travadas por hash foi homologado para Linux x86_64 e Python 3.12. No Windows, execute `wsl -d Ubuntu` e siga os comandos da seção anterior. A instalação nativa Windows/PowerShell exige hashes específicos das wheels do Windows e ainda não está homologada.
 
 ## Coleta de uma secao
 

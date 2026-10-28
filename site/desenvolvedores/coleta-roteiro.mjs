@@ -21,7 +21,7 @@ export function gerarRoteiro(localidade, totalEsperado) {
   const output = `site/dados/${loc.uf.toLowerCase()}_${loc.codigo}_${loc.zona}.json`;
   const prefix = `scripts/coleta start --escopo zona --uf ${loc.uf.toLowerCase()} --municipio ${loc.codigo} --zona ${loc.zona}`;
   const commands = {
-    install: "git clone https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-.git\ncd conferencia-eleicao-26Br-\nbash scripts/instalar_vps.sh",
+    install: "sudo apt update && sudo apt install -y git curl\ncurl -LsSf https://astral.sh/uv/install.sh | sh\nexport PATH=\"$HOME/.local/bin:$PATH\"\nuv python install 3.12\ngit clone https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-.git\ncd conferencia-eleicao-26Br-\nPYTHON=\"$(uv python find 3.12)\" bash scripts/instalar_vps.sh",
     check: prefix + " --dry-run",
     start: prefix,
     status: "scripts/coleta status",
