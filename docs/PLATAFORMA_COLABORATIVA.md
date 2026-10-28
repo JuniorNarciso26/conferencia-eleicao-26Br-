@@ -148,3 +148,8 @@ Se o colaborador abrir um Pull Request antes do vencimento, poderá registrar se
 4. No portal dos colaboradores, entre com GitHub, escolha a zona disponível, clique em **Reservar esta zona por 24 horas** e confirme a identificação, prazo e exclusividade em outro navegador.
 
 Não apague a tabela `zones` existente: ela permanece no banco para a futura publicação direta, sem uso neste fluxo. Os dados de urna continuam exclusivamente no WSL/VPS do colaborador até o PR revisado.
+
+## Registrar pacote de zona no catálogo sem copiar JSON bruto para terminal
+
+Após `scripts/gerar_painel_zona.py` gerar o pacote validado em `site/dados/<uf>_<codigoTSE>_<zona>.json`, o comando `python3 scripts/registrar_zona.py --arquivo site/dados/sp_71072_0252.json` acrescenta automaticamente a entrada a `site/dados/catalogo.json`. O script confere identidade da zona, catálogo oficial de localidades, cobertura completa e presença de dois turnos; falha se já existir um pacote diferente para essa zona. É idempotente e altera somente `catalogo.json`, sem publicar dados nem enviar arquivos.
+O painel do colaborador passou a oferecer **um comando terminal real**, em vez de um bloco JSON, para evitar `Command 'uf:' not found`. Para publicar, enviar via PR exclusivamente o JSON consolidado e o catálogo atualizado.
