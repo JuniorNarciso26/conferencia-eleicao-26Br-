@@ -18,3 +18,17 @@ jobs:
           bash -n scripts/*.sh scripts/coleta
       - name: Testes unitarios sem rede
         run: python -m unittest discover -s tests -v
+
+  dependencias_python312:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verificar hashes das dependencias homologadas no Linux
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --require-hashes -r requirements-homologacao.txt
+          .venv/bin/python -c "import sys, bitstruct; assert sys.version_info[:2] == (3, 12)"
