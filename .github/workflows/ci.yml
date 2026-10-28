@@ -29,6 +29,7 @@ jobs:
           python-version: '3.12'
       - name: Verificar hashes das dependencias homologadas no Linux
         run: |
-          python -m venv .venv
-          .venv/bin/python -m pip install --require-hashes -r requirements-homologacao.txt
-          .venv/bin/python -c "import sys, bitstruct; assert sys.version_info[:2] == (3, 12)"
+          PYTHON=python bash scripts/instalar_vps.sh
+          .venv/bin/python -c "import sys, dataurnas, bitstruct; assert sys.version_info[:2] == (3, 12)"
+          test -f vendor/DataUrnas-BR/pyproject.toml
+          test -f vendor/DataUrnas-BR/spec/v2/bu.asn1
