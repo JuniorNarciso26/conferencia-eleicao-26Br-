@@ -21,3 +21,10 @@
 .zone-state.available{background:#fff8e7;border-color:#efd49a;color:#77551c}
 .zone-state.error{background:#fff1ef;border-color:#e4bbb2;color:#a13f35}
 .guide-fields input[readonly]{background:#e8f2f8;color:#234b62}
+
+.zone-local-controls{margin:10px 0 16px}
+.zone-local-controls button{margin-bottom:6px}
+.zone-local-controls .small{margin:4px 0 0}
+.zone-state.local-running{background:#e7f1ff;border-color:#99bfeb;color:#1b5888}
+.guide-monitor-help{border:1px solid #b8d8e9;background:#f9fcff}
+.guide-monitor-help .guide-code{margin-top:14px}
