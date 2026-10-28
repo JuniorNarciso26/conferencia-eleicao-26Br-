@@ -50,6 +50,25 @@
       <div id="growth-reference" class="growth-reference"></div>
       <p class="growth-note">Esta reconciliação mostra de quais categorias vêm as diferenças líquidas. Não identifica quais eleitores mudaram de voto. Comparações proporcionais são hipóteses, não previsões estatísticas.</p>
     </section>
+
+    <section class="panel growth-panel" id="weighted-pattern" aria-labelledby="weighted-title">
+      <h2 id="weighted-title">Onde a diferença de crescimento foi maior?</h2>
+      <p class="desc">Distribuição das seções por diferença de crescimento entre Lula e Flávio, dividida pelo comparecimento do 1º turno de cada seção. Faixas negativas indicam maior variação de Flávio; positivas, de Lula. Isso não mede transferência de votos entre candidatos.</p>
+      <div id="weighted-summary" class="weighted-summary" aria-label="Resumo das diferenças intensas"></div>
+      <label class="pattern-filter" for="weighted-mode">Mostrar as barras por
+        <select id="weighted-mode">
+          <option value="eleitores">Peso dos eleitores (comparecimento no 1º turno)</option>
+          <option value="urnas">Quantidade de urnas</option>
+        </select>
+      </label>
+      <div class="weighted-legend" aria-hidden="true"><span>Predominância do crescimento de Flávio</span><span>Equilíbrio</span><span>Predominância do crescimento de Lula</span></div>
+      <div id="weighted-chart" class="weighted-chart" role="group" aria-label="Faixas de diferença de crescimento por seção"></div>
+      <div class="weighted-actions">
+        <p id="weighted-selection-status" class="growth-status" role="status" aria-live="polite">Clique em uma faixa para listar somente suas seções na tabela abaixo.</p>
+        <button id="weighted-clear" type="button" hidden>Limpar faixa selecionada</button>
+      </div>
+      <p class="growth-note"><strong>Fórmula por seção:</strong> [(Lula 2º − Lula 1º) − (Flávio 2º − Flávio 1º)] ÷ comparecimento do 1º turno × 100, em pontos percentuais. A ponderação soma os comparecimentos do 1º turno das seções de cada faixa; urnas maiores têm mais peso. “Diferença intensa” significa pelo menos 10 p.p. nesta escala, apenas um critério descritivo ajustável, não um limiar de anomalia estatística. Nenhum número identifica para quem um eleitor mudou seu voto.</p>
+    </section>
     <section class="panel growth-panel" id="section-pattern" aria-labelledby="section-pattern-title">
       <h2 id="section-pattern-title">Padrão de variação por seção eleitoral (urna)</h2>
       <p class="desc">As seções são analisadas individualmente. O resumo indica em quantas delas cada finalista teve a maior variação líquida entre os turnos; não identifica transferências individuais.</p>
