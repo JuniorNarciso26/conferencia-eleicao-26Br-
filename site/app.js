@@ -29,20 +29,23 @@
     if (!api) {
       apiStatus.textContent = "API não configurada";
       apiStatus.className = "status error";
-      return;
+      return false;
     }
     try {
       const result = await fetchAPI("/api/health");
       if (result.ok && result.github_login === "IMPLEMENTADO") {
         apiStatus.textContent = "Login disponível";
         apiStatus.className = "status ok";
+        return true;
       } else {
         apiStatus.textContent = "Configuração pendente";
         apiStatus.className = "status error";
+        return false;
       }
     } catch {
       apiStatus.textContent = "API indisponível";
       apiStatus.className = "status error";
+      return false;
     }
   }
   async function showProfile(token) {
@@ -59,8 +62,8 @@
     if (ticket || loginError) {
       history.replaceState(null, "", window.location.pathname + window.location.search);
     }
-    await checkHealth();
-    if (!api) { setStatus("O login será habilitado quando a API for publicada."); return; }
+    const loginAvailable = await checkHealth();
+    if (!loginAvailable) { setStatus("Login indisponível até a publicação da API no Cloudflare."); return; }
     loginButton.hidden = false;
     if (loginError) {
       sessionStorage.removeItem(KEY);

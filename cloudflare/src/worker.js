@@ -196,7 +196,7 @@ async function exchange(request, env) {
     .bind(await sha256(token), row.user_id, epoch() + SESSION_TTL).run();
   return json({ ok: true, token, expires_in: SESSION_TTL }, 200, corsHeaders(request, env));
 }
-async function health(env) {
+async function health(env, request) {
   try {
     const r = await env.DB.prepare(
       "SELECT COUNT(*) AS total FROM sqlite_master WHERE type='table' AND name IN " +
@@ -206,9 +206,9 @@ async function health(env) {
     return json({ ok: database && configReady(env), database: database ? "OK" : "ERRO",
       tables: Number(r?.total) || 0,
       github_configuration: Boolean(env.GH_CLIENT_ID && env.GH_CLIENT_SECRET) ? "OK" : "ERRO",
-      github_login: configReady(env) ? "IMPLEMENTADO" : "CONFIGURACAO_PENDENTE" }, database ? 200 : 503);
+      github_login: configReady(env) ? "IMPLEMENTADO" : "CONFIGURACAO_PENDENTE" }, database ? 200 : 503, corsHeaders(request, env));
   } catch {
-    return json({ ok: false, database: "ERRO_DE_CONEXAO" }, 503);
+    return json({ ok: false, database: "ERRO_DE_CONEXAO" }, 503, corsHeaders(request, env));
   }
 }
 export default {
@@ -220,7 +220,7 @@ export default {
         : error("ORIGIN_FORBIDDEN", 403, request, env);
     }
     try {
-      if (path === "/api/health" && request.method === "GET") return await health(env);
+      if (path === "/api/health" && request.method === "GET") return await health(env, request);
       if (path === "/api/auth/github" && request.method === "GET") return await startAuth(env);
       if (path === "/api/auth/callback" && request.method === "GET") return await callback(request, env);
       if (path === "/api/auth/ticket" && request.method === "POST") return await exchange(request, env);

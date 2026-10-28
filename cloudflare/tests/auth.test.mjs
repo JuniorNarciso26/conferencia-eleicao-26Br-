@@ -65,6 +65,8 @@ test("health reports configured database without exposing credentials", async ()
   assert.equal(out.github_login, "IMPLEMENTADO");
   assert.equal(out.tables, 7);
   assert.ok(!JSON.stringify(out).includes(envBase.GH_CLIENT_SECRET));
+  const fromPages = await worker.fetch(request("/api/health", { headers: origin() }), { ...envBase, DB: memoryDB() });
+  assert.equal(fromPages.headers.get("access-control-allow-origin"), new URL(site).origin);
 });
 
 test("OAuth PKCE -> GitHub -> one-use ticket -> user registration -> logout", async () => {
