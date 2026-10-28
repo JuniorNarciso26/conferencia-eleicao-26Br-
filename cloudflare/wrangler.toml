@@ -1,0 +1,13 @@
+name = "conferencia-eleitoral-api"
+main = "src/worker.js"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "conferencia-eleitoral"
+database_id = "PREENCHER_ID_D1"
+
+[vars]
+SITE_URL = "https://juniornarciso26.github.io/conferencia-eleicao-26Br-/"
+GH_CLIENT_ID = "PREENCHER_CLIENT_ID"
+ADMIN_GITHUB_IDS = "PREENCHER_ID_NUMERICO"
