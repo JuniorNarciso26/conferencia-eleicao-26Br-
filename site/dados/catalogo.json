@@ -1,5 +1,13 @@
 {
   "versao": 1,
-  "atualizado_em": null,
-  "zonas": []
+  "atualizado_em": "2026-10-28T17:06:12Z",
+  "zonas": [
+    {
+      "uf": "SP",
+      "municipio_codigo": "71072",
+      "municipio_nome": "São Paulo",
+      "zona": "0253",
+      "arquivo": "dados/zona_0253.json"
+    }
+  ]
 }

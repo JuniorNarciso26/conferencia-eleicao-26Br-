@@ -27,10 +27,20 @@ test("login permanece na área de colaboradores", () => {
   assert.match(html, /Conecte sua conta GitHub/);
 });
 
-test("catálogo inicial é vazio: não publica resultado fictício", () => {
+test("catálogo publica somente a zona validada e mantém a consulta dinâmica", () => {
   const data = JSON.parse(read("dados/catalogo.json"));
   assert.equal(data.versao, 1);
-  assert.deepEqual(data.zonas, []);
+  assert.deepEqual(data.zonas, [{
+    uf: "SP",
+    municipio_codigo: "71072",
+    municipio_nome: "São Paulo",
+    zona: "0253",
+    arquivo: "dados/zona_0253.json"
+  }]);
+  const pack = JSON.parse(read("dados/zona_0253.json"));
+  assert.equal(pack.meta.total_secoes, 496);
+  assert.equal(pack.meta.cobertura_completa, true);
+  assert.equal(pack.secoes.length, 496);
   const code = read("consulta.js");
   assert.match(code, /catalogo\.json/);
   assert.match(code, /PACOTE PUBLICADO/);
