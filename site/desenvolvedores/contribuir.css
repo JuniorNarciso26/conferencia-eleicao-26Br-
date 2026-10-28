@@ -1,0 +1,17 @@
+.guide-panel {border:1px solid #a5cce6;background:linear-gradient(160deg,#f8fcff,#fff);scroll-margin-top:24px}
+.guide-panel h3 {font-size:18px;margin:24px 0 14px;color:#153e5c;display:flex;align-items:center;gap:9px}
+.guide-panel .guide-info {background:#eaf4fb;border-left:3px solid #2f84b8;padding:11px 14px;font-size:13px;line-height:1.6;border-radius:4px}
+.guide-fields {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:10px}
+.guide-fields label,.guide-total label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:750;color:#254b64}
+.guide-fields select,.guide-fields input,.guide-total input{font:inherit;padding:11px 12px;border:1px solid #a6c4d9;border-radius:9px;width:100%;background:#fff;color:#173e5a}
+.guide-fields :focus-visible,.guide-total :focus-visible{outline:2px solid #1682c7;outline-offset:2px}
+.guide-head {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:22px;border-top:1px solid #d5e5ef;padding-top:8px}
+.guide-location{font-size:12px;font-weight:700;border-radius:999px;background:#e2effb;padding:7px 13px}
+.step-num{background:#0c5689;border-radius:50%;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;width:27px;height:27px;flex:0 0 auto}
+.guide-code{display:flex;gap:10px;align-items:flex-start;border:1px solid #cbdfe9;background:#0e2843;border-radius:10px;padding:12px;margin:10px 0 16px}
+.guide-code pre {margin:0;color:#e2f5ff;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;flex:1;font-size:12px;line-height:1.6}
+.guide-code .button {flex:0 0 auto;background:#fff;color:#154a6a;padding:8px 12px;font-size:12px}
+.guide-total{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:14px 0}.guide-total label{width:230px}
+#collect-message,#collect-total-message{font-size:13px;font-weight:650;color:#275e7b}
+.guide-panel[hidden],#collect-steps[hidden],#collect-export[hidden]{display:none}
+@media(max-width:620px){.guide-fields{grid-template-columns:1fr}.guide-code{flex-direction:column}.guide-code .button{align-self:flex-end}.guide-total label{width:100%}}

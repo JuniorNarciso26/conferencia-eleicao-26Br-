@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../styles.css">
 <script defer src="../config.js"></script>
 <script defer src="../app.js"></script>
+<link rel="stylesheet" href="./contribuir.css">
+<script type="module" src="./contribuir.js"></script>
 </head>
 <body>
 <header class="hero">
@@ -45,10 +47,62 @@
     </section>
     <section>
       <h2>Contribuir com a coleta</h2>
-      <p>Os colaboradores instalam o coletor do repositório, selecionam uma zona e processam os dados do TSE localmente.</p>
-      <p><strong>O envio dos resultados ao banco central será uma etapa posterior.</strong> Não envie logs, RDV, BU ou VSC ao portal.</p>
+      <p>Escolha uma zona eleitoral e receba um roteiro de coleta feito para ela. O portal vai orientar você da instalação até o Pull Request, sem precisar memorizar comandos.</p>
+      <button type="button" class="button primary" id="contribute-start" aria-expanded="false" aria-controls="contribute-guide">Quero contribuir</button>
+      <p class="small">A coleta roda no seu computador Linux/WSL ou VPS. A reserva de zonas e o envio automático ainda não estão disponíveis.</p>
     </section>
   </div>
+  <section id="contribute-guide" class="guide-panel" hidden aria-labelledby="guide-title">
+    <div class="section-head"><div><p class="eyebrow dark">ASSISTENTE DE CONTRIBUIÇÃO</p><h2 id="guide-title">Vamos preparar sua primeira coleta</h2></div><button type="button" id="contribute-close" class="button outline">Fechar guia</button></div>
+    <p>Em poucos passos você define a zona, prepara os comandos, valida os resultados e os envia para revisão via GitHub.</p>
+    <p class="guide-info">O site <strong>não executa a coleta</strong>, não reserva zonas automaticamente e não envia arquivos ao servidor nesta versão. O login GitHub é necessário para abrir o Pull Request, não para consultar os resultados.</p>
+    <form id="contribute-form" novalidate>
+      <h3><span class="step-num">1</span> Escolha a zona eleitoral</h3>
+      <div class="guide-fields">
+        <label for="collect-uf">Estado (UF)
+          <select id="collect-uf" name="uf" required><option value="">Escolha o estado</option></select>
+        </label>
+        <label for="collect-city">Município
+          <input id="collect-city" name="city" type="text" maxlength="100" placeholder="Ex.: São Paulo" required>
+        </label>
+        <label for="collect-city-code">Código do município no TSE
+          <input id="collect-city-code" name="cityCode" type="text" inputmode="numeric" maxlength="6" pattern="[0-9]{1,6}" placeholder="Ex.: 71072" required>
+        </label>
+        <label for="collect-zone">Zona eleitoral
+          <input id="collect-zone" name="zone" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{1,4}" placeholder="Ex.: 0254" required>
+        </label>
+      </div>
+      <p class="small">Informe o código TSE do município (não é o código IBGE). Exemplo: São Paulo/SP = 71072. Se estiver em dúvida, confirme no cadastro eleitoral do TSE antes da coleta.</p>
+      <button class="button primary" type="submit" id="collect-generate">Preparar meu roteiro</button>
+      <p id="collect-message" role="status" aria-live="polite"></p>
+    </form>
+    <div id="collect-steps" hidden>
+      <div class="guide-head"><h3><span class="step-num">2</span> Instale o coletor</h3><span id="collect-location" class="guide-location"></span></div>
+      <p>Execute estes comandos no <strong>Linux, WSL (Windows) ou VPS</strong>, dentro de um terminal. É necessário ter Git e Python 3.11 ou superior.</p>
+      <div class="guide-code"><pre id="cmd-install"></pre><button type="button" class="button outline copy-command" data-copy="cmd-install">Copiar</button></div>
+      <h3><span class="step-num">3</span> Confira e inicie a coleta</h3>
+      <p>Primeiro veja a quantidade de seções que o catálogo encontrou, sem baixar arquivos:</p>
+      <div class="guide-code"><pre id="cmd-check"></pre><button type="button" class="button outline copy-command" data-copy="cmd-check">Copiar</button></div>
+      <p>Depois execute a coleta dos dois turnos. O processo continua em segundo plano.</p>
+      <div class="guide-code"><pre id="cmd-start"></pre><button type="button" class="button outline copy-command" data-copy="cmd-start">Copiar</button></div>
+      <p>Acompanhe até o estado <code>completed</code>, sem falhas:</p>
+      <div class="guide-code"><pre id="cmd-status"></pre><button type="button" class="button outline copy-command" data-copy="cmd-status">Copiar</button></div>
+      <p class="small">Você pode interromper com <code>scripts/coleta stop</code> e continuar com <code>scripts/coleta resume</code>. Não feche sua VPS ou computador durante o processamento.</p>
+      <h3><span class="step-num">4</span> Valide e prepare os resultados</h3>
+      <p>Após terminar, informe a <strong>quantidade esperada de seções</strong>, confirmada no catálogo eleitoral e na coleta. Não reutilize o total de outra zona.</p>
+      <div class="guide-total"><label for="collect-total">Quantidade de seções <input id="collect-total" type="number" min="1" max="10000" step="1" placeholder="Ex.: 300"></label><button id="collect-build" class="button primary" type="button">Gerar comando de validação</button></div>
+      <p id="collect-total-message" role="status" aria-live="polite"></p>
+      <div id="collect-export" hidden>
+        <div class="guide-code"><pre id="cmd-export"></pre><button type="button" class="button outline copy-command" data-copy="cmd-export">Copiar</button></div>
+        <p>O comando só gera o pacote se todas as seções esperadas estiverem validadas. Revise os totais e a origem dos dados antes de publicar.</p>
+        <h3><span class="step-num">5</span> Envie sua contribuição para revisão</h3>
+        <p>Crie um <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/fork" target="_blank" rel="noopener noreferrer">fork do projeto</a> no seu GitHub. Inclua somente o JSON consolidado gerado e uma nova entrada em <code>site/dados/catalogo.json</code>:</p>
+        <div class="guide-code"><pre id="cmd-catalog"></pre><button type="button" class="button outline copy-command" data-copy="cmd-catalog">Copiar</button></div>
+        <p>Crie um Pull Request para a branch <code>main</code> do <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/pulls" target="_blank" rel="noopener noreferrer">repositório oficial</a>. Os arquivos serão revisados antes de entrar no site público.</p>
+        <p class="guide-info"><strong>Privacidade:</strong> não envie BU, RDV, VSC, logs, diretórios <code>raw/</code>, arquivos de identificação pessoal nem credenciais. O único arquivo de resultados a publicar é o JSON consolidado.</p>
+      </div>
+    </div>
+  </section>
   <section>
     <h2>Como auditamos</h2>
     <p>Compararemos os dois turnos por seção eleitoral, incluindo comparecimento, habilitação biométrica, votos válidos, brancos e nulos. Indicadores estatísticos servem para orientar análises, não para provar irregularidades por si só.</p>
