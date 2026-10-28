@@ -54,17 +54,17 @@ test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => 
   }
 });
 
-test("não publica arquivos brutos, não promete reserva nem upload automático", () => {
+test("portal preserva coleta local mas exige reserva central para iniciar", () => {
   const html=read("desenvolvedores/index.html");
-  assert.match(html,/não reserva zonas automaticamente/i);
-  assert.match(html,/não executa a coleta/i);
+  assert.match(html,/reserva é compartilhada entre colaboradores/i);
   assert.match(html,/não envie BU, RDV, VSC/i);
   assert.match(html,/Pull Request/);
   const js=read("desenvolvedores/contribuir.js");
   assert.match(js,/catalogo\.json/);
   assert.match(js,/isPublished/);
   assert.match(js,/localidades_2026\.json/);
-  assert.doesNotMatch(js,/\/api\/zones|\/api\/contributions/);
+  assert.match(js,/api\/zones\/reserve/);
+  assert.match(js,/api\/zones\/submit/);
 });
 
 
@@ -93,17 +93,17 @@ test("catálogo TSE 2026 tem 27 UFs, municípios e zonas vinculados", () => {
   }
 });
 
-test("seletores preenchem código TSE e zona sem digitação manual", () => {
-  const html = read("desenvolvedores/index.html");
-  assert.match(html, /<select id="collect-city"/);
-  assert.match(html, /id="collect-city-code"[^>]*readonly/);
-  assert.match(html, /<select id="collect-zone"/);
-  assert.match(html, /id="collect-zone-status"/);
-  const script = read("desenvolvedores/contribuir.js");
-  assert.match(script, /zone\.addEventListener\("change",selectStatus\)/);
-  assert.match(script, /isPublished\(loc\)/);
-  assert.match(script, /alreadyPublished|published===null/);
-  assert.match(script, /generate\.disabled=false/);
+test("seletores mantêm código TSE automático e consultam o status central", () => {
+  const html=read("desenvolvedores/index.html");
+  assert.match(html,/<select id="collect-city"/);
+  assert.match(html,/id="collect-city-code"[^>]*readonly/);
+  assert.match(html,/<select id="collect-zone"/);
+  assert.match(html,/id="collect-zone-status"/);
+  const script=read("desenvolvedores/contribuir.js");
+  assert.match(script,/zone\.addEventListener\("change"/);
+  assert.match(script,/api\/zones\/reservation/);
+  assert.match(script,/isPublished\(loc\)/);
+  assert.match(script,/reserveButton\.hidden=false/);
 });
 
 
@@ -117,23 +117,22 @@ test("guia inclui painel de acompanhamento local sem coletar via GitHub Pages", 
   assert.doesNotMatch(js,/\/api\/status/);
 });
 
-test("colaborador pode anotar zona em coleta neste navegador sem reservar no servidor", () => {
+test("reserva compartilhada informa colaborador, prazo e envio PR", () => {
   const html=read("desenvolvedores/index.html");
-  assert.match(html,/id="collect-mark-local"/);
-  assert.match(html,/id="collect-unmark-local"/);
-  assert.match(html,/id="collect-local-controls"/);
-  assert.match(html,/somente neste navegador/i);
+  assert.match(html,/id="collect-reserve"/);
+  assert.match(html,/id="collect-release"/);
+  assert.match(html,/id="collect-submit"/);
+  assert.match(html,/id="collect-pr-number"/);
+  assert.match(html,/24 horas/);
   assert.match(html,/id="cmd-monitor-help"/);
-  assert.match(html,/scripts\/coleta painel/);
-  assert.match(html,/127\.0\.0\.1:8765/);
-  const code=read("desenvolvedores/contribuir.js");
-  assert.match(code,/localStorage\.getItem\(LOCAL_KEY\)/);
-  assert.match(code,/localStorage\.setItem\(LOCAL_KEY/);
-  assert.match(code,/localMarked\.has\(zoneKey\(loc\)\)/);
-  assert.match(code,/EM COLETA NESTE NAVEGADOR/);
-  assert.match(code,/resultados AINDA NÃO PUBLICADOS/);
-  assert.match(code,/if\(isPublished\(loc\)\)/);
-  assert.match(code,/markLocal\.addEventListener\("click"/);
-  assert.match(code,/unmarkLocal\.addEventListener\("click"/);
-  assert.doesNotMatch(code,/api\/zones|api\/contributions|fetch\(.+method:"POST"/);
+  const js=read("desenvolvedores/contribuir.js");
+  assert.match(js,/SENDO PROCESSADA POR/);
+  assert.match(js,/SUA RESERVA ATIVA/);
+  assert.match(js,/AGUARDANDO REVISÃO/);
+  assert.match(js,/api\/zones\/reserve/);
+  assert.match(js,/api\/zones\/submit/);
+  assert.match(js,/api\/zones\/release/);
+  assert.match(js,/sessionStorage\.getItem\(TOKEN_KEY\)/);
+  assert.doesNotMatch(js,/localStorage/);
+  assert.doesNotMatch(js,/collect-mark-local/);
 });

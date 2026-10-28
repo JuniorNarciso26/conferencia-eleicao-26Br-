@@ -36,3 +36,11 @@
 .zone-state.reserved{background:#fff5dd;border-color:#e7cb82;color:#72500e}
 .zone-state.mine{background:#e6f1ff;border-color:#99bfeb;color:#1d5a87}
 .zone-state.submitted{background:#eaf0fc;border-color:#b1c1e7;color:#475ba0}
+
+.reservation-controls{margin:12px 0 16px;padding:15px;border:1px solid #bfd8e9;border-radius:12px;background:#f6fafd}
+.reservation-controls button{margin:8px 8px 8px 0}
+.reservation-controls label{display:block;font-size:13px;font-weight:650;margin:14px 0 8px}
+.reservation-controls input{max-width:200px;width:100%;padding:10px;border:1px solid #a6c4d9;border-radius:8px;font:inherit}
+.zone-state.reserved{background:#fff5dd;border-color:#e7cb82;color:#72500e}
+.zone-state.mine{background:#e6f1ff;border-color:#99bfeb;color:#1d5a87}
+.zone-state.submitted{background:#eaf0fc;border-color:#b1c1e7;color:#475ba0}
