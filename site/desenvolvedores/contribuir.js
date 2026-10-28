@@ -288,7 +288,7 @@ start.addEventListener("click",()=>{
 });
 close.addEventListener("click",()=>{guide.hidden=true;start.setAttribute("aria-expanded","false");start.focus();});
 function updateCommands(data){
-  for(const k of ["install","check","start","status","monitor","catalog"])text("cmd-"+k,data[k]);
+  for(const k of ["install","check","start","status","monitor"])text("cmd-"+k,data[k]);
   if(data.export)text("cmd-export",data.export);
 }
 form.addEventListener("submit",async event=>{
@@ -317,7 +317,7 @@ build.addEventListener("click",()=>{
   if(!locationSelected){status.textContent="Primeiro reserve a zona.";return;}
   try{
     const commands=gerarRoteiro(locationSelected,totalInput.value);
-    text("cmd-export",commands.export);text("cmd-catalog",commands.catalog);
+    text("cmd-export",commands.export);
     output.hidden=false;
     status.textContent="Gere e valide os resultados. Depois envie o JSON no campo Arquivo consolidado da zona.";
     output.scrollIntoView({behavior:"smooth",block:"start"});
