@@ -35,7 +35,8 @@ test("monta comandos para nova zona sem reutilizar o total da zona 0253", () => 
   const input={uf:"SP",municipio:"São Paulo",codigo:"71072",zona:"0254"};
   const basic=gerarRoteiro(input);
   assert.match(basic.install,/git clone/);
-  assert.match(basic.install,/bash scripts\/instalar_vps\.sh/);
+  assert.match(basic.install,/uv python install 3\.12/);
+  assert.match(basic.install,/PYTHON=.*uv python find 3\.12.*bash scripts\/instalar_vps\.sh/);
   assert.match(basic.check,/--uf sp --municipio 71072 --zona 0254 --dry-run$/);
   assert.match(basic.start,/--uf sp --municipio 71072 --zona 0254$/);
   assert.equal(basic.status,"scripts/coleta status");
