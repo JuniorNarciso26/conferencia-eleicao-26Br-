@@ -8,7 +8,7 @@ test("guia de contribuicao existe na area de colaboradores; consulta publica per
   const dev = read("desenvolvedores/index.html");
   assert.match(dev, /id="contribute-start"/);
   assert.match(dev, /id="contribute-guide"[^>]*hidden/);
-  assert.match(dev, /id="collect-form"/);
+  assert.match(dev, /id="contribute-form"/);
   assert.match(dev, /id="collect-total"/);
   assert.match(dev, /src="\.\/contribuir\.js"/);
   assert.match(dev, /id="login-button"/);
