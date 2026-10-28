@@ -44,3 +44,15 @@
 .zone-state.reserved{background:#fff5dd;border-color:#e7cb82;color:#72500e}
 .zone-state.mine{background:#e6f1ff;border-color:#99bfeb;color:#1d5a87}
 .zone-state.submitted{background:#eaf0fc;border-color:#b1c1e7;color:#475ba0}
+
+#collect-upload-file{display:block;width:100%;max-width:430px;margin:8px 0}
+#collect-upload-progress{display:block;width:100%;margin:10px 0;height:16px}
+#collect-upload-progress[hidden]{display:none}
+#collect-upload-status{font-weight:600}
+#review-list{display:grid;gap:12px;margin:14px 0}
+.review-item{border:1px solid #d1e0eb;border-radius:10px;padding:14px}
+.review-item button{margin:8px 0 0}
+.review-preview{background:#eef5f9;padding:15px;white-space:pre-wrap;max-height:260px;overflow:auto;border-radius:8px}
+#review-detail label{display:block;margin:18px 0}
+#review-detail textarea{display:block;width:100%;max-width:600px;margin:9px 0;padding:10px}
+#review-approve,#review-reject{margin:6px 8px 6px 0}

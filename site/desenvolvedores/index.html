@@ -65,8 +65,8 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
   </section>
   <section id="contribute-guide" class="guide-panel" hidden aria-labelledby="guide-title">
     <div class="section-head"><div><p class="eyebrow dark">ASSISTENTE DE CONTRIBUIÇÃO</p><h2 id="guide-title">Vamos preparar sua primeira coleta</h2></div><button type="button" id="contribute-close" class="button outline">Fechar guia</button></div>
-    <p>Reserve a zona por 24 horas e siga o roteiro para coletar, validar e enviar os resultados por Pull Request.</p>
-    <p class="guide-info">A reserva é compartilhada entre colaboradores no Cloudflare D1 e vence em 24 horas se não houver envio válido. O portal não executa a coleta nem recebe arquivos brutos; o envio continua por Pull Request.</p>
+    <p>Reserve a zona por 24 horas, siga o roteiro da coleta e envie o JSON consolidado diretamente no portal para revisão.</p>
+    <p class="guide-info">A reserva é compartilhada entre colaboradores por 24 horas. Após a coleta, selecione o JSON consolidado e envie diretamente para revisão. O portal não executa a coleta nem recebe arquivos brutos.</p>
     <form id="contribute-form" novalidate>
       <h3><span class="step-num">1</span> Escolha a zona eleitoral</h3>
       <div class="guide-fields">
@@ -89,12 +89,14 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
         <div id="collect-reservation-status" role="status" aria-live="polite"></div>
         <button id="collect-reserve" type="button" class="button primary" hidden>Reservar esta zona por 24 horas</button>
         <button id="collect-release" type="button" class="button outline" hidden>Liberar minha reserva</button>
-        <div id="collect-submit-controls" hidden>
-          <label for="collect-pr-number">Número do Pull Request com os resultados
-            <input id="collect-pr-number" type="number" min="1" step="1" placeholder="Ex.: 15">
+        <div id="collect-upload-controls" hidden>
+          <label for="collect-upload-file">Arquivo consolidado da zona (.json)
+            <input id="collect-upload-file" type="file" accept=".json,application/json">
           </label>
-          <button id="collect-submit" type="button" class="button primary">Registrar envio para revisão</button>
-          <p class="small">Depois de criar o Pull Request, informe o número aqui antes das 24 horas. O sistema valida o autor e os arquivos da zona. Uma zona em revisão não expira automaticamente.</p>
+          <button id="collect-upload-button" type="button" class="button primary">Enviar resultados para revisão</button>
+          <progress id="collect-upload-progress" max="100" value="0" hidden aria-label="Progresso do envio"></progress>
+          <p class="small" id="collect-upload-status" role="status" aria-live="polite">Selecione o JSON produzido pelo coletor.</p>
+          <p class="small">O envio utiliza sua reserva GitHub e ocorre em lotes. Se a conexão falhar, selecione o mesmo arquivo e tente novamente. Nenhum arquivo bruto será enviado.</p>
         </div>
       </div>
       <p class="small" id="collect-source"></p>
@@ -124,13 +126,29 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
       <div id="collect-export" hidden>
         <div class="guide-code"><pre id="cmd-export"></pre><button type="button" class="button outline copy-command" data-copy="cmd-export">Copiar</button></div>
         <p>O comando só gera o pacote se todas as seções esperadas estiverem validadas. Revise os totais e a origem dos dados antes de publicar.</p>
-        <h3><span class="step-num">5</span> Envie sua contribuição para revisão</h3>
-        <p><strong>Registre a zona automaticamente:</strong> execute o próximo comando no Ubuntu/WSL. Ele valida o pacote e acrescenta a zona ao arquivo <code>site/dados/catalogo.json</code>. O conteúdo JSON é um dado de cadastro, <strong>não</strong> deve ser colado no terminal.</p>
-        <div class="guide-code"><pre id="cmd-catalog"></pre><button type="button" class="button outline copy-command" data-copy="cmd-catalog">Copiar comando</button></div>
-        <p>Depois confira com <code>git status</code> e crie um Pull Request contendo <strong>apenas</strong> o JSON consolidado da zona e o catálogo atualizado. Se não tiver permissão de escrita no projeto, envie a alteração pelo seu fork.</p>
-        <p>Crie um Pull Request para a branch <code>main</code> do <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/pulls" target="_blank" rel="noopener noreferrer">repositório oficial</a>. Volte ao formulário e informe o número do PR em <strong>Registrar envio para revisão</strong> antes de vencer sua reserva. O sistema confere sua autoria e os arquivos da zona. Os resultados serão revisados antes de entrar no site público.</p>
-        <p class="guide-info"><strong>Privacidade:</strong> não envie BU, RDV, VSC, logs, diretórios <code>raw/</code>, arquivos de identificação pessoal nem credenciais. O único arquivo de resultados a publicar é o JSON consolidado.</p>
+        <h3><span class="step-num">5</span> Envie o JSON pelo portal</h3>
+        <p>Volte à seleção da zona, escolha o arquivo <code id="upload-name-hint">.json</code> no campo <strong>Arquivo consolidado da zona</strong> e clique em <strong>Enviar resultados para revisão</strong>. O portal enviará as seções diretamente ao D1, sem comandos Git, fork, commit ou Pull Request.</p>
+        <p>Se a coleta já estiver concluída e o JSON existir, você pode pular a geração de um novo pacote. A reserva de 24 horas precisa estar ativa no momento do envio.</p>
+        <p class="guide-info"><strong>Privacidade:</strong> selecione somente o JSON consolidado da zona, nunca BU, RDV, VSC, logs, diretórios <code>raw/</code> ou credenciais. O envio entra em revisão e não aparece imediatamente na consulta pública.</p>
       </div>
+    </div>
+  </section>
+  <section class="guide-panel" aria-labelledby="review-title">
+    <div class="section-head"><div><p class="eyebrow dark">ADMINISTRAÇÃO</p><h2 id="review-title">Revisão dos resultados enviados</h2></div>
+      <button id="review-refresh" type="button" class="button outline">Consultar minha fila</button></div>
+    <p class="small">Disponível exclusivamente aos revisores autorizados no Worker. Consulte as entregas, abra o pacote e aprove ou rejeite antes da publicação.</p>
+    <p id="review-message" role="status" aria-live="polite"></p>
+    <div id="review-list"></div>
+    <div id="review-detail" hidden>
+      <h3 id="review-detail-title"></h3>
+      <p id="review-detail-stats"></p>
+      <pre id="review-detail-preview" class="review-preview"></pre>
+      <a id="review-download" class="button outline" download="pacote-conferencia.json">Baixar pacote para conferência</a>
+      <label for="review-reason">Motivo da rejeição (obrigatório se rejeitar)
+        <textarea id="review-reason" rows="3" placeholder="Descreva a inconsistência encontrada."></textarea>
+      </label>
+      <button id="review-approve" class="button primary" type="button">Aprovar e publicar</button>
+      <button id="review-reject" class="button outline" type="button">Rejeitar e liberar zona</button>
     </div>
   </section>
   <section>
