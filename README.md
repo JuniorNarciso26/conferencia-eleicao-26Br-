@@ -107,6 +107,22 @@ Para uma zona, use o gerador fail-closed informando a cobertura esperada:
 .venv/bin/python scripts/gerar_painel_zona.py --raiz data/coletas --saida web/dados/zona_0253.json --uf SP --municipio 71072 --zona 0253 --esperado 496
 ```
 
+## Comparar a votação por horário
+
+A [página de horários](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/horarios.html) lista as zonas com horários aprovados no D1 e carrega a zona 0252 de São Paulo como exemplo enquanto a primeira carga é publicada. Ela mostra a quantidade de votações concluídas em cada hora e a evolução percentual do comparecimento nos dois turnos, na zona inteira ou por seção. CSVs locais continuam disponíveis para prévia.
+
+Depois de coletar e validar todas as seções da nova zona, gere o CSV anônimo:
+
+```bash
+python3 scripts/exportar_horarios.py --raiz data/coletas --uf SP --municipio 71072 --zona 0252 --esperado 339 --saida horarios_sp_71072_0252.csv
+```
+
+Troque UF, código TSE do município, zona e número oficial de seções no comando. O exportador confere o SHA-256 de cada log com o manifesto e exige que a contagem dos eventos de conclusão feche com o comparecimento do BU em cada seção e turno. Ele lê também logs anteriores anexados dentro do pacote `.jez`. O CSV contém somente `turno;secao;hora;votacoes_concluidas`; nenhum log bruto ou escolha de candidato é enviado à página.
+
+Depois de publicar os resultados da zona no D1, selecione a mesma zona na área de colaboradores e envie o CSV de horários. O Worker armazena contagens por seção e turno, confere cada soma com o BU já publicado e manda o pacote para revisão. Só depois da aprovação os horários aparecem na consulta pública. A nova migration é `cloudflare/migrations/0005_hourly_voting.sql`; consulte a sequência de implantação em `docs/PLATAFORMA_COLABORATIVA.md`. Para a zona 0252 já analisada, use `site/dados/horarios_sp_71072_0252.csv` como primeira carga.
+
+O horário do log registra a conclusão de uma votação. BU e RDV não fornecem uma associação confiável entre esse horário e o candidato escolhido. Portanto, a página não atribui votos de candidatos a horas do dia.
+
 ## Envio direto do JSON pelo portal (novo fluxo)
 
 Após gerar o arquivo `site/dados/<uf>_<municipioTSE>_<zona>.json`, o colaborador **não precisa de Git, commit, push nem Pull Request** para entregar os dados. O arquivo permanece em seu computador até ele selecioná-lo no campo de upload na área [Colaboradores](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/desenvolvedores/).

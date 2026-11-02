@@ -1,5 +1,6 @@
 "use strict";
 import { validarLocalidade, gerarRoteiro } from "./coleta-roteiro.mjs";
+import {analisarCsv,secoesParaUpload} from "../horarios.mjs";
 const $=s=>document.querySelector(s);
 const start=$("#contribute-start"),guide=$("#contribute-guide"),close=$("#contribute-close");
 const form=$("#contribute-form"),steps=$("#collect-steps"),output=$("#collect-export");
@@ -12,6 +13,9 @@ const reserveButton=$("#collect-reserve"),releaseButton=$("#collect-release");
 const uploadControls=$("#collect-upload-controls"),uploadButton=$("#collect-upload-button");
 const fileInput=$("#collect-upload-file"),uploadProgress=$("#collect-upload-progress");
 const uploadStatus=$("#collect-upload-status");
+const hourlyControls=$("#hourly-upload-controls"),hourlyFile=$("#hourly-upload-file");
+const hourlyButton=$("#hourly-upload-button"),hourlyProgress=$("#hourly-upload-progress");
+const hourlyStatus=$("#hourly-upload-status");
 const FIELD_KEYS=["aptos","comparecimento","comparecimento_bu","habilitados_biometria",
   "habilitados_biografia","comp_sem_biometria","flavio","lula","outros","brancos","nulos","nulos_tecnicos"];
 const API=(window.CONF_CONFIG?.apiBaseUrl||"").replace(/\/+$/,"");
@@ -38,7 +42,7 @@ function resetGuide(){
 }
 function resetControls(){
   controls.hidden=true;reserveButton.hidden=true;releaseButton.hidden=true;
-  uploadControls.hidden=true;info.textContent="";activeLease=null;
+  uploadControls.hidden=true;hourlyControls.hidden=true;info.textContent="";activeLease=null;
 }
 function cityForSelection(){return (locations?.ufs?.[uf.value]||[]).find(x=>x.codigo===city.value);}
 function currentZone(){
@@ -84,7 +88,14 @@ function niceError(code){
     ALREADY_SUBMITTED:"A zona já foi enviada para revisão.",
     INVALID_HASH:"Falha ao conferir o identificador de integridade.",
     INVALID_UPLOAD_ID:"Identificador do envio inválido.",
-    ZONE_IN_REVIEW:"Esta zona já está aguardando revisão."
+    ZONE_IN_REVIEW:"Esta zona já está aguardando revisão.",
+    INVALID_HOURS:"O CSV contém horários ou contagens inválidos.",
+    HOURLY_TOTAL_MISMATCH:"A contagem horária não confere com o comparecimento dos boletins publicados.",
+    SECTION_NOT_IN_RESULTS:"O CSV inclui uma seção ausente dos resultados publicados.",
+    HOURLY_UPLOAD_NOT_ACTIVE:"O envio de horários expirou ou pertence a outra conta.",
+    HOURLY_UPLOAD_EXISTS:"Esta zona já possui horários enviados ou em revisão.",
+    ZONE_NOT_PUBLISHED:"Os resultados desta zona precisam estar publicados antes dos horários.",
+    FORBIDDEN:"Sua conta não tem autorização para enviar horários desta zona."
   })[code]||"Não foi possível concluir a solicitação. Confira a conexão e tente novamente.";
 }
 async function api(path,options={}){
@@ -129,6 +140,7 @@ async function checkStatus(reset=true){
     }else if(result.status==="published"){
       state("Zona "+loc.zona+": resultados PUBLICADOS no portal após revisão.","published");
       info.textContent="Os dados desta zona estão disponíveis na consulta pública.";
+      hourlyControls.hidden=false;
     }else if(result.status==="submitted"){
       state("Zona "+loc.zona+": DADOS ENVIADOS POR @"+result.contributor+"; AGUARDANDO REVISÃO.","submitted");
       info.textContent=result.pr_number
@@ -246,6 +258,35 @@ async function uploadSelected(){
   }finally{uploadButton.disabled=false;}
 }
 uploadButton.addEventListener("click",uploadSelected);
+async function uploadSelectedHours(){
+  const loc=currentZone(),file=hourlyFile.files?.[0];
+  if(!loc||!file){hourlyStatus.textContent="Selecione uma zona publicada e o CSV de horários.";return;}
+  if(file.size>20*1024*1024||file.size<50){
+    hourlyStatus.textContent="CSV inválido ou acima do limite de 20 MB.";return;
+  }
+  hourlyButton.disabled=true;hourlyProgress.hidden=false;hourlyProgress.value=0;
+  try{
+    const data=analisarCsv(await file.text());
+    const bytes=await file.arrayBuffer();
+    const digest=await crypto.subtle.digest("SHA-256",bytes);
+    const sha256=[...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,"0")).join("");
+    const secoes=secoesParaUpload(data);
+    hourlyStatus.textContent="Enviando "+secoes.length+" seções para conferência...";
+    const start=await changeReservation("/api/hourly/start",{sha256});
+    if(start.sections!==secoes.length)throw Error("INCOMPLETE_UPLOAD");
+    for(let i=0;i<secoes.length;i+=20){
+      const part=secoes.slice(i,i+20);
+      await changeReservation("/api/hourly/chunk",{upload_id:start.upload_id,secoes:part});
+      hourlyProgress.value=Math.round(95*Math.min(secoes.length,i+part.length)/secoes.length);
+      hourlyStatus.textContent="Enviando seção "+Math.min(secoes.length,i+part.length)+"/"+secoes.length+"...";
+    }
+    await changeReservation("/api/hourly/finish",{upload_id:start.upload_id});
+    hourlyProgress.value=100;
+    hourlyStatus.textContent="Horários recebidos e conferidos com os BUs. Protocolo "+start.upload_id+". Aguardando revisão para publicação.";
+  }catch(e){hourlyStatus.textContent=niceError(e.message)+" Código: "+e.message;}
+  finally{hourlyButton.disabled=false;}
+}
+hourlyButton.addEventListener("click",uploadSelectedHours);
 async function loadCatalog(){
   try{
     const [r1,r2]=await Promise.all([

@@ -224,3 +224,17 @@ A consulta pública de uma zona aprovada no D1 mostra uma caixa **Responsáveis 
    Se a zona ainda estiver **aguardando revisão**, não aparece na API pública e o revisor não existe: aprove no painel depois de conferir os resultados.
 
 **Importante:** identificar quem processou e quem revisou é um registro de responsabilidade editorial, **não constitui certificação do TSE nem prova automática da integridade dos boletins**.
+
+## Horários de votação no D1
+
+As contagens de votações concluídas por hora ficam nas tabelas `zone_hourly_uploads` e `zone_hourly_sections`, vinculadas à carga de resultados já publicada da mesma zona. O banco guarda um vetor de 24 contagens para cada turno e seção, sem log bruto, RDV, candidato ou identificador de eleitor. No fluxo de novas zonas, o CSV de origem permanece no computador do colaborador; o SHA-256 registrado no banco é declarado pelo navegador, sem autenticação da fonte original. O CSV da zona 0252 já está versionado como exemplo público.
+
+1. Na **mesma base D1** e após as migrations `0003` e `0004`, faça backup e aplique `cloudflare/migrations/0005_hourly_voting.sql` uma vez. Com o UUID real configurado somente na cópia local de `wrangler.toml`, execute em `cloudflare/`:
+   ```bash
+   npx wrangler d1 execute conferencia-eleitoral --remote --file migrations/0005_hourly_voting.sql
+   ```
+2. Publique o Worker atualizado, preservando o binding `DB`, as variáveis e secrets existentes. Publique também o site atualizado pelo GitHub Pages. A API antiga continua atendendo os resultados por candidato.
+3. Para a primeira carga, entre na área dos colaboradores, escolha **SP → São Paulo → zona 0252** e selecione `site/dados/horarios_sp_71072_0252.csv` no campo de horários. Somente quem enviou os resultados da zona ou um revisor em `ADMIN_GITHUB_IDS` pode enviar. O Worker confere 339 seções, os dois turnos e a soma de cada seção com o BU já publicado. Se os resultados da zona 0252 ainda não estiverem publicados no D1, publique-os pelo fluxo normal primeiro.
+4. O revisor abre **Revisão dos horários enviados**, confere o pacote e aprova. Somente então a zona passa a aparecer em `/api/published/hourly/zones` e `/api/published/hourly/zone?uf=SP&municipio=71072&zona=0252`, usada pela página de horários.
+
+Para outras cidades, use `scripts/exportar_horarios.py` após validar a coleta completa e repita o envio na zona correspondente. Um envio interrompido pode ser retomado com o mesmo CSV durante 24 horas; a aprovação nunca é automática. A página mantém o CSV local como prévia enquanto a API ou a carga ainda não estiverem disponíveis.
