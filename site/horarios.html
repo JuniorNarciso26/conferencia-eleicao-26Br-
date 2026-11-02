@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Compare a quantidade anônima de votações concluídas por hora e seção entre dois turnos e localidades.">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>Caminho da votação por horário | Conferência Eleitoral 2026</title>
+<link rel="stylesheet" href="./consulta.css">
+<link rel="stylesheet" href="./horarios.css">
+<script type="module" src="./horarios.js"></script>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">CONFERÊNCIA ELEITORAL <span>2026</span></div>
+    <nav aria-label="Navegação principal">
+      <a href="./">Consulta pública</a>
+      <a href="./horarios.html" aria-current="page">Votação por horário</a>
+      <a href="./desenvolvedores/">Área dos colaboradores</a>
+      <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">Código aberto</a>
+    </nav>
+  </div>
+  <div class="headline">
+    <div>
+      <div class="eyebrow">LOGS DE URNA · CONTAGEM ANÔNIMA</div>
+      <h1>Caminho da votação por horário</h1>
+      <p>Veja quantas votações foram concluídas a cada hora e como o comparecimento acumulou ao longo do dia. Compare os dois turnos e carregue outra cidade ou zona.</p>
+    </div>
+  </div>
+</header>
+<main class="shell">
+  <section class="notice" aria-label="Limite da análise">
+    <strong>O horário não identifica o candidato escolhido.</strong> O log informa quando uma votação foi computada; o BU informa totais por candidato e seção. O RDV não preserva uma ligação entre voto e horário. Os gráficos mostram somente a movimentação anônima de votantes.
+  </section>
+  <section class="panel" aria-labelledby="arquivos-titulo">
+    <h2 id="arquivos-titulo">Dados para comparar</h2>
+    <p class="desc">A zona 0252 de São Paulo/SP é carregada automaticamente. Os CSVs escolhidos são lidos apenas neste navegador.</p>
+    <div class="inputs">
+      <div class="dataset">
+        <h3>Localidade A</h3>
+        <label for="nome-a">Nome da cidade / zona</label>
+        <input id="nome-a" type="text" value="São Paulo/SP · zona 0252" maxlength="80">
+        <label for="arquivo-a">Trocar CSV da localidade A</label>
+        <input id="arquivo-a" type="file" accept=".csv,text/csv">
+        <label for="secao-a">Seção</label>
+        <select id="secao-a" disabled><option value="">Zona inteira</option></select>
+        <p id="meta-a" class="dataset-meta">Carregando...</p>
+      </div>
+      <div class="dataset">
+        <h3>Localidade B (opcional)</h3>
+        <label for="nome-b">Nome da cidade / zona</label>
+        <input id="nome-b" type="text" placeholder="Ex.: Campinas/SP · zona 0033" maxlength="80">
+        <label for="arquivo-b">CSV da localidade B</label>
+        <input id="arquivo-b" type="file" accept=".csv,text/csv">
+        <label for="secao-b">Seção</label>
+        <select id="secao-b" disabled><option value="">Zona inteira</option></select>
+        <p id="meta-b" class="dataset-meta">Nenhum arquivo selecionado.</p>
+      </div>
+    </div>
+    <p id="erro" class="error" role="alert" hidden></p>
+  </section>
+  <section class="metrics" id="totais" aria-label="Totais de votações concluídas"></section>
+  <section class="panel" aria-labelledby="grafico-titulo">
+    <h2 id="grafico-titulo">Comparecimento acumulado ao longo do dia</h2>
+    <p class="desc">Porcentagem do total de votações concluídas em cada turno e localidade. A escala percentual permite comparar zonas de tamanhos diferentes.</p>
+    <div id="legenda" class="legend"></div>
+    <div class="chart-wrap"><svg id="grafico" role="img" aria-label="Gráfico de porcentagem acumulada por hora" viewBox="0 0 900 350"></svg></div>
+  </section>
+  <section class="panel" aria-labelledby="tabela-titulo">
+    <h2 id="tabela-titulo">Votações concluídas em cada hora</h2>
+    <p class="desc">Cada coluna traz contagens de pessoas que finalizaram a votação naquela hora, não votos para candidatos.</p>
+    <div class="table-wrap"><table id="tabela"><thead></thead><tbody></tbody><tfoot></tfoot></table></div>
+  </section>
+  <section class="panel">
+    <h2>Fonte e preparo dos dados</h2>
+    <p>São Paulo, zona 0252: 339 seções por turno. Os eventos dos logs foram conferidos com o comparecimento dos boletins: 84.773 no 1º turno e 87.648 no 2º. <a href="https://resultados.tse.jus.br/oficial/ele2026/6257/dados/sp/sp71072-z0252-c0001-e006257-u.json">Resultado oficial do 1º turno</a> · <a href="https://resultados.tse.jus.br/oficial/ele2026/6258/dados/sp/sp71072-z0252-c0001-e006258-u.json">Resultado oficial do 2º turno</a>.</p>
+    <p>Para outra cidade, colete os logs e boletins, gere o CSV com <code>scripts/exportar_horarios.py</code> e selecione o arquivo acima. O <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">repositório</a> contém o comando e o formato. <a href="https://www.tse.jus.br/comunicacao/noticias/2024/Marco/conheca-as-principais-etapas-de-transparencia-e-seguranca-da-urna-no-dia-da-eleicao">Leia a explicação do TSE sobre o RDV</a>.</p>
+  </section>
+</main>
+<footer class="shell">Projeto independente, não afiliado ao Tribunal Superior Eleitoral.</footer>
+</body>
+</html>

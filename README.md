@@ -107,6 +107,20 @@ Para uma zona, use o gerador fail-closed informando a cobertura esperada:
 .venv/bin/python scripts/gerar_painel_zona.py --raiz data/coletas --saida web/dados/zona_0253.json --uf SP --municipio 71072 --zona 0253 --esperado 496
 ```
 
+## Comparar a votação por horário
+
+A [página de horários](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/horarios.html) carrega a zona 0252 de São Paulo e permite abrir CSVs locais para outra cidade ou zona. Ela mostra a quantidade de votações concluídas em cada hora e a evolução percentual do comparecimento nos dois turnos, na zona inteira ou por seção.
+
+Depois de coletar e validar todas as seções da nova zona, gere o CSV anônimo:
+
+```bash
+python3 scripts/exportar_horarios.py --raiz data/coletas --uf SP --municipio 71072 --zona 0252 --esperado 339 --saida horarios_sp_71072_0252.csv
+```
+
+Troque UF, código TSE do município, zona e número oficial de seções no comando. O exportador confere o SHA-256 de cada log com o manifesto e exige que a contagem dos eventos de conclusão feche com o comparecimento do BU em cada seção e turno. Ele lê também logs anteriores anexados dentro do pacote `.jez`. O CSV contém somente `turno;secao;hora;votacoes_concluidas`; nenhum log bruto ou escolha de candidato é enviado à página. Os CSVs escolhidos no navegador permanecem locais.
+
+O horário do log registra a conclusão de uma votação. BU e RDV não fornecem uma associação confiável entre esse horário e o candidato escolhido. Portanto, a página não atribui votos de candidatos a horas do dia.
+
 ## Envio direto do JSON pelo portal (novo fluxo)
 
 Após gerar o arquivo `site/dados/<uf>_<municipioTSE>_<zona>.json`, o colaborador **não precisa de Git, commit, push nem Pull Request** para entregar os dados. O arquivo permanece em seu computador até ele selecioná-lo no campo de upload na área [Colaboradores](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/desenvolvedores/).
