@@ -27,6 +27,41 @@ export function analisarCsv(texto) {
   return {registros, secoes: [...secoes].sort(), totais};
 }
 
+export function analisarPacoteHorario(pacote) {
+  if(!pacote||!pacote.meta||!Array.isArray(pacote.secoes)||
+     !Number.isSafeInteger(pacote.meta.total_secoes)||
+     pacote.secoes.length!==pacote.meta.total_secoes||
+     pacote.secoes.length<1)throw new Error("Pacote de horários inválido.");
+  const linhas=[HEADER.join(";")];
+  const secoes=new Set();
+  for(const item of pacote.secoes){
+    if(!/^[0-9]{4}$/.test(item?.secao)||secoes.has(item.secao))
+      throw new Error("Seção de horários inválida ou repetida.");
+    secoes.add(item.secao);
+    for(const turno of ["1","2"]){
+      const horas=item.turnos?.[turno];
+      if(!Array.isArray(horas)||horas.length!==24||
+         horas.some(x=>!Number.isSafeInteger(x)||x<0))
+        throw new Error("Contagens horárias inválidas.");
+      horas.forEach((valor,hora)=>{
+        if(valor)linhas.push(`${turno}T;${item.secao};${String(hora).padStart(2,"0")};${valor}`);
+      });
+    }
+  }
+  return analisarCsv(linhas.join("\n"));
+}
+
+export function secoesParaUpload(dados) {
+  const porSecao=new Map(dados.secoes.map(secao=>[secao,{secao,turnos:{
+    "1":Array(24).fill(0),"2":Array(24).fill(0)
+  }}]));
+  for(const [chave,valor] of dados.registros){
+    const [turno,secao,hora]=chave.split("|");
+    porSecao.get(secao).turnos[turno==="1T"?"1":"2"][Number(hora)]=valor;
+  }
+  return [...porSecao.values()];
+}
+
 export function seriePorHora(dados, turno, secao = "") {
   const horas = Array(24).fill(0);
   for (const [chave, quantidade] of dados.registros) {

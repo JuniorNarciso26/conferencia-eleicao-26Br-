@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Compare a quantidade anônima de votações concluídas por hora e seção entre dois turnos e localidades.">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' https://conferencia-eleitoral-api.junior-ab2.workers.dev; base-uri 'none'; form-action 'none'; object-src 'none'">
 <title>Caminho da votação por horário | Conferência Eleitoral 2026</title>
 <link rel="stylesheet" href="./consulta.css">
 <link rel="stylesheet" href="./horarios.css">
+<script defer src="./config.js"></script>
 <script type="module" src="./horarios.js"></script>
 </head>
 <body>
@@ -35,10 +36,13 @@
   </section>
   <section class="panel" aria-labelledby="arquivos-titulo">
     <h2 id="arquivos-titulo">Dados para comparar</h2>
-    <p class="desc">A zona 0252 de São Paulo/SP é carregada automaticamente. Os CSVs escolhidos são lidos apenas neste navegador.</p>
+    <p class="desc">Escolha as zonas publicadas no banco. A zona 0252 de São Paulo fica disponível como exemplo durante a transição. CSVs locais podem ser abertos para prévia antes da publicação.</p>
+    <p id="banco-status" class="dataset-meta" role="status" aria-live="polite">Consultando o banco...</p>
     <div class="inputs">
       <div class="dataset">
         <h3>Localidade A</h3>
+        <label for="banco-a">Zona publicada no banco</label>
+        <select id="banco-a" disabled><option value="">Carregando...</option></select>
         <label for="nome-a">Nome da cidade / zona</label>
         <input id="nome-a" type="text" value="São Paulo/SP · zona 0252" maxlength="80">
         <label for="arquivo-a">Trocar CSV da localidade A</label>
@@ -49,6 +53,8 @@
       </div>
       <div class="dataset">
         <h3>Localidade B (opcional)</h3>
+        <label for="banco-b">Zona publicada no banco</label>
+        <select id="banco-b" disabled><option value="">Carregando...</option></select>
         <label for="nome-b">Nome da cidade / zona</label>
         <input id="nome-b" type="text" placeholder="Ex.: Campinas/SP · zona 0033" maxlength="80">
         <label for="arquivo-b">CSV da localidade B</label>
@@ -75,7 +81,7 @@
   <section class="panel">
     <h2>Fonte e preparo dos dados</h2>
     <p>São Paulo, zona 0252: 339 seções por turno. Os eventos dos logs foram conferidos com o comparecimento dos boletins: 84.773 no 1º turno e 87.648 no 2º. <a href="https://resultados.tse.jus.br/oficial/ele2026/6257/dados/sp/sp71072-z0252-c0001-e006257-u.json">Resultado oficial do 1º turno</a> · <a href="https://resultados.tse.jus.br/oficial/ele2026/6258/dados/sp/sp71072-z0252-c0001-e006258-u.json">Resultado oficial do 2º turno</a>.</p>
-    <p>Para outra cidade, colete os logs e boletins, gere o CSV com <code>scripts/exportar_horarios.py</code> e selecione o arquivo acima. O <a href="https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-">repositório</a> contém o comando e o formato. <a href="https://www.tse.jus.br/comunicacao/noticias/2024/Marco/conheca-as-principais-etapas-de-transparencia-e-seguranca-da-urna-no-dia-da-eleicao">Leia a explicação do TSE sobre o RDV</a>.</p>
+    <p>Para outra cidade, colete os logs e boletins, gere o CSV com <code>scripts/exportar_horarios.py</code> e envie pela área dos colaboradores após a publicação dos resultados da zona. Os horários são conferidos com cada BU e revisados antes de aparecer no banco público. <a href="https://www.tse.jus.br/comunicacao/noticias/2024/Marco/conheca-as-principais-etapas-de-transparencia-e-seguranca-da-urna-no-dia-da-eleicao">Leia a explicação do TSE sobre o RDV</a>.</p>
   </section>
 </main>
 <footer class="shell">Projeto independente, não afiliado ao Tribunal Superior Eleitoral.</footer>

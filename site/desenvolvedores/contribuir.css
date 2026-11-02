@@ -48,6 +48,9 @@
 #collect-upload-file{display:block;width:100%;max-width:430px;margin:8px 0}
 #collect-upload-progress{display:block;width:100%;margin:10px 0;height:16px}
 #collect-upload-progress[hidden]{display:none}
+#hourly-upload-file{display:block;width:100%;max-width:430px;margin:8px 0}
+#hourly-upload-progress{display:block;width:100%;margin:10px 0;height:16px}
+#hourly-upload-progress[hidden]{display:none}
 #collect-upload-status{font-weight:600}
 #review-list{display:grid;gap:12px;margin:14px 0}
 .review-item{border:1px solid #d1e0eb;border-radius:10px;padding:14px}

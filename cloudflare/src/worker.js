@@ -1,4 +1,6 @@
 import {beginUpload,uploadChunk,finishUpload,publishedZones,publishedZone,isAdmin,pendingReviews,reviewPacket,reviewDecision} from "./upload.js";
+import {beginHourly,hourlyChunk,finishHourly,publishedHourlyZones,publishedHourlyZone,
+  pendingHourlyReviews,hourlyReviewPacket,hourlyReviewDecision} from "./hourly.js";
 import { validarZona,getLease,ensureValidUnpublishedZone,reserveZone,releaseZone,verifyPullRequest,submitZone } from "./reservas.js";
 // Conferencia Eleitoral 2026 - GitHub OAuth com PKCE e sessoes no D1.
 // Apenas login. Nenhum dado eleitoral e enviado por esta versao.
@@ -272,9 +274,59 @@ function uploadError(code,request,env){
     RESERVATION_NOT_ACTIVE:409,RESERVATION_EXPIRED:409,
     ALREADY_SUBMITTED:409,UPLOAD_EXISTS:409,INVALID_DECISION:400,
     REVIEW_REASON_REQUIRED:400,NOT_PENDING:409,ZONE_NOT_PUBLISHED:404,
-    ZONE_PUBLISHED:409,ZONE_IN_REVIEW:409,UNKNOWN_ZONE:400,CATALOG_UNAVAILABLE:503
+    ZONE_PUBLISHED:409,ZONE_IN_REVIEW:409,UNKNOWN_ZONE:400,CATALOG_UNAVAILABLE:503,
+    INVALID_HOURS:400,HOURLY_TOTAL_MISMATCH:422,SECTION_NOT_IN_RESULTS:422,
+    HOURLY_UPLOAD_NOT_ACTIVE:409,HOURLY_UPLOAD_EXISTS:409,FORBIDDEN:403
   }[code]||500;
   return error(status===500?"UPLOAD_ERROR":code,status,request,env);
+}
+
+async function hourlyRequest(request,env,path){
+  const headers=corsHeaders(request,env),now=epoch();
+  if(path==="/api/published/hourly/zones"&&request.method==="GET"){
+    try{return json({ok:true,zonas:await publishedHourlyZones(env)},200,headers);}
+    catch(e){return uploadError(e.message,request,env);}
+  }
+  if(path==="/api/published/hourly/zone"&&request.method==="GET"){
+    const query=new URL(request.url).searchParams;
+    try{
+      const zone=validarZona({uf:query.get("uf"),municipio:query.get("municipio"),zona:query.get("zona")});
+      return json(await publishedHourlyZone(env,zone),200,headers);
+    }catch(e){return uploadError(e.message,request,env);}
+  }
+  if(path.startsWith("/api/hourly/")){
+    if(request.method!=="POST"||!authorizedOrigin(request,env))
+      return error("ORIGIN_FORBIDDEN",403,request,env);
+    const user=await identity(request,env);
+    if(!user)return error("UNAUTHORIZED",401,request,env);
+    let body;
+    try{body=await readBody(request,path==="/api/hourly/chunk"?180000:2000);}
+    catch(e){return error(e.message,400,request,env);}
+    try{
+      let result;
+      if(path==="/api/hourly/start"){
+        const zone=validarZona(body);
+        result=await beginHourly(env,zone,user,body,now);
+      }else if(path==="/api/hourly/chunk")result=await hourlyChunk(env,body,user,now);
+      else if(path==="/api/hourly/finish")result=await finishHourly(env,body,user,now);
+      else return error("NOT_FOUND",404,request,env);
+      return json({ok:true,...result},200,headers);
+    }catch(e){return uploadError(e.message,request,env);}
+  }
+  if(path.startsWith("/api/review/hourly/")){
+    if(!authorizedOrigin(request,env))return error("ORIGIN_FORBIDDEN",403,request,env);
+    const user=await identity(request,env);
+    if(!isAdmin(env,user))return error("FORBIDDEN",403,request,env);
+    try{
+      if(path==="/api/review/hourly/queue"&&request.method==="GET")
+        return json({ok:true,items:await pendingHourlyReviews(env)},200,headers);
+      if(path==="/api/review/hourly/packet"&&request.method==="GET")
+        return json({ok:true,...await hourlyReviewPacket(env,new URL(request.url).searchParams.get("upload_id"))},200,headers);
+      if(path==="/api/review/hourly/decision"&&request.method==="POST")
+        return json({ok:true,...await hourlyReviewDecision(env,await readBody(request,1000),user,now)},200,headers);
+    }catch(e){return uploadError(e.message,request,env);}
+  }
+  return error("NOT_FOUND",404,request,env);
 }
 async function uploadRequest(request,env,path){
   const headers=corsHeaders(request,env),now=epoch();
@@ -337,6 +389,9 @@ export default {
     }
     try {
       if (path === "/api/health" && request.method === "GET") return await health(env, request);
+      if (path.startsWith("/api/hourly/") || path.startsWith("/api/published/hourly/") ||
+          path.startsWith("/api/review/hourly/"))
+        return await hourlyRequest(request,env,path);
       if (path.startsWith("/api/uploads/") || path.startsWith("/api/review/") ||
           path==="/api/published/zones" || path==="/api/published/zone")
         return await uploadRequest(request,env,path);

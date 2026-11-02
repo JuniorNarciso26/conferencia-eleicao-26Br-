@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="./contribuir.css">
 <script type="module" src="./contribuir.js"></script>
 <script type="module" src="./revisao.js"></script>
+<script type="module" src="./revisao-horarios.js"></script>
 </head>
 <body>
 <header class="hero">
@@ -100,6 +101,16 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
           <p class="small">O envio utiliza sua reserva GitHub e ocorre em lotes. Se a conexão falhar, selecione o mesmo arquivo e tente novamente. Nenhum arquivo bruto será enviado.</p>
         </div>
       </div>
+      <div id="hourly-upload-controls" class="reservation-controls" hidden>
+        <h3>Adicionar horários à zona publicada</h3>
+        <p class="small">Selecione o CSV anônimo gerado pelo exportador de horários. O banco receberá contagens por seção, turno e hora, que serão conferidas com os boletins já publicados antes da revisão.</p>
+        <label for="hourly-upload-file">CSV de horários (.csv)
+          <input id="hourly-upload-file" type="file" accept=".csv,text/csv">
+        </label>
+        <button id="hourly-upload-button" type="button" class="button primary">Enviar horários para revisão</button>
+        <progress id="hourly-upload-progress" max="100" value="0" hidden aria-label="Progresso do envio de horários"></progress>
+        <p id="hourly-upload-status" class="small" role="status" aria-live="polite">Apenas o colaborador que enviou os resultados da zona ou um revisor autorizado pode enviar os horários.</p>
+      </div>
       <p class="small" id="collect-source"></p>
       <button class="button primary" type="submit" id="collect-generate">Preparar meu roteiro</button>
       <p id="collect-message" role="status" aria-live="polite"></p>
@@ -150,6 +161,24 @@ scripts/coleta painel</pre><button class="button outline copy-command" type="but
       </label>
       <button id="review-approve" class="button primary" type="button">Aprovar e publicar</button>
       <button id="review-reject" class="button outline" type="button">Rejeitar e liberar zona</button>
+    </div>
+  </section>
+  <section class="guide-panel" aria-labelledby="hourly-review-title">
+    <div class="section-head"><div><p class="eyebrow dark">ADMINISTRAÇÃO</p><h2 id="hourly-review-title">Revisão dos horários enviados</h2></div>
+      <button id="hourly-review-refresh" type="button" class="button outline">Consultar horários pendentes</button></div>
+    <p class="small">Disponível aos revisores autorizados. A conferência automática exige que cada seção e turno feche com o comparecimento publicado.</p>
+    <p id="hourly-review-message" role="status" aria-live="polite"></p>
+    <div id="hourly-review-list"></div>
+    <div id="hourly-review-detail" hidden>
+      <h3 id="hourly-review-detail-title"></h3>
+      <p id="hourly-review-detail-stats"></p>
+      <pre id="hourly-review-detail-preview" class="review-preview"></pre>
+      <a id="hourly-review-download" class="button outline" download="horarios.json">Baixar horários para conferência</a>
+      <label for="hourly-review-reason">Motivo da rejeição (obrigatório se rejeitar)
+        <textarea id="hourly-review-reason" rows="3"></textarea>
+      </label>
+      <button id="hourly-review-approve" class="button primary" type="button">Aprovar e publicar horários</button>
+      <button id="hourly-review-reject" class="button outline" type="button">Rejeitar horários</button>
     </div>
   </section>
   <section>
