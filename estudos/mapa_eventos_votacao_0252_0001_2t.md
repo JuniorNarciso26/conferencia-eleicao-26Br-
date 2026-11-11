@@ -49,7 +49,7 @@ As saídas para a alternativa após a segunda ou terceira leitura são **possibi
 
 ## Primeira aplicação ao log original
 
-O pacote original foi reaberto; seu SHA-256 coincidiu com o manifesto local. Os 280 percursos reconstruídos anteriormente foram conferidos evento por evento contra as linhas do log original. Para cada percurso, o arquivo local `mapa_votos_0252_0001_2t.json` guarda a sequência de mensagens, a quantidade de tentativas solicitadas e o deslocamento em segundos desde o primeiro evento. Identificadores numéricos longos foram substituídos por `#`; horários absolutos não foram incluídos nesse arquivo.
+O pacote original foi reaberto; seu SHA-256 coincidiu com o manifesto local. Os 280 percursos reconstruídos anteriormente foram conferidos evento por evento contra as linhas do log original. Para cada percurso, o [arquivo público de eventos anônimos](https://github.com/JuniorNarciso26/conferencia-eleicao-26Br-/blob/main/site/dados/mapa_votos_0252_0001_2t_compacto.json) guarda a sequência de mensagens, a quantidade de tentativas solicitadas e o deslocamento em segundos desde o primeiro evento. Identificadores numéricos longos foram substituídos por `#`; horários absolutos não foram incluídos nesse arquivo. A [aba Mapa dos votos](https://juniornarciso26.github.io/conferencia-eleicao-26Br-/mapa.html) permite explorar os percursos.
 
 | Caminho observado | Percursos | Tentativas de digital solicitadas |
 |---|---:|---|
