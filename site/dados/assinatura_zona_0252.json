@@ -1,0 +1,2374 @@
+{
+  "zona": "0252",
+  "turno": "2T",
+  "data": "25/10/2026",
+  "definicao": "Nove mensagens e todos os intervalos iguais à assinatura congelada (10, 8, 1).",
+  "nota_ordem": "Posição do evento computado no log; não identifica eleitor nem posição no RDV.",
+  "secoes": [
+    {
+      "secao": "0001",
+      "computados": 280,
+      "posicoes": [
+        92,
+        134
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0002",
+      "computados": 270,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0003",
+      "computados": 279,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0004",
+      "computados": 270,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0005",
+      "computados": 276,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0006",
+      "computados": 270,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0007",
+      "computados": 277,
+      "posicoes": [
+        46,
+        138,
+        271
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0008",
+      "computados": 284,
+      "posicoes": [
+        159
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0009",
+      "computados": 292,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0010",
+      "computados": 288,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0011",
+      "computados": 183,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0012",
+      "computados": 184,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0013",
+      "computados": 179,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0014",
+      "computados": 171,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0015",
+      "computados": 186,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0016",
+      "computados": 178,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0017",
+      "computados": 177,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0018",
+      "computados": 172,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0019",
+      "computados": 176,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0020",
+      "computados": 180,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0021",
+      "computados": 177,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0022",
+      "computados": 219,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0023",
+      "computados": 210,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0024",
+      "computados": 220,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0025",
+      "computados": 208,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0026",
+      "computados": 236,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0027",
+      "computados": 226,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0028",
+      "computados": 197,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0029",
+      "computados": 223,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0030",
+      "computados": 227,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0031",
+      "computados": 271,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0032",
+      "computados": 272,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0033",
+      "computados": 260,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0034",
+      "computados": 263,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0035",
+      "computados": 259,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0036",
+      "computados": 269,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0037",
+      "computados": 262,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0038",
+      "computados": 289,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0039",
+      "computados": 178,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0040",
+      "computados": 170,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0041",
+      "computados": 163,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0042",
+      "computados": 168,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0043",
+      "computados": 159,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0044",
+      "computados": 180,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0045",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0046",
+      "computados": 273,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0047",
+      "computados": 279,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0048",
+      "computados": 285,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0049",
+      "computados": 288,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0050",
+      "computados": 288,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0051",
+      "computados": 279,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0052",
+      "computados": 287,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0053",
+      "computados": 283,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0054",
+      "computados": 296,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0055",
+      "computados": 271,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0056",
+      "computados": 274,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0057",
+      "computados": 269,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0058",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0059",
+      "computados": 290,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0060",
+      "computados": 284,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0061",
+      "computados": 280,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0062",
+      "computados": 308,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0063",
+      "computados": 171,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0064",
+      "computados": 180,
+      "posicoes": [
+        44
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0065",
+      "computados": 173,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0066",
+      "computados": 172,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0067",
+      "computados": 179,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0068",
+      "computados": 172,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0069",
+      "computados": 171,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0070",
+      "computados": 158,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0071",
+      "computados": 185,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0072",
+      "computados": 180,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0073",
+      "computados": 240,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0074",
+      "computados": 214,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0075",
+      "computados": 231,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0076",
+      "computados": 232,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0077",
+      "computados": 228,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0078",
+      "computados": 232,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0079",
+      "computados": 149,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0080",
+      "computados": 142,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0081",
+      "computados": 147,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0082",
+      "computados": 160,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0083",
+      "computados": 147,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0084",
+      "computados": 152,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0085",
+      "computados": 149,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0086",
+      "computados": 149,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0087",
+      "computados": 148,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0088",
+      "computados": 160,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0089",
+      "computados": 152,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0090",
+      "computados": 264,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0091",
+      "computados": 268,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0092",
+      "computados": 270,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0093",
+      "computados": 256,
+      "posicoes": [
+        124
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0094",
+      "computados": 255,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0095",
+      "computados": 255,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0096",
+      "computados": 261,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0097",
+      "computados": 276,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0098",
+      "computados": 258,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0099",
+      "computados": 272,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0100",
+      "computados": 191,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0101",
+      "computados": 227,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0102",
+      "computados": 194,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0103",
+      "computados": 214,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0104",
+      "computados": 199,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0105",
+      "computados": 219,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0106",
+      "computados": 223,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0107",
+      "computados": 274,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0108",
+      "computados": 271,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0109",
+      "computados": 271,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0110",
+      "computados": 276,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0111",
+      "computados": 278,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0112",
+      "computados": 289,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0113",
+      "computados": 287,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0114",
+      "computados": 263,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0115",
+      "computados": 273,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0116",
+      "computados": 292,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0117",
+      "computados": 287,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0118",
+      "computados": 298,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0119",
+      "computados": 306,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0120",
+      "computados": 275,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0121",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0122",
+      "computados": 267,
+      "posicoes": [
+        84
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0123",
+      "computados": 283,
+      "posicoes": [
+        75
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0124",
+      "computados": 284,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0125",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0126",
+      "computados": 307,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0127",
+      "computados": 307,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0128",
+      "computados": 287,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0129",
+      "computados": 304,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0130",
+      "computados": 287,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0131",
+      "computados": 295,
+      "posicoes": [
+        131
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0132",
+      "computados": 306,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0133",
+      "computados": 291,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0134",
+      "computados": 260,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0135",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0136",
+      "computados": 296,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0137",
+      "computados": 300,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0138",
+      "computados": 315,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0139",
+      "computados": 277,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0140",
+      "computados": 283,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0141",
+      "computados": 288,
+      "posicoes": [
+        180
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0142",
+      "computados": 289,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0143",
+      "computados": 282,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0144",
+      "computados": 284,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0145",
+      "computados": 291,
+      "posicoes": [
+        20,
+        228
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0146",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0147",
+      "computados": 278,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0148",
+      "computados": 302,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0149",
+      "computados": 301,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0150",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0151",
+      "computados": 299,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0152",
+      "computados": 305,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0153",
+      "computados": 313,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0154",
+      "computados": 217,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0155",
+      "computados": 245,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0156",
+      "computados": 255,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0157",
+      "computados": 245,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0158",
+      "computados": 242,
+      "posicoes": [
+        103
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0159",
+      "computados": 243,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0160",
+      "computados": 235,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0161",
+      "computados": 252,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0162",
+      "computados": 258,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0163",
+      "computados": 259,
+      "posicoes": [
+        79,
+        153
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0164",
+      "computados": 275,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0165",
+      "computados": 265,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0166",
+      "computados": 266,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0167",
+      "computados": 272,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0168",
+      "computados": 273,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0169",
+      "computados": 257,
+      "posicoes": [
+        232
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0170",
+      "computados": 272,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0171",
+      "computados": 267,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0172",
+      "computados": 292,
+      "posicoes": [
+        48
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0173",
+      "computados": 280,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0174",
+      "computados": 246,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0175",
+      "computados": 242,
+      "posicoes": [
+        105
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0176",
+      "computados": 232,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0177",
+      "computados": 239,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0178",
+      "computados": 233,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0179",
+      "computados": 222,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0180",
+      "computados": 234,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0181",
+      "computados": 241,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0182",
+      "computados": 246,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0183",
+      "computados": 252,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0184",
+      "computados": 240,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0185",
+      "computados": 233,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0186",
+      "computados": 258,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0187",
+      "computados": 228,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0188",
+      "computados": 247,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0189",
+      "computados": 258,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0190",
+      "computados": 252,
+      "posicoes": [
+        73
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0191",
+      "computados": 254,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0192",
+      "computados": 260,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0193",
+      "computados": 235,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0194",
+      "computados": 251,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0195",
+      "computados": 236,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0196",
+      "computados": 231,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0197",
+      "computados": 249,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0198",
+      "computados": 244,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0199",
+      "computados": 243,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0200",
+      "computados": 242,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0201",
+      "computados": 213,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0202",
+      "computados": 240,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0203",
+      "computados": 224,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0204",
+      "computados": 230,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0205",
+      "computados": 214,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0206",
+      "computados": 208,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0207",
+      "computados": 229,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0208",
+      "computados": 244,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0209",
+      "computados": 236,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0210",
+      "computados": 263,
+      "posicoes": [
+        176
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0211",
+      "computados": 324,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0212",
+      "computados": 234,
+      "posicoes": [],
+      "ressalvas": [
+        "1 percurso(s) não reconstruído(s)"
+      ]
+    },
+    {
+      "secao": "0213",
+      "computados": 245,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0214",
+      "computados": 333,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0215",
+      "computados": 273,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0216",
+      "computados": 308,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0217",
+      "computados": 254,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0218",
+      "computados": 223,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0219",
+      "computados": 254,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0220",
+      "computados": 248,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0221",
+      "computados": 232,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0222",
+      "computados": 251,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0223",
+      "computados": 310,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0224",
+      "computados": 191,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0225",
+      "computados": 253,
+      "posicoes": [
+        91
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0226",
+      "computados": 233,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0227",
+      "computados": 234,
+      "posicoes": [
+        38,
+        61,
+        158
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0228",
+      "computados": 297,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0229",
+      "computados": 171,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0230",
+      "computados": 261,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0231",
+      "computados": 168,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0232",
+      "computados": 259,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0233",
+      "computados": 307,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0234",
+      "computados": 188,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0235",
+      "computados": 279,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0236",
+      "computados": 311,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0237",
+      "computados": 303,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0238",
+      "computados": 294,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0239",
+      "computados": 270,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0240",
+      "computados": 304,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0241",
+      "computados": 284,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0242",
+      "computados": 206,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0243",
+      "computados": 226,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0244",
+      "computados": 332,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0245",
+      "computados": 309,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0246",
+      "computados": 288,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0247",
+      "computados": 326,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0248",
+      "computados": 305,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0249",
+      "computados": 322,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0250",
+      "computados": 316,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0251",
+      "computados": 304,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0252",
+      "computados": 182,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0253",
+      "computados": 328,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0254",
+      "computados": 327,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0255",
+      "computados": 301,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0256",
+      "computados": 320,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0257",
+      "computados": 318,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0258",
+      "computados": 308,
+      "posicoes": [
+        148
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0259",
+      "computados": 318,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0260",
+      "computados": 279,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0261",
+      "computados": 253,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0262",
+      "computados": 309,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0263",
+      "computados": 322,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0264",
+      "computados": 320,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0265",
+      "computados": 317,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0266",
+      "computados": 323,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0267",
+      "computados": 302,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0268",
+      "computados": 326,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0269",
+      "computados": 230,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0270",
+      "computados": 327,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0271",
+      "computados": 307,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0272",
+      "computados": 299,
+      "posicoes": [
+        225
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0273",
+      "computados": 312,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0274",
+      "computados": 299,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0275",
+      "computados": 250,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0276",
+      "computados": 322,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0277",
+      "computados": 306,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0278",
+      "computados": 311,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0279",
+      "computados": 181,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0280",
+      "computados": 309,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0281",
+      "computados": 310,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0282",
+      "computados": 304,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0283",
+      "computados": 242,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0284",
+      "computados": 312,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0285",
+      "computados": 256,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0286",
+      "computados": 300,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0287",
+      "computados": 194,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0288",
+      "computados": 272,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0289",
+      "computados": 307,
+      "posicoes": [],
+      "ressalvas": [
+        "mais de um log; reconciliação pendente"
+      ]
+    },
+    {
+      "secao": "0290",
+      "computados": 300,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0291",
+      "computados": 300,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0292",
+      "computados": 273,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0293",
+      "computados": 242,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0294",
+      "computados": 269,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0295",
+      "computados": 289,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0296",
+      "computados": 281,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0297",
+      "computados": 187,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0298",
+      "computados": 182,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0299",
+      "computados": 250,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0300",
+      "computados": 273,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0301",
+      "computados": 255,
+      "posicoes": [
+        240
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0302",
+      "computados": 297,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0303",
+      "computados": 266,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0304",
+      "computados": 185,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0305",
+      "computados": 294,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0306",
+      "computados": 161,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0307",
+      "computados": 207,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0308",
+      "computados": 276,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0309",
+      "computados": 281,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0310",
+      "computados": 257,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0311",
+      "computados": 246,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0312",
+      "computados": 247,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0313",
+      "computados": 236,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0314",
+      "computados": 318,
+      "posicoes": [
+        35,
+        55
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0315",
+      "computados": 287,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0316",
+      "computados": 288,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0317",
+      "computados": 236,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0318",
+      "computados": 283,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0319",
+      "computados": 329,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0320",
+      "computados": 315,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0321",
+      "computados": 294,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0322",
+      "computados": 318,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0323",
+      "computados": 298,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0324",
+      "computados": 319,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0325",
+      "computados": 313,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0326",
+      "computados": 274,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0327",
+      "computados": 279,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0328",
+      "computados": 326,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0329",
+      "computados": 303,
+      "posicoes": [
+        44,
+        76
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0330",
+      "computados": 296,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0331",
+      "computados": 341,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0332",
+      "computados": 342,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0333",
+      "computados": 307,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0334",
+      "computados": 295,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0335",
+      "computados": 338,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0336",
+      "computados": 333,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0337",
+      "computados": 291,
+      "posicoes": [],
+      "ressalvas": []
+    },
+    {
+      "secao": "0338",
+      "computados": 294,
+      "posicoes": [
+        92,
+        128
+      ],
+      "ressalvas": []
+    },
+    {
+      "secao": "0339",
+      "computados": 352,
+      "posicoes": [],
+      "ressalvas": []
+    }
+  ],
+  "ocorrencias": [
+    {
+      "secao": "0001",
+      "posicao": 92,
+      "total_secao": 280,
+      "intervalo_anterior_s": 23.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0001",
+      "posicao": 134,
+      "total_secao": 280,
+      "intervalo_anterior_s": 24.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0007",
+      "posicao": 46,
+      "total_secao": 277,
+      "intervalo_anterior_s": 83.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0007",
+      "posicao": 138,
+      "total_secao": 277,
+      "intervalo_anterior_s": 113.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0007",
+      "posicao": 271,
+      "total_secao": 277,
+      "intervalo_anterior_s": 477.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0008",
+      "posicao": 159,
+      "total_secao": 284,
+      "intervalo_anterior_s": 75.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0064",
+      "posicao": 44,
+      "total_secao": 180,
+      "intervalo_anterior_s": 175.0,
+      "tipo_anterior": "habilitação manual"
+    },
+    {
+      "secao": "0093",
+      "posicao": 124,
+      "total_secao": 256,
+      "intervalo_anterior_s": 14.0,
+      "tipo_anterior": "sem biometria cadastrada"
+    },
+    {
+      "secao": "0122",
+      "posicao": 84,
+      "total_secao": 267,
+      "intervalo_anterior_s": 15.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0123",
+      "posicao": 75,
+      "total_secao": 283,
+      "intervalo_anterior_s": 21.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0131",
+      "posicao": 131,
+      "total_secao": 295,
+      "intervalo_anterior_s": 51.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0141",
+      "posicao": 180,
+      "total_secao": 288,
+      "intervalo_anterior_s": 175.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0145",
+      "posicao": 20,
+      "total_secao": 291,
+      "intervalo_anterior_s": 17.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0145",
+      "posicao": 228,
+      "total_secao": 291,
+      "intervalo_anterior_s": 63.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0158",
+      "posicao": 103,
+      "total_secao": 242,
+      "intervalo_anterior_s": 16.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0163",
+      "posicao": 79,
+      "total_secao": 259,
+      "intervalo_anterior_s": 18.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0163",
+      "posicao": 153,
+      "total_secao": 259,
+      "intervalo_anterior_s": 100.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0169",
+      "posicao": 232,
+      "total_secao": 257,
+      "intervalo_anterior_s": 60.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0172",
+      "posicao": 48,
+      "total_secao": 292,
+      "intervalo_anterior_s": 45.0,
+      "tipo_anterior": "habilitação manual"
+    },
+    {
+      "secao": "0175",
+      "posicao": 105,
+      "total_secao": 242,
+      "intervalo_anterior_s": 18.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0190",
+      "posicao": 73,
+      "total_secao": 252,
+      "intervalo_anterior_s": 23.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0210",
+      "posicao": 176,
+      "total_secao": 263,
+      "intervalo_anterior_s": 119.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0225",
+      "posicao": 91,
+      "total_secao": 253,
+      "intervalo_anterior_s": 67.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0227",
+      "posicao": 38,
+      "total_secao": 234,
+      "intervalo_anterior_s": 211.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0227",
+      "posicao": 61,
+      "total_secao": 234,
+      "intervalo_anterior_s": 158.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0227",
+      "posicao": 158,
+      "total_secao": 234,
+      "intervalo_anterior_s": 42.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0258",
+      "posicao": 148,
+      "total_secao": 308,
+      "intervalo_anterior_s": 15.0,
+      "tipo_anterior": "outro ou indeterminado"
+    },
+    {
+      "secao": "0272",
+      "posicao": 225,
+      "total_secao": 299,
+      "intervalo_anterior_s": 19.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0301",
+      "posicao": 240,
+      "total_secao": 255,
+      "intervalo_anterior_s": 21.0,
+      "tipo_anterior": "outro ou indeterminado"
+    },
+    {
+      "secao": "0314",
+      "posicao": 35,
+      "total_secao": 318,
+      "intervalo_anterior_s": 19.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0314",
+      "posicao": 55,
+      "total_secao": 318,
+      "intervalo_anterior_s": 17.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0329",
+      "posicao": 44,
+      "total_secao": 303,
+      "intervalo_anterior_s": 27.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0329",
+      "posicao": 76,
+      "total_secao": 303,
+      "intervalo_anterior_s": 10.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0338",
+      "posicao": 92,
+      "total_secao": 294,
+      "intervalo_anterior_s": 242.0,
+      "tipo_anterior": "biometria reconhecida"
+    },
+    {
+      "secao": "0338",
+      "posicao": 128,
+      "total_secao": 294,
+      "intervalo_anterior_s": 38.0,
+      "tipo_anterior": "biometria reconhecida"
+    }
+  ],
+  "comparacao": {
+    "criterio_controle": "Mesmas 25 seções, mesma sequência de nove mensagens e rota; excluídas as 35 ocorrências exatas.",
+    "assinatura": {
+      "total": 35,
+      "mediana_intervalo_s": 38.0,
+      "intervalo_min_s": 10.0,
+      "intervalo_max_s": 477.0,
+      "aguardando_identificador": 34,
+      "anterior_biometrica": 30,
+      "quartil_2": 16
+    },
+    "controle": {
+      "total": 2642,
+      "intervalo_disponivel": 2632,
+      "mediana_intervalo_s": 36.0,
+      "aguardando_identificador": 2550,
+      "anterior_biometrica": 2310,
+      "quartil_2": 660
+    }
+  }
+}
