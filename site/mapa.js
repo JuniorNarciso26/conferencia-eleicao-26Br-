@@ -96,15 +96,61 @@ function render(reset=true){
   $("lista").replaceChildren(...rows.slice(0,visible).map(card));
   $("mais").hidden=visible>=rows.length;
 }
+function temporalSignature(row,mode){
+  const events=row[3],deltas=events.map(([second],i)=>i?second-events[i-1][0]:0);
+  const messages=events.map(([,code])=>data.eventos[code]);
+  const key=JSON.stringify([row[1],row[2].length,events.length,mode==="completa"?messages:null,deltas]);
+  return {key,deltas,messages};
+}
+function renderTemporal(){
+  if(!data)return;
+  const mode=$("modo-assinatura").value,route=$("rota-assinatura").value;
+  const groups=new Map();
+  for(const row of data.percursos){
+    if(route&&row[1]!==route)continue;
+    const sig=temporalSignature(row,mode);
+    if(!groups.has(sig.key))groups.set(sig.key,{rows:[],...sig});
+    groups.get(sig.key).rows.push(row);
+  }
+  const repeated=[...groups.values()].filter(g=>g.rows.length>=2)
+    .sort((a,b)=>b.rows.length-a.rows.length||a.rows[0][0]-b.rows[0][0]);
+  const cycles=repeated.reduce((n,g)=>n+g.rows.length,0);
+  $("temporal-resumo").textContent=repeated.length+" assinatura(s) repetida(s) em "+cycles+" percurso(s). "+
+    (mode==="completa"?"Mensagens e todos os intervalos iguais.":"Só os intervalos são iguais; as mensagens podem diferir.");
+  const cards=repeated.map(group=>{
+    const first=group.rows[0],wrap=node("details",undefined,"mapa-temporal-item");
+    const head=node("summary");
+    head.append(node("strong",group.rows.length+" percursos"),node("span",labels[first[1]]||first[1]),
+      node("small",first[2].length+" tentativa(s) · "+first[3].length+" eventos"));
+    wrap.append(head);
+    const body=node("div",undefined,"mapa-temporal-body");
+    body.append(node("p","Percursos: "+group.rows.map(row=>row[0]).join(", ")));
+    body.append(node("p","Intervalos entre eventos (s): "+group.deltas.slice(1).join(" · ")));
+    if(mode==="tempos"){
+      const variants=new Set(group.rows.map(row=>JSON.stringify(row[3].map(([,code])=>data.eventos[code]))));
+      body.append(node("p",variants.size+" sequência(s) de mensagens neste grupo. A lista abaixo mostra a primeira."));
+    }
+    const list=node("ol");
+    group.messages.forEach((message,i)=>{
+      const li=node("li");
+      li.append(node("b",i===0?"início":"+"+group.deltas[i]+" s"),node("span",message));
+      list.append(li);
+    });
+    body.append(list);wrap.append(body);return wrap;
+  });
+  $("temporal-grupos").replaceChildren(...cards);
+  if(!cards.length)$("temporal-grupos").append(node("p","Nenhuma assinatura repetida com estes critérios."));
+}
 async function load(){
   try{
     const response=await fetch("./dados/mapa_votos_0252_0001_2t_compacto.json",{cache:"no-store"});
     if(!response.ok)throw new Error("HTTP "+response.status);
     data=await response.json();
     if(!Array.isArray(data.percursos)||!Array.isArray(data.eventos))throw new Error("Formato inválido");
-    summary();render();
+    summary();render();renderTemporal();
   }catch(e){$("resumo").replaceChildren(node("p","Não foi possível carregar os percursos: "+e.message));}
 }
+for(const id of ["modo-assinatura","rota-assinatura"])$(id).addEventListener("change",renderTemporal);
 for(const id of ["caminho","tentativas","quantidade-eventos","numero"])$(id).addEventListener(id==="numero"?"input":"change",()=>render());
 $("mais").addEventListener("click",()=>render(false));
 load();
