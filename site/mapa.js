@@ -4,13 +4,45 @@ const labels={biometria_reconhecida:"Biometria reconhecida",sem_biometria_cadast
 let data=null,visible=0;
 function node(tag,content,cls){const e=document.createElement(tag);if(content!==undefined)e.textContent=content;if(cls)e.className=cls;return e}
 function summary(){
-  const counts={};for(const row of data.percursos)counts[row[1]]=(counts[row[1]]||0)+1;
-  const entries=[["Percursos concluídos",data.percursos.length],["Biometria reconhecida",counts.biometria_reconhecida||0],["Sem biometria",counts.sem_biometria_cadastrada||0],["Habilitação manual",counts.biometria_nao_reconhecida_habilitacao_manual||0]];
+  const rows=data.percursos;
+  const count=(path,n)=>rows.filter(row=>(!path||row[1]===path)&&
+    (n===undefined||row[2].length===n)).length;
+  const recognized="biometria_reconhecida",absent="sem_biometria_cadastrada",manual="biometria_nao_reconhecida_habilitacao_manual";
+  const entries=[["Percursos concluídos",rows.length],["Biometria reconhecida",count(recognized)],["Sem biometria",count(absent)],["Habilitação manual",count(manual)]];
   $("resumo").replaceChildren(...entries.map(([label,value])=>{const box=node("div");box.append(node("b",String(value)),node("span",label));return box}));
+  function button(label,total,path,attempts,detail,major=false){
+    const b=node("button",undefined,"fluxo-botao"+(major?" total":""));
+    b.type="button";
+    b.append(node("b",String(total)),node("span",label));
+    if(detail)b.append(node("small",detail));
+    b.addEventListener("click",()=>{
+      $("caminho").value=path;
+      $("tentativas").value=attempts===undefined?"":String(attempts);
+      $("numero").value="";
+      render();
+      $("percursos-title").scrollIntoView({behavior:"smooth",block:"start"});
+    });
+    return b;
+  }
+  const yes=node("div",undefined,"fluxo-ramo");
+  yes.append(node("h4","Biometria reconhecida"),node("p","Digital do eleitor reconhecida; votação habilitada."));
+  yes.append(button("Todos os reconhecidos",count(recognized),recognized,undefined,"1 a 4 tentativas",true));
+  const yesChildren=node("div",undefined,"fluxo-filhos");
+  for(const n of [1,2,3,4])yesChildren.append(button(n+" tentativa"+(n>1?"s":""),count(recognized,n),recognized,n,"Reconhecimento na tentativa "+n));
+  yes.append(yesChildren);
+  const no=node("div",undefined,"fluxo-ramo");
+  no.append(node("h4","Sem biometria reconhecida"),node("p","Sem cadastro biométrico ou leituras sem reconhecimento."));
+  const noTotal=count(absent)+count(manual);
+  no.append(button("Todos deste ramo",noTotal,"sem_reconhecimento",undefined,"20 sem cadastro + 8 habilitações manuais",true));
+  const noChildren=node("div",undefined,"fluxo-filhos");
+  noChildren.append(button("Sem biometria cadastrada",count(absent),absent,0,"Conferência de dado pessoal"));
+  noChildren.append(button("Após 4 tentativas",count(manual,4),manual,4,"Falha biométrica → dado pessoal → digital do mesário"));
+  no.append(noChildren);
+  $("fluxos").replaceChildren(yes,no);
 }
 function match(row){
   const path=$("caminho").value,attempts=$("tentativas").value,n=$("numero").value.trim();
-  return (!path||row[1]===path)&&(!attempts||row[2].length===Number(attempts))&&(!n||row[0]===Number(n));
+  return (!path||row[1]===path||(path==="sem_reconhecimento"&&row[1]!=="biometria_reconhecida"))&&(!attempts||row[2].length===Number(attempts))&&(!n||row[0]===Number(n));
 }
 function card(row){
   const details=node("details",undefined,"mapa-item");
