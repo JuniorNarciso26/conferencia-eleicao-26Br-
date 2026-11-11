@@ -72,6 +72,7 @@ def main():
                              'previous_sequence':tuple(e[0] for e in previous_cycle['signature']) if previous_cycle else None,
                              'previous_message':re.sub(r'(?<!\d)\d{4,}(?!\d)','#',before or 'início'),
                              'intermediate_events':len(between),
+                             'intermediate_wait_only':between==['Aguardando digitação do identificador do eleitor'],
                              'previous_fraction':i/len(ends) if ends else None})
     observed=[x for x in all_rows if x['match']]
     controls=[x for x in all_rows if not x['match']]
@@ -121,6 +122,8 @@ def main():
             'comparacao':{'criterio_controle':report['control_definition'],
                           'sequencia_anterior':{'distintas_nos_casos':len(sequences),'mais_comum_nos_casos':common_count,
                                                 'mesma_sequencia_nos_controles':common_control},
+                          'entre_percursos':{'somente_espera_casos':sum(x['intermediate_wait_only'] for x in observed),
+                                             'somente_espera_controles':sum(x['intermediate_wait_only'] for x in controls)},
                           'assinatura':{'total':s['n'],'mediana_intervalo_s':s['gap_median'],
                             'intervalo_min_s':s['gap_min'],'intervalo_max_s':s['gap_max'],
                             'aguardando_identificador':s['last_message'].get('Aguardando digitação do identificador do eleitor',0),
