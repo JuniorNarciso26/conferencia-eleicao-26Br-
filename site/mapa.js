@@ -105,9 +105,15 @@ function temporalSignature(row,mode){
 function renderTemporal(){
   if(!data)return;
   const mode=$("modo-assinatura").value,route=$("rota-assinatura").value;
+  const attempts=$("tentativas-assinatura").value,eventSelect=$("eventos-assinatura");
+  const eligible=data.percursos.filter(row=>(!route||row[1]===route)&&(!attempts||row[2].length===Number(attempts)));
+  const selectedEvents=eventSelect.value;
+  const lengths=[...new Set(eligible.map(row=>row[3].length))].sort((a,b)=>a-b);
+  eventSelect.replaceChildren(new Option("Todos",""),...lengths.map(n=>new Option(n+" eventos",String(n))));
+  if(selectedEvents&&lengths.includes(Number(selectedEvents)))eventSelect.value=selectedEvents;
   const groups=new Map();
-  for(const row of data.percursos){
-    if(route&&row[1]!==route)continue;
+  for(const row of eligible){
+    if(eventSelect.value&&row[3].length!==Number(eventSelect.value))continue;
     const sig=temporalSignature(row,mode);
     if(!groups.has(sig.key))groups.set(sig.key,{rows:[],...sig});
     groups.get(sig.key).rows.push(row);
@@ -150,7 +156,7 @@ async function load(){
     summary();render();renderTemporal();
   }catch(e){$("resumo").replaceChildren(node("p","Não foi possível carregar os percursos: "+e.message));}
 }
-for(const id of ["modo-assinatura","rota-assinatura"])$(id).addEventListener("change",renderTemporal);
+for(const id of ["modo-assinatura","rota-assinatura","tentativas-assinatura","eventos-assinatura"])$(id).addEventListener("change",renderTemporal);
 for(const id of ["caminho","tentativas","quantidade-eventos","numero"])$(id).addEventListener(id==="numero"?"input":"change",()=>render());
 $("mais").addEventListener("click",()=>render(false));
 load();
