@@ -96,56 +96,55 @@ function render(reset=true){
   $("lista").replaceChildren(...rows.slice(0,visible).map(card));
   $("mais").hidden=visible>=rows.length;
 }
-function temporalSignature(row,mode){
+function temporalSignature(row){
   const events=row[3],deltas=events.map(([second],i)=>i?second-events[i-1][0]:0);
   const messages=events.map(([,code])=>data.eventos[code]);
-  const key=JSON.stringify([row[1],row[2].length,events.length,mode==="completa"?messages:null,deltas]);
+  const key=JSON.stringify([row[1],row[2].length,events.length,messages,deltas]);
   return {key,deltas,messages};
 }
 function renderTemporal(){
   if(!data)return;
-  const mode=$("modo-assinatura").value,route=$("rota-assinatura").value;
-  const attempts=$("tentativas-assinatura").value,eventSelect=$("eventos-assinatura");
+  const route=$("rota-assinatura").value,attempts=$("tentativas-assinatura").value;
+  const eventSelect=$("eventos-assinatura"),referenceSelect=$("referencia-assinatura");
   const eligible=data.percursos.filter(row=>(!route||row[1]===route)&&(!attempts||row[2].length===Number(attempts)));
   const selectedEvents=eventSelect.value;
   const lengths=[...new Set(eligible.map(row=>row[3].length))].sort((a,b)=>a-b);
   eventSelect.replaceChildren(new Option("Todos",""),...lengths.map(n=>new Option(n+" eventos",String(n))));
   if(selectedEvents&&lengths.includes(Number(selectedEvents)))eventSelect.value=selectedEvents;
-  const groups=new Map();
-  for(const row of eligible){
-    if(eventSelect.value&&row[3].length!==Number(eventSelect.value))continue;
-    const sig=temporalSignature(row,mode);
-    if(!groups.has(sig.key))groups.set(sig.key,{rows:[],...sig});
-    groups.get(sig.key).rows.push(row);
+  const options=eligible.filter(row=>!eventSelect.value||row[3].length===Number(eventSelect.value));
+  const selectedReference=Number(referenceSelect.value);
+  referenceSelect.replaceChildren(...options.map(row=>new Option(
+    "Percurso "+row[0]+(row[0]===92?" — assinatura do estudo":""),String(row[0]))));
+  const reference=options.find(row=>row[0]===selectedReference)||
+    options.find(row=>row[0]===92)||options[0];
+  const target=$("temporal-grupos");
+  if(!reference){
+    $("temporal-resumo").textContent="Nenhum percurso com esses filtros.";
+    target.replaceChildren();return;
   }
-  const repeated=[...groups.values()].filter(g=>g.rows.length>=2)
-    .sort((a,b)=>b.rows.length-a.rows.length||a.rows[0][0]-b.rows[0][0]);
-  const cycles=repeated.reduce((n,g)=>n+g.rows.length,0);
-  $("temporal-resumo").textContent=repeated.length+" assinatura(s) repetida(s) em "+cycles+" percurso(s). "+
-    (mode==="completa"?"Mensagens e todos os intervalos iguais.":"Só os intervalos são iguais; as mensagens podem diferir.");
-  const cards=repeated.map(group=>{
-    const first=group.rows[0],wrap=node("details",undefined,"mapa-temporal-item");
-    const head=node("summary");
-    head.append(node("strong",group.rows.length+" percursos"),node("span",labels[first[1]]||first[1]),
-      node("small",first[2].length+" tentativa(s) · "+first[3].length+" eventos"));
-    wrap.append(head);
-    const body=node("div",undefined,"mapa-temporal-body");
-    body.append(node("p","Percursos: "+group.rows.map(row=>row[0]).join(", ")));
-    body.append(node("p","Intervalos entre eventos (s): "+group.deltas.slice(1).join(" · ")));
-    if(mode==="tempos"){
-      const variants=new Set(group.rows.map(row=>JSON.stringify(row[3].map(([,code])=>data.eventos[code]))));
-      body.append(node("p",variants.size+" sequência(s) de mensagens neste grupo. A lista abaixo mostra a primeira."));
-    }
-    const list=node("ol");
-    group.messages.forEach((message,i)=>{
-      const li=node("li");
-      li.append(node("b",i===0?"início":"+"+group.deltas[i]+" s"),node("span",message));
-      list.append(li);
-    });
-    body.append(list);wrap.append(body);return wrap;
+  referenceSelect.value=String(reference[0]);
+  const sig=temporalSignature(reference);
+  const matches=data.percursos.filter(row=>temporalSignature(row).key===sig.key);
+  const others=matches.filter(row=>row[0]!==reference[0]);
+  $("temporal-resumo").textContent="Assinatura do percurso "+reference[0]+": "+
+    matches.length+" percurso(s) com a mesma sequência e todos os intervalos iguais. "+
+    (others.length?"Correspondências: "+matches.map(row=>row[0]).join(", ")+".":"Nenhuma outra correspondência.");
+  const wrap=node("details",undefined,"mapa-temporal-item");wrap.open=true;
+  const head=node("summary");
+  head.append(node("strong","Uma assinatura selecionada"),
+    node("span",labels[reference[1]]||reference[1]),
+    node("small",reference[2].length+" tentativa(s) · "+reference[3].length+" eventos"));
+  wrap.append(head);
+  const body=node("div",undefined,"mapa-temporal-body");
+  body.append(node("p","Percursos com esta assinatura: "+matches.map(row=>row[0]).join(", ")));
+  body.append(node("p","Intervalos entre eventos (s): "+sig.deltas.slice(1).join(" · ")));
+  const list=node("ol");
+  sig.messages.forEach((message,i)=>{
+    const li=node("li");
+    li.append(node("b",i===0?"início":"+"+sig.deltas[i]+" s"),node("span",message));
+    list.append(li);
   });
-  $("temporal-grupos").replaceChildren(...cards);
-  if(!cards.length)$("temporal-grupos").append(node("p","Nenhuma assinatura repetida com estes critérios."));
+  body.append(list);wrap.append(body);target.replaceChildren(wrap);
 }
 async function load(){
   try{
@@ -156,7 +155,7 @@ async function load(){
     summary();render();renderTemporal();
   }catch(e){$("resumo").replaceChildren(node("p","Não foi possível carregar os percursos: "+e.message));}
 }
-for(const id of ["modo-assinatura","rota-assinatura","tentativas-assinatura","eventos-assinatura"])$(id).addEventListener("change",renderTemporal);
+for(const id of ["rota-assinatura","tentativas-assinatura","eventos-assinatura","referencia-assinatura"])$(id).addEventListener("change",renderTemporal);
 for(const id of ["caminho","tentativas","quantidade-eventos","numero"])$(id).addEventListener(id==="numero"?"input":"change",()=>render());
 $("mais").addEventListener("click",()=>render(false));
 load();
