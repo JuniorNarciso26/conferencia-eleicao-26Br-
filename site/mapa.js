@@ -19,6 +19,7 @@ function summary(){
       $("caminho").value=path;
       $("tentativas").value=attempts===undefined?"":String(attempts);
       $("numero").value="";
+      $("quantidade-eventos").value="";
       render();
       $("percursos-title").scrollIntoView({behavior:"smooth",block:"start"});
     });
@@ -50,9 +51,36 @@ function summary(){
   detail.textContent="Entre os percursos com leitura biométrica, "+count(recognized,4)+" foram reconhecidos na quarta tentativa e "+count(manual,4)+" seguiram para habilitação manual depois de quatro tentativas. Esta contagem descreve a seção 0001; não comprova voto sem eleitor.";
   summaryBox.append(detail);
 }
+function routeMatch(row){
+  const path=$("caminho").value,attempts=$("tentativas").value;
+  return (!path||row[1]===path||(path==="sem_reconhecimento"&&row[1]!=="biometria_reconhecida"))&&
+    (!attempts||row[2].length===Number(attempts));
+}
 function match(row){
-  const path=$("caminho").value,attempts=$("tentativas").value,n=$("numero").value.trim();
-  return (!path||row[1]===path||(path==="sem_reconhecimento"&&row[1]!=="biometria_reconhecida"))&&(!attempts||row[2].length===Number(attempts))&&(!n||row[0]===Number(n));
+  const n=$("numero").value.trim(),eventCount=$("quantidade-eventos").value;
+  return routeMatch(row)&&(!eventCount||row[3].length===Number(eventCount))&&
+    (!n||row[0]===Number(n));
+}
+function eventGroups(){
+  const counts=new Map();
+  for(const row of data.percursos.filter(routeMatch)){
+    const n=row[3].length;counts.set(n,(counts.get(n)||0)+1);
+  }
+  const select=$("quantidade-eventos"),selected=select.value;
+  select.replaceChildren(new Option("Todas",""),...([...counts.keys()].sort((a,b)=>a-b).map(n=>new Option(n+" eventos",String(n)))));
+  if(counts.has(Number(selected))&&selected!=="")select.value=selected;
+  const buttons=[...counts].sort((a,b)=>a[0]-b[0]).map(([events,total])=>{
+    const button=node("button",total+" percurso"+(total===1?"":"s")+" · "+events+" eventos","mapa-event-button");
+    button.type="button";
+    if(select.value===String(events))button.setAttribute("aria-pressed","true");
+    button.addEventListener("click",()=>{
+      select.value=select.value===String(events)?"":String(events);
+      $("numero").value="";
+      render();
+    });
+    return button;
+  });
+  $("eventos-grupos").replaceChildren(...buttons);
 }
 function card(row){
   const details=node("details",undefined,"mapa-item");
@@ -62,6 +90,7 @@ function card(row){
 function render(reset=true){
   if(!data)return;
   if(reset)visible=20;else visible+=20;
+  eventGroups();
   const rows=data.percursos.filter(match);
   $("resultado-count").textContent=rows.length+" percurso(s) encontrado(s)";
   $("lista").replaceChildren(...rows.slice(0,visible).map(card));
@@ -76,6 +105,6 @@ async function load(){
     summary();render();
   }catch(e){$("resumo").replaceChildren(node("p","Não foi possível carregar os percursos: "+e.message));}
 }
-for(const id of ["caminho","tentativas","numero"])$(id).addEventListener(id==="numero"?"input":"change",()=>render());
+for(const id of ["caminho","tentativas","quantidade-eventos","numero"])$(id).addEventListener(id==="numero"?"input":"change",()=>render());
 $("mais").addEventListener("click",()=>render(false));
 load();
