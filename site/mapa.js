@@ -39,6 +39,16 @@ function summary(){
   noChildren.append(button("Após 4 tentativas",count(manual,4),manual,4,"Falha biométrica → dado pessoal → digital do mesário"));
   no.append(noChildren);
   $("fluxos").replaceChildren(yes,no);
+  const percent=value=>(100*value/rows.length).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";
+  const summaryBox=$("resumo-texto");
+  summaryBox.replaceChildren();
+  summaryBox.append(node("h3","Resumo do primeiro teste"));
+  const text=node("p");
+  text.textContent="Dos "+rows.length+" percursos concluídos, "+count(recognized)+" ("+percent(count(recognized))+") tiveram biometria reconhecida. Os outros "+noTotal+" se dividem em "+count(absent)+" sem biometria cadastrada e "+count(manual)+" com habilitação manual após falha biométrica.";
+  summaryBox.append(text);
+  const detail=node("p");
+  detail.textContent="Entre os percursos com leitura biométrica, "+count(recognized,4)+" foram reconhecidos na quarta tentativa e "+count(manual,4)+" seguiram para habilitação manual depois de quatro tentativas. Esta contagem descreve a seção 0001; não comprova voto sem eleitor.";
+  summaryBox.append(detail);
 }
 function match(row){
   const path=$("caminho").value,attempts=$("tentativas").value,n=$("numero").value.trim();
