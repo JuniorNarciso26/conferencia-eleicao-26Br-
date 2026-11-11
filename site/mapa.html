@@ -38,17 +38,15 @@
     <h2 id="visao-title">Visão da urna piloto</h2>
     <p class="desc">Os caminhos partem da identificação por CPF ou título, passam pela habilitação e chegam à confirmação para presidente e ao evento de voto computado.</p>
     <div id="resumo" class="mapa-kpis" aria-live="polite"><p>Carregando percursos...</p></div>
-    <div class="mapa-paths" aria-label="Caminhos de habilitação">
-      <div><strong>Biometria reconhecida</strong><span>1 a 4 tentativas → eleitor habilitado</span></div>
-      <div><strong>Sem biometria cadastrada</strong><span>Conferência de dado pessoal → eleitor habilitado</span></div>
-      <div><strong>Biometria não reconhecida</strong><span>Conferência de dado → digital do mesário → eleitor habilitado</span></div>
-    </div>
+    <h3 class="fluxos-title">Percursos agrupados por fluxo</h3>
+    <p class="desc">Selecione um grupo para ver seus percursos na lista abaixo. “Sem reconhecimento” reúne quem não tinha biometria cadastrada e quem precisou de habilitação manual após as tentativas.</p>
+    <div id="fluxos" class="fluxos" aria-label="Fluxos de habilitação"></div>
   </section>
   <section class="panel" aria-labelledby="percursos-title">
     <h2 id="percursos-title">Percursos registrados</h2>
     <p class="desc">Cada linha corresponde a uma votação concluída no log. Selecione uma linha para ver todos os eventos e os segundos relativos.</p>
     <div class="mapa-filtros">
-      <label for="caminho">Caminho<select id="caminho"><option value="">Todos</option><option value="biometria_reconhecida">Biometria reconhecida</option><option value="sem_biometria_cadastrada">Sem biometria cadastrada</option><option value="biometria_nao_reconhecida_habilitacao_manual">Habilitação manual após falha</option></select></label>
+      <label for="caminho">Caminho<select id="caminho"><option value="">Todos</option><option value="biometria_reconhecida">Biometria reconhecida</option><option value="sem_reconhecimento">Sem reconhecimento ou sem cadastro</option><option value="sem_biometria_cadastrada">Sem biometria cadastrada</option><option value="biometria_nao_reconhecida_habilitacao_manual">Habilitação manual após falha</option></select></label>
       <label for="tentativas">Tentativas solicitadas<select id="tentativas"><option value="">Todas</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
       <label for="numero">Número do percurso<input id="numero" type="number" min="1" max="280" placeholder="1 a 280"></label>
     </div>
