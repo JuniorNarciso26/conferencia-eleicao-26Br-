@@ -28,6 +28,7 @@
       const a=data.comparacao.assinatura,b=data.comparacao.controle;
       get("zona-comparacao").replaceChildren(
         make("li","Posição: da 20ª à 271ª conclusão; não há uma posição fixa."),
+        make("li","Distância entre posições consecutivas da assinatura na mesma seção: "+data.secoes.flatMap(s=>s.posicoes.slice(1).map((n,i)=>n-s.posicoes[i])).sort((x,y)=>x-y).join(", ")+" posições; as dez distâncias são diferentes."),
         make("li","Intervalo desde a conclusão anterior: mediana de "+a.mediana_intervalo_s+" s nas ocorrências e "+b.mediana_intervalo_s+" s no controle; nas ocorrências variou de "+a.intervalo_min_s+" a "+a.intervalo_max_s+" s."),
         make("li","Última mensagem: “Aguardando digitação do identificador do eleitor” em "+a.aguardando_identificador+"/"+a.total+" ocorrências ("+pct(a.aguardando_identificador,a.total)+") e "+b.aguardando_identificador+"/"+b.total+" controles ("+pct(b.aguardando_identificador,b.total)+")."),
         make("li","Rota anterior com biometria reconhecida: "+a.anterior_biometrica+"/"+a.total+" ocorrências e "+b.anterior_biometrica+"/"+b.total+" controles."),
