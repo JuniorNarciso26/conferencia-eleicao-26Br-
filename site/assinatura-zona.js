@@ -30,6 +30,7 @@
         make("li","Intervalo desde a conclusão anterior: mediana de "+a.mediana_intervalo_s+" s nas ocorrências e "+b.mediana_intervalo_s+" s no controle; nas ocorrências variou de "+a.intervalo_min_s+" a "+a.intervalo_max_s+" s."),
         make("li","Última mensagem: “Aguardando digitação do identificador do eleitor” em "+a.aguardando_identificador+"/"+a.total+" ocorrências ("+pct(a.aguardando_identificador,a.total)+") e "+b.aguardando_identificador+"/"+b.total+" controles ("+pct(b.aguardando_identificador,b.total)+")."),
         make("li","Rota anterior com biometria reconhecida: "+a.anterior_biometrica+"/"+a.total+" ocorrências e "+b.anterior_biometrica+"/"+b.total+" controles."),
+        make("li","Percurso anterior: "+data.comparacao.sequencia_anterior.distintas_nos_casos+" sequências de mensagens distintas entre os casos; a mais frequente apareceu em "+data.comparacao.sequencia_anterior.mais_comum_nos_casos+"/"+a.total+" casos e "+data.comparacao.sequencia_anterior.mesma_sequencia_nos_controles+"/"+b.total+" controles."),
         make("li","Posição no segundo quarto da seção: "+a.quartil_2+"/"+a.total+" ocorrências ("+pct(a.quartil_2,a.total)+") e "+b.quartil_2+"/"+b.total+" controles ("+pct(b.quartil_2,b.total)+"). Esta diferença é exploratória e precisa ser testada em outra amostra.")
       );
       draw();
