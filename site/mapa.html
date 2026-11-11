@@ -45,17 +45,17 @@
     <p class="mapa-analysis-link"><a href="#analise-temporal">Ver análise temporal das assinaturas ↓</a></p>
   </section>
   <section class="panel" id="analise-temporal" aria-labelledby="analise-temporal-title">
-    <h2 id="analise-temporal-title">Análise temporal</h2>
-    <p class="desc">Encontre percursos da mesma rota com todos os intervalos iguais. A assinatura completa também exige a mesma sequência de mensagens, incluindo CPF ou título. Os horários do log têm resolução de um segundo.</p>
+    <h2 id="analise-temporal-title">Análise temporal de uma assinatura</h2>
+    <p class="desc">A referência inicial é a assinatura já definida no estudo: percurso 92, com vetor resumido (10, 8, 1). A tela compara uma assinatura por vez, exigindo a mesma rota, a mesma sequência de mensagens e todos os intervalos iguais.</p>
     <div class="mapa-filtros">
-      <label for="modo-assinatura">Comparação<select id="modo-assinatura"><option value="completa">Sequência + tempos exatos</option><option value="tempos">Apenas tempos na mesma rota</option></select></label>
       <label for="rota-assinatura">Rota<select id="rota-assinatura"><option value="">Todas as rotas</option><option value="biometria_reconhecida">Biometria reconhecida</option><option value="sem_biometria_cadastrada">Sem biometria cadastrada</option><option value="biometria_nao_reconhecida_habilitacao_manual">Habilitação manual após falha</option></select></label>
       <label for="tentativas-assinatura">Tentativas<select id="tentativas-assinatura"><option value="">Todas</option><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
       <label for="eventos-assinatura">Eventos<select id="eventos-assinatura"><option value="">Todos</option></select></label>
+      <label for="referencia-assinatura">Percurso de referência<select id="referencia-assinatura"></select></label>
     </div>
     <p id="temporal-resumo" class="mapa-meta" role="status" aria-live="polite">Carregando assinaturas...</p>
     <div id="temporal-grupos" class="mapa-temporal-list"></div>
-    <p class="desc mapa-temporal-note">Uma assinatura repetida mostra igualdade de mensagens e/ou segundos registrados. Isso não demonstra voto sem eleitor.</p>
+    <p class="desc mapa-temporal-note">Igualdade de mensagens e segundos registrados não demonstra voto sem eleitor. O log tem resolução de um segundo.</p>
   </section>
   <section class="panel" aria-labelledby="percursos-title">
     <h2 id="percursos-title">Percursos registrados</h2>
