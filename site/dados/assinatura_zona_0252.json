@@ -2353,6 +2353,11 @@
   ],
   "comparacao": {
     "criterio_controle": "Mesmas 25 seções, mesma sequência de nove mensagens e rota; excluídas as 35 ocorrências exatas.",
+    "sequencia_anterior": {
+      "distintas_nos_casos": 14,
+      "mais_comum_nos_casos": 9,
+      "mesma_sequencia_nos_controles": 1104
+    },
     "assinatura": {
       "total": 35,
       "mediana_intervalo_s": 38.0,
