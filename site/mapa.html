@@ -8,7 +8,9 @@
 <title>Mapa dos votos | Conferência Eleitoral 2026</title>
 <link rel="stylesheet" href="./consulta.css">
 <link rel="stylesheet" href="./mapa.css">
+<link rel="stylesheet" href="./assinatura-zona.css">
 <script defer src="./mapa.js"></script>
+<script defer src="./assinatura-zona.js"></script>
 </head>
 <body>
 <header>
@@ -42,7 +44,7 @@
     <p class="desc">Selecione um grupo para ver seus percursos na lista abaixo. “Sem reconhecimento” reúne quem não tinha biometria cadastrada e quem precisou de habilitação manual após as tentativas.</p>
     <div id="fluxos" class="fluxos" aria-label="Fluxos de habilitação"></div>
     <div id="resumo-texto" class="mapa-resumo" role="note" aria-live="polite"></div>
-    <p class="mapa-analysis-link"><a href="#analise-temporal">Ver análise temporal das assinaturas ↓</a></p>
+    <p class="mapa-analysis-link"><a href="#analise-temporal">Ver análise temporal ↓</a> · <a href="#painel-zona">Ver assinatura em toda a zona ↓</a></p>
   </section>
   <section class="panel" id="analise-temporal" aria-labelledby="analise-temporal-title">
     <h2 id="analise-temporal-title">Análise temporal de uma assinatura</h2>
@@ -56,6 +58,28 @@
     <p id="temporal-resumo" class="mapa-meta" role="status" aria-live="polite">Carregando assinaturas...</p>
     <div id="temporal-grupos" class="mapa-temporal-list"></div>
     <p class="desc mapa-temporal-note">Igualdade de mensagens e segundos registrados não demonstra voto sem eleitor. O log tem resolução de um segundo.</p>
+  </section>
+  <section class="panel zona-panel" id="painel-zona" aria-labelledby="zona-title">
+    <h2 id="zona-title">Assinatura escolhida em toda a zona 0252</h2>
+    <p class="desc">Segundo turno · assinatura de nove mensagens e intervalos completos, representada pelo vetor resumido (10, 8, 1). As posições são a ordem das conclusões registradas no log de cada seção.</p>
+    <div id="zona-indicadores" class="zona-indicadores" aria-live="polite"><p>Carregando painel...</p></div>
+    <p class="zona-note"><strong>Como ler a posição:</strong> “92” indica a 92ª mensagem de voto computado naquele log. Ela não identifica a pessoa nem a posição do voto no RDV.</p>
+    <h3>Busca exploratória por um possível gatilho</h3>
+    <p class="zona-note">Comparação com outros percursos das mesmas 25 seções que têm a mesma sequência de nove mensagens, mas tempos diferentes. O grupo de controle contém 2.642 percursos. Os números descrevem o piloto e não confirmam causa ou significância estatística.</p>
+    <ul id="zona-comparacao" class="zona-comparacao"></ul>
+    <p class="zona-note"><strong>Resultado:</strong> não foi encontrado um gatilho comum nos indicadores examinados. Eventos de outros aplicativos, comandos não registrados e outras hipóteses ainda exigem investigação.</p>
+    <h3>Ocorrências por seção</h3>
+    <div class="zona-controls">
+      <label><input id="zona-somente" type="checkbox" checked> Mostrar seções com ocorrências</label>
+      <label for="zona-secao">Buscar seção <input id="zona-secao" type="search" inputmode="numeric" placeholder="Ex.: 0007"></label>
+    </div>
+    <p id="zona-contagem" role="status" aria-live="polite"></p>
+    <p id="zona-erro" class="zona-error" role="alert" hidden></p>
+    <div class="zona-table-wrap"><table class="zona-table">
+      <thead><tr><th scope="col">Seção</th><th scope="col">Computados</th><th scope="col">Ocorrências</th><th scope="col">Posições no log</th><th scope="col">Ressalvas</th></tr></thead>
+      <tbody id="zona-corpo"></tbody>
+    </table></div>
+    <p class="zona-note">Desmarque o filtro para ver todas as seções analisadas, inclusive as sem correspondência e as com ressalvas de reconstrução.</p>
   </section>
   <section class="panel" aria-labelledby="percursos-title">
     <h2 id="percursos-title">Percursos registrados</h2>
