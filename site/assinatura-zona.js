@@ -5,6 +5,7 @@
   const pct=(n,d)=>(100*n/d).toLocaleString("pt-BR",{maximumFractionDigits:1})+"%";
   let data;
   function draw(){
+    if(!data)return;
     const q=get("zona-secao").value.trim(),only=get("zona-somente").checked;
     const sections=data.secoes.filter(s=>(!only||s.posicoes.length>0)&&(!q||s.secao.includes(q)));
     get("zona-contagem").textContent=sections.length+" seção(ões) exibida(s)";
