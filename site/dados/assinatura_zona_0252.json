@@ -2358,6 +2358,10 @@
       "mais_comum_nos_casos": 9,
       "mesma_sequencia_nos_controles": 1104
     },
+    "entre_percursos": {
+      "somente_espera_casos": 27,
+      "somente_espera_controles": 2323
+    },
     "assinatura": {
       "total": 35,
       "mediana_intervalo_s": 38.0,
